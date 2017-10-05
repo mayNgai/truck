@@ -1,9 +1,7 @@
 package com.dtc.sevice.truckclub.view.driver.fragment;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,16 +14,11 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.adapter.AddImageAdapter;
@@ -56,7 +49,7 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
     public static List<TblPicture> imagePaths;
     private int PROFILE_PIC = 1;
     private Uri uriProfile;
-    private Bitmap bitmapProfileDefault;
+    private static Bitmap bitmapProfileDefault;
     private static boolean defaultPicProfile = true;
     private ApplicationController _appController;
     public static ArrayList<String> selectedItems;
@@ -178,7 +171,7 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
                 , "Select Picture"), PROFILE_PIC);
     }
 
-    String pathDefault="";
+    private static String pathDefault="";
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         InputStream imageStream = null;
