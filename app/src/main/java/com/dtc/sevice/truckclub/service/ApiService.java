@@ -3,15 +3,21 @@ package com.dtc.sevice.truckclub.service;
 import com.dtc.sevice.truckclub.model.TblCarDetail;
 import com.dtc.sevice.truckclub.model.TblCarGroup;
 import com.dtc.sevice.truckclub.model.TblMember;
+import com.dtc.sevice.truckclub.model.TblPicture;
 import com.dtc.sevice.truckclub.model.TblProvince;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
+import retrofit.http.Body;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
+import retrofit.http.Header;
+import retrofit.http.Headers;
 import retrofit.http.POST;
+import retrofit.http.Query;
 import rx.Observable;
 
 /**
@@ -62,6 +68,20 @@ public class ApiService {
         public Observable<TblCarDetail> createCar(@Field("member_id") int member_id, @Field("license_plate") String license_plate, @Field("car_brand") String car_brand,@Field("province") String province,
                                                   @Field("car_model") String car_model, @Field("group_id") int group_id,@Field("car_tow") int car_tow, @Field("car_wheels") int car_wheels,
                                                   @Field("car_tons") int car_tons, @Field("option_trailer") int option_trailer,@Field("sum_weight") int sum_weight);
+
+        @FormUrlEncoded
+        @POST("/create_picture.php")
+        public Observable<TblPicture> createPictureCar(@Field("car_id") int car_id, @Field("name_path") String name_path);
+
+        @FormUrlEncoded
+        @POST("/create_member_and_car.php")
+        public Observable<TblMember> createMemberAndCar(@Field("data") ArrayList<TblMember> data);
+//        @FormUrlEncoded
+//        @POST("/create_member_and_car.php")
+//        public Observable<TblMember> createMemberAndCar(@Field("first_name") String first_name, @Field("last_name") String last_name, @Field("email") String email,
+//                                                        @Field("user_name") String user_name, @Field("tel") String tel, @Field("birth_date") String birth_date, @Field("sex") String sex,
+//                                                        @Field("password") String password, @Field("member_type") int member_type, @Field("authority") String authority, @Field("device_id") String device_id,
+//                                                        @Field("face_book_id") String face_book_id, @Field("name_pic_path") String name_pic_path,@Field("car_detail") TblCarDetail car_detail);
 
         @FormUrlEncoded
         @POST("/user_login.php")

@@ -11,6 +11,7 @@ import com.dtc.sevice.truckclub.until.DialogController;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverRegisterActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observer;
@@ -35,19 +36,20 @@ public class DriverRegisterPresenter {
         taskController = new TaskController();
     }
 
+
     public void loadRegister(){
         try {
             //dialog = ProgressDialog.show(mView, "Wait", "loading...");
+            ArrayList<TblMember> data = new ArrayList<TblMember>();
+            data.add(mView.member);
             mForum.getApi()
-                    .createMember(mView.member.getFirst_name(),mView.member.getLast_name(),mView.member.getEmail(),
-                            mView.member.getUser_name(),mView.member.getTel(),mView.member.getBirth_date(),mView.member.getSex(),mView.member.getPassword()
-                            ,mView.member.getMember_type(),mView.member.getAuthority(),mView.member.getDevice_id(),mView.member.getFace_book_id(),mView.member.getName_pic_path())
+                    .createMemberAndCar(data)
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<TblMember>() {
                         @Override
                         public void onCompleted() {
-                           // dialog.dismiss();
+                            // dialog.dismiss();
                         }
 
                         @Override
@@ -66,6 +68,71 @@ public class DriverRegisterPresenter {
             e.printStackTrace();
         }
     }
+
+//    public void loadRegister(){
+//        try {
+//            //dialog = ProgressDialog.show(mView, "Wait", "loading...");
+//            mForum.getApi()
+//                    .createMemberAndCar(mView.member.getFirst_name(),mView.member.getLast_name(),mView.member.getEmail(),
+//                            mView.member.getUser_name(),mView.member.getTel(),mView.member.getBirth_date(),mView.member.getSex(),mView.member.getPassword()
+//                            ,mView.member.getMember_type(),mView.member.getAuthority(),mView.member.getDevice_id(),mView.member.getFace_book_id(),mView.member.getName_pic_path(),
+//                            mView.member.getCar_detail())
+//                    .subscribeOn(Schedulers.newThread())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(new Observer<TblMember>() {
+//                        @Override
+//                        public void onCompleted() {
+//                            // dialog.dismiss();
+//                        }
+//
+//                        @Override
+//                        public void onError(Throwable e) {
+//                            Log.e("loadRegister Error", e.getMessage());
+//                            //dialog.dismiss();
+//                        }
+//
+//                        @Override
+//                        public void onNext(TblMember member) {
+//                            updateSignUp(member);
+//                            //dialog.dismiss();
+//                        }
+//                    });
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//    }
+
+//    public void loadRegister(){
+//        try {
+//            //dialog = ProgressDialog.show(mView, "Wait", "loading...");
+//            mForum.getApi()
+//                    .createMember(mView.member.getFirst_name(),mView.member.getLast_name(),mView.member.getEmail(),
+//                            mView.member.getUser_name(),mView.member.getTel(),mView.member.getBirth_date(),mView.member.getSex(),mView.member.getPassword()
+//                            ,mView.member.getMember_type(),mView.member.getAuthority(),mView.member.getDevice_id(),mView.member.getFace_book_id(),mView.member.getName_pic_path())
+//                    .subscribeOn(Schedulers.newThread())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(new Observer<TblMember>() {
+//                        @Override
+//                        public void onCompleted() {
+//                           // dialog.dismiss();
+//                        }
+//
+//                        @Override
+//                        public void onError(Throwable e) {
+//                            Log.e("loadRegister Error", e.getMessage());
+//                            //dialog.dismiss();
+//                        }
+//
+//                        @Override
+//                        public void onNext(TblMember member) {
+//                            updateSignUp(member);
+//                            //dialog.dismiss();
+//                        }
+//                    });
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 
     public void updateSignUp(TblMember member){
         try {

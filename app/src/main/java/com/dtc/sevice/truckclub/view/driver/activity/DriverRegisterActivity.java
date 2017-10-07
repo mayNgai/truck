@@ -179,6 +179,7 @@ public class DriverRegisterActivity extends FragmentActivity {
                                     success = true;
                                     carDetail = new TblCarDetail();
                                     carDetail = mSecond.carDetail;
+
                                 }
                             }else {
                                 success = true;
@@ -204,6 +205,8 @@ public class DriverRegisterActivity extends FragmentActivity {
             if(success){
                 tblPicture = new ArrayList<TblPicture>();
                 tblPicture = mThird.imagePaths;
+                carDetail.setPicture(tblPicture);
+                member.setCar_detail(carDetail);
                 mApiService = new ApiService();
                 mDriverRegisterPresenter = new DriverRegisterPresenter(this,mApiService);
                 mDriverRegisterPresenter.loadRegister();

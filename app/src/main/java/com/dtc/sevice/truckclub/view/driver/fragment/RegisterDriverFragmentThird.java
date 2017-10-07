@@ -16,6 +16,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -33,7 +34,9 @@ import com.dtc.sevice.truckclub.adapter.ItemOffsetDecoration;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblPicture;
 import com.dtc.sevice.truckclub.until.ApplicationController;
+import com.dtc.sevice.truckclub.until.Updown_Image;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverRegisterActivity;
+import com.dtc.sevice.truckclub.view.user.activity.UserRegisterActivity;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -60,6 +63,7 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
     private static boolean defaultPicProfile = true;
     private ApplicationController _appController;
     public static ArrayList<String> selectedItems;
+    private Updown_Image download_image;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -70,6 +74,7 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
 
     private void init(){
         try {
+            download_image = new Updown_Image();
             mView = new DriverRegisterActivity();
             imagePaths = new ArrayList<TblPicture>();
             _appController = new ApplicationController();
@@ -238,7 +243,10 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
                 success = true;
                 String new_path = GlobalVar.saveImage(bitmapProfileDefault,pathDefault);
                 mView.member.setName_pic_path(GlobalVar.findPicName(new_path));
+                final String result = download_image.SendImageNode(_activity, new_path);
+                Log.i("Upload Image",result);
                 imagePaths.remove(imagePaths.size()-1);
+
             }
         }catch (Exception e){
             e.printStackTrace();

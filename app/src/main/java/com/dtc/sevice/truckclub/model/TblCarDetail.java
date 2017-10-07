@@ -6,6 +6,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by May on 9/29/2017.
@@ -78,6 +79,11 @@ public class TblCarDetail implements Serializable {
     @Expose
     @DatabaseField( useGetSet = true)
     private int sum_weight;
+
+    @SerializedName("picture")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private List<TblPicture> picture;
 
     public String getSuccess() {
         return success;
@@ -222,5 +228,13 @@ public class TblCarDetail implements Serializable {
 
     public void setGroup_id(int group_id) {
         this.group_id = group_id;
+    }
+
+    public List<TblPicture> getPicture() {
+        return picture;
+    }
+
+    public void setPicture(List<TblPicture> picture) {
+        this.picture = picture;
     }
 }
