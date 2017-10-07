@@ -135,7 +135,6 @@
                         android:textAlignment="center"
                         android:textSize="@dimen/font_18"/>
                     <ImageView
-                        android:id="@+id/img_del_iden"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.3"
@@ -168,7 +167,6 @@
                         android:textAlignment="center"
                         android:textSize="@dimen/font_18"/>
                     <ImageView
-                        android:id="@+id/img_del_iden"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.3"
@@ -198,7 +196,6 @@
                         android:layout_weight="1.7"
                         android:textSize="@dimen/font_18"/>
                     <TextView
-                        android:id="@+id/img_del_iden"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.3"

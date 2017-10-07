@@ -20,6 +20,11 @@
             android:title=""
             app:showAsAction="always"
             android:visible="false"/>
+        <item
+            android:id="@+id/txt_status"
+            android:orderInCategory="103"
+            android:title="พร้อมใช้งาน"
+            app:showAsAction="always" />
 
         <item
             android:id="@+id/status"
