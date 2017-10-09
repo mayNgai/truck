@@ -1,9 +1,11 @@
 package com.dtc.sevice.truckclub.view.driver.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -11,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -18,8 +21,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dtc.sevice.truckclub.R;
+import com.dtc.sevice.truckclub.helper.GlobalVar;
+import com.dtc.sevice.truckclub.model.TblCarDetail;
+import com.dtc.sevice.truckclub.model.TblMember;
+import com.dtc.sevice.truckclub.presenters.driver.DriverProfilePresenter;
+import com.dtc.sevice.truckclub.service.ApiService;
+import com.dtc.sevice.truckclub.until.DateController;
+import com.dtc.sevice.truckclub.until.TaskController;
+import com.dtc.sevice.truckclub.until.Updown_Image;
 import com.dtc.sevice.truckclub.view.user.activity.UserMainActivity;
 import com.dtc.sevice.truckclub.view.user.activity.UserProfileActivity;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by May on 9/27/2017.
@@ -29,12 +44,23 @@ public class DriverProfileActivity extends AppCompatActivity implements View.OnC
     private Toolbar toolbar;
     private Button btn_info,btn_vehicle;
     private ImageView img_profile,img_first_name,img_last_name,img_mail,img_tel;
-    private EditText edt_first_name,edt_last_name,edt_mail,edt_tel;
+    private EditText edt_first_name,edt_last_name,edt_mail,edt_tel,edt_car_brand,edt_car_model,edt_license_plate,edt_license_province,edt_sum1,edt_sum2;
     private TextView txt_birth;
-    private Spinner spn_sex;
+    private Spinner spn_sex,spn_car_group,spn_tow;
+    private CheckBox chk_weight,chk_option;
     private ScrollView scroll_profile,scroll_vehicle;
+    private RecyclerView recycler_view;
     private MenuItem save,edit;
     private boolean flagEdit = false;
+    public static List<TblMember> listMembers;
+    private TaskController taskController;
+    private Updown_Image download_image;
+    private DateController dateController;
+    private Activity _activity;
+
+    private DriverProfilePresenter driverProfilePresenter;
+    private ApiService apiService;
+    private static TblCarDetail carDetail;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +69,10 @@ public class DriverProfileActivity extends AppCompatActivity implements View.OnC
     }
 
     private void init(){
+        taskController = new TaskController();
+        download_image = new Updown_Image();
+        dateController = new DateController();
+        _activity = new DriverProfileActivity();
         btn_info = (Button)findViewById(R.id.btn_info);
         btn_vehicle = (Button)findViewById(R.id.btn_vehicle);
         img_profile = (ImageView)findViewById(R.id.img_profile);
@@ -54,10 +84,21 @@ public class DriverProfileActivity extends AppCompatActivity implements View.OnC
         edt_last_name = (EditText)findViewById(R.id.edt_last_name);
         edt_mail = (EditText)findViewById(R.id.edt_mail);
         edt_tel = (EditText)findViewById(R.id.edt_tel);
+        edt_car_brand = (EditText)findViewById(R.id.edt_car_brand);
+        edt_car_model = (EditText)findViewById(R.id.edt_car_model);
+        edt_license_plate = (EditText)findViewById(R.id.edt_license_plate);
+        edt_license_province = (EditText)findViewById(R.id.edt_license_province);
+        edt_sum1 = (EditText)findViewById(R.id.edt_sum1);
+        edt_sum2 = (EditText)findViewById(R.id.edt_sum2);
+        spn_car_group = (Spinner) findViewById(R.id.spn_car_group);
+        spn_tow = (Spinner)findViewById(R.id.spn_tow);
         txt_birth = (TextView)findViewById(R.id.txt_birth);
         spn_sex = (Spinner)findViewById(R.id.spn_sex);
+        chk_weight = (CheckBox) findViewById(R.id.chk_weight);
+        chk_option = (CheckBox)findViewById(R.id.chk_option);
         scroll_profile = (ScrollView)findViewById(R.id.scroll_profile);
         scroll_vehicle = (ScrollView)findViewById(R.id.scroll_vehicle);
+        recycler_view = (RecyclerView)findViewById(R.id.recycler_view);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -70,17 +111,93 @@ public class DriverProfileActivity extends AppCompatActivity implements View.OnC
         });
         btn_info.setOnClickListener(this);
         btn_vehicle.setOnClickListener(this);
+        getMember();
+        if(listMembers != null && listMembers.size()>0){
+            setText();
+            setCarDetail();
+        }
+    }
+
+    private void getMember(){
+        try {
+            listMembers = new ArrayList<TblMember>();
+            listMembers = taskController.getMember();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void setText(){
+        try {
+            if(listMembers.get(0).getMember_type() == 0){
+                Picasso.with(_activity).load(GlobalVar.url_up_pic + listMembers.get(0).getName_pic_path())
+                        .placeholder( R.drawable.progress_animation )
+                        .fit().centerCrop().error( R.drawable.no_images ).into(img_profile);
+            }else if(listMembers.get(0).getMember_type() == 1){
+                Picasso.with(_activity).load(ApiService.url_facebook + listMembers.get(0).getFace_book_id() + ApiService.pic_facebook)
+                        .placeholder( R.drawable.progress_animation )
+                        .fit().centerCrop().error( R.drawable.no_images ).into(img_profile);
+            }
+
+            edt_first_name.setText(listMembers.get(0).getFirst_name());
+            edt_last_name.setText(listMembers.get(0).getLast_name());
+            edt_mail.setText(listMembers.get(0).getEmail());
+            txt_birth.setText((listMembers.get(0).getBirth_date() ==null) ? "":dateController.convertDateFormat2To1(listMembers.get(0).getBirth_date()));
+            edt_tel.setText(listMembers.get(0).getTel());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void setCarDetail(){
+        try {
+            apiService = new ApiService();
+            driverProfilePresenter = new DriverProfilePresenter(DriverProfileActivity.this,apiService);
+            driverProfilePresenter.loadCarDetail();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void updateCarDetail(TblCarDetail detail){
+        try {
+            carDetail = new TblCarDetail();
+            carDetail = detail;
+            edt_car_brand.setText(carDetail.getCar_brand());
+            edt_car_model.setText(carDetail.getCar_model());
+            edt_license_plate.setText(carDetail.getLicense_plate());
+            edt_license_province.setText(carDetail.getProvince());
+            edt_sum1.setText(String.valueOf(carDetail.getCar_wheels()));
+            edt_sum2.setText(String.valueOf(carDetail.getCar_tons()));
+
+            if(carDetail.getOption_trailer()==0)
+                chk_option.setChecked(false);
+            else
+                chk_option.setChecked(true);
+
+            if(carDetail.getSum_weight()==0)
+                chk_weight.setChecked(false);
+            else
+                chk_weight.setChecked(true);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_info:
-                scroll_vehicle.setVisibility(View.GONE);
-                scroll_profile.setVisibility(View.VISIBLE);
+                if(!flagEdit){
+                    scroll_vehicle.setVisibility(View.GONE);
+                    scroll_profile.setVisibility(View.VISIBLE);
+                }
                 break;
             case R.id.btn_vehicle:
-                scroll_profile.setVisibility(View.GONE);
-                scroll_vehicle.setVisibility(View.VISIBLE);
+                if(!flagEdit){
+                    scroll_profile.setVisibility(View.GONE);
+                    scroll_vehicle.setVisibility(View.VISIBLE);
+                }
+
                 break;
 
         }

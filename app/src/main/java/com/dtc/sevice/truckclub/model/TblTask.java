@@ -29,6 +29,11 @@ public class TblTask implements Serializable {
     @DatabaseField( useGetSet = true)
     private String task_id;
 
+    @SerializedName("user_id")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private int user_id;
+
     @SerializedName("type_task")
     @Expose
     @DatabaseField( useGetSet = true)
@@ -328,5 +333,13 @@ public class TblTask implements Serializable {
 
     public void setTime_wait(int time_wait) {
         this.time_wait = time_wait;
+    }
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 }

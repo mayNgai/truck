@@ -2,6 +2,7 @@ package com.dtc.sevice.truckclub.view.user.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -22,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,6 +38,7 @@ import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.presenters.user.UserMainPresenter;
 import com.dtc.sevice.truckclub.service.ApiService;
+import com.dtc.sevice.truckclub.until.DateController;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.BaseActivity;
 import com.google.android.gms.appindexing.Action;
@@ -55,6 +58,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -64,8 +68,8 @@ import java.util.Locale;
 
 public class UserMainActivity2 extends BaseActivity implements View.OnClickListener,OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener , com.google.android.gms.location.LocationListener{
-    private Button btn_now,btn_booking;
-    private EditText edt_start;
+    private Button btn_now,btn_booking,btc_call_service;
+    private EditText edt_start,edt_count_date,edt_end_date,edt_start_date,edt_iden;
     private CheckBox chk_cash,chk_credit;
     private ImageView img_start,img_del_start;
     private LinearLayout linear_select_type,linear_current,linear_detail;
@@ -90,7 +94,9 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
     private ApiService mApiService;
     private UserMainPresenter mUserMainPresenter;
     private static List<TblCarGroup> listCarGroups;
-    private static TblTask tblTask;
+    public static TblTask tblTask;
+    private DateController dateController;
+    private String service_type = "";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,10 +109,17 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         members = new ArrayList<TblMember>();
         tblTask = new TblTask();
         _activity = new UserMainActivity2();
+        dateController = new DateController();
         //linear_detail = (LinearLayout)findViewById(R.id.linear_detail);
         btn_now = (Button)findViewById(R.id.btn_now);
         btn_booking = (Button)findViewById(R.id.btn_booking);
+        btc_call_service = (Button)findViewById(R.id.btc_call_service);
         edt_start = (EditText)findViewById(R.id.edt_start);
+        edt_count_date = (EditText)findViewById(R.id.edt_count_date);
+        edt_end_date = (EditText)findViewById(R.id.edt_end_date);
+        edt_start_date = (EditText)findViewById(R.id.edt_start_date);
+        edt_iden = (EditText)findViewById(R.id.edt_iden);
+        chk_cash = (CheckBox)findViewById(R.id.chk_cash);
         img_start = (ImageView)findViewById(R.id.img_start);
         linear_current = (LinearLayout)findViewById(R.id.linear_current);
         img_del_start = (ImageView)findViewById(R.id.img_del_start);
@@ -122,6 +135,9 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         img_del_start.setOnClickListener(this);
         btn_now.setOnClickListener(this);
         btn_booking.setOnClickListener(this);
+        btc_call_service.setOnClickListener(this);
+        edt_end_date.setOnClickListener(this);
+        edt_start_date.setOnClickListener(this);
         //img_del_iden.setOnClickListener(this);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -222,6 +238,8 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                             moveMap(latlon.latitude,latlon.longitude);
                             String strAddress = getAddressByLatLng(latlon.latitude,latlon.longitude);
                             edt_start.setText((strAddress.length()>40) ? strAddress.substring(0,40) + ".." : strAddress);
+                            String strProvince = getProvinceByLatLng(latlon.latitude,latlon.longitude);
+                            setDestination(latlon.latitude,latlon.longitude,strProvince,strAddress);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -256,9 +274,22 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                     moveMap(address.getLatitude(),address.getLongitude());
                     String strAddress = getAddressByLatLng(address.getLatitude(),address.getLongitude());
                     edt_start.setText((strAddress.length()>40) ? strAddress.substring(0,40) + ".." : strAddress);
+                    setDestination(address.getLatitude(),address.getLongitude(),address.getLocality(),strAddress);
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setDestination(double lat , double lon , String province ,String location){
+        try {
+            tblTask = new TblTask();
+            tblTask.setDes_lat(Float.valueOf(String.valueOf(lat)));
+            tblTask.setDes_lon(Float.valueOf(String.valueOf(lon)));
+            tblTask.setDest_province(province);
+            tblTask.setDest_location(location);
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -297,6 +328,23 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
             e.printStackTrace();
         }
         return strAddress;
+    }
+
+    public String getProvinceByLatLng(double lat ,double lon) {
+        String strAddress = "",city = "";
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        try {
+            addresses = geocoder.getFromLocation(lat, lon, 1);
+            strAddress = addresses.get(0).getAddressLine(0);
+            city = addresses.get(0).getLocality();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return city;
     }
 
     private void removeMarkerDestination(){
@@ -368,6 +416,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                     linear_detail.setVisibility(View.VISIBLE);
                     btn_now.setTextColor(getResources().getColor(R.color.colorPrimary));
                     btn_booking.setTextColor(getResources().getColor(R.color.black_1));
+                    service_type = "Now";
                 }
                 break;
             case R.id.btn_booking:
@@ -375,6 +424,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                     linear_detail.setVisibility(View.VISIBLE);
                     btn_now.setTextColor(getResources().getColor(R.color.black_1));
                     btn_booking.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    service_type = "Booking";
                 }
 
                 break;
@@ -382,10 +432,79 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 setDialogBottom();
                 break;
 
+            case R.id.btc_call_service:
+                if(edt_start.getText().toString().length()>0){
+                    setdata();
+                }
+
+                break;
+            case R.id.edt_start_date:
+                setDatePicker(edt_start_date);
+                break;
+            case R.id.edt_end_date:
+                setDatePicker(edt_end_date);
+                break;
 
         }
     }
 
+    private void setdata(){
+        try {
+            boolean cancel = false;
+            if(edt_start_date.getText().toString().length()==0){
+                cancel = true;
+            }else if(edt_end_date.getText().toString().length()==0){
+                cancel = true;
+            }
+
+            if(!cancel){
+                tblTask.setUser_id(members.get(0).getMember_id());
+                tblTask.setGroup_id(position);
+                tblTask.setService_type(service_type);
+                tblTask.setDate_count(0);
+                tblTask.setType_create("1");
+                tblTask.setIdentify(edt_iden.getText().toString());
+                if(service_type.equalsIgnoreCase("Now"))
+                    tblTask.setTime_wait(10);
+                tblTask.setStart_date(dateController.convertDateFormat1To2(edt_start_date.getText().toString()));
+                tblTask.setEnd_date(dateController.convertDateFormat1To2(edt_end_date.getText().toString()));
+                mApiService = new ApiService();
+                mUserMainPresenter = new UserMainPresenter(UserMainActivity2.this,mApiService);
+                mUserMainPresenter.sentCrarteTask();
+
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    private void setDatePicker(final EditText editText) {
+        String txtDate = "";
+        Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(UserMainActivity2.this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                String aa = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+
+                if (monthOfYear + 1 < 10 || dayOfMonth < 10) {
+                    if (monthOfYear + 1 < 10)
+                        aa = year + "-0" + (monthOfYear + 1) + "-" + dayOfMonth;
+                    if (dayOfMonth < 10)
+                        aa = year + "-" + (monthOfYear + 1) + "-0" + dayOfMonth;
+                    if (monthOfYear + 1 < 10 && dayOfMonth < 10)
+                        aa = year + "-0" + (monthOfYear + 1) + "-0" + dayOfMonth;
+                }
+                editText.setText(dateController.convertDateFormat2To1(aa));
+            }
+        }, mYear, mMonth, mDay);
+        datePickerDialog.show();
+
+    }
     private void setCarGroup(){
         try {
             listCarGroups = taskController.getCarGroup();
@@ -436,8 +555,9 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
             e.printStackTrace();
         }
     }
-
+    static int position = 1;
     public void setSelectCar(int i){
+        position = i + 1;
         for(int a = 0 ; a<listCarGroups.size();a++){
             if(a == i){
                 listCarGroups.get(a).setIsSelect(1);
@@ -495,6 +615,14 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                         .position(new LatLng(Double.parseDouble(String.valueOf(m.get(i).getLat())), Double.parseDouble(String.valueOf(m.get(i).getLon()))))
                         .title("คุณ" + " " + m.get(i).getFirst_name()));
             }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void setDefault(){
+        try {
+
         }catch (Exception e){
             e.printStackTrace();
         }

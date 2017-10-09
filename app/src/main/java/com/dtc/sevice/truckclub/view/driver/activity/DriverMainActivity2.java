@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -62,6 +63,8 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     private TaskController taskController;
     public List<TblMember> members;
     private Activity _activity;
+    public static LinearLayout linear_select_type;
+    private static BaseActivity baseActivity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,8 +74,11 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     }
 
     private void init(){
+        linear_select_type = (LinearLayout)findViewById(R.id.linear_select_type);
         taskController =new TaskController();
+        baseActivity = new BaseActivity();
         members = new ArrayList<TblMember>();
+        members = baseActivity.listMembers;
         _activity = new DriverMainActivity2();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -84,7 +90,23 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         dMapFragment2.getMapAsync(this);
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        setShowSelectList();
+    }
 
+    public void setShowSelectList(){
+        try {
+            if(members == null ||members.size()==0){
+                members = baseActivity.listMembers;
+            }
+            if(members.get(0).getStatus_id()==2){
+                linear_select_type.setVisibility(View.VISIBLE);
+            }else {
+                linear_select_type.setVisibility(View.GONE);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public Action getIndexApiAction() {
@@ -152,7 +174,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
             //String strAddress = getAddressByLatLng(latitude,longitude);
             //edt_start.setText((strAddress.length()>25) ? strAddress.substring(0,25) + ".." : strAddress);
             if(members == null || members.size() == 0)
-                members = taskController.getMember();
+                members = baseActivity.listMembers;
             members.get(0).setLat(Float.valueOf(String.valueOf(latitude)));
             members.get(0).setLon(Float.valueOf(String.valueOf(longitude)));
             members.get(0).setRadius(0.05);

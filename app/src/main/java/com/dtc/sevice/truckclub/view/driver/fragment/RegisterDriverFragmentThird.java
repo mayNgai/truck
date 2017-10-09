@@ -35,6 +35,7 @@ import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblPicture;
 import com.dtc.sevice.truckclub.until.ApplicationController;
 import com.dtc.sevice.truckclub.until.Updown_Image;
+import com.dtc.sevice.truckclub.view.LoginSecondActivity;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverRegisterActivity;
 import com.dtc.sevice.truckclub.view.user.activity.UserRegisterActivity;
 
@@ -59,7 +60,7 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
     public static List<TblPicture> imagePaths;
     private int PROFILE_PIC = 1;
     private Uri uriProfile;
-    private Bitmap bitmapProfileDefault;
+    private static Bitmap bitmapProfileDefault;
     private static boolean defaultPicProfile = true;
     private ApplicationController _appController;
     public static ArrayList<String> selectedItems;
@@ -183,7 +184,7 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
                 , "Select Picture"), PROFILE_PIC);
     }
 
-    String pathDefault="";
+    private static String pathDefault="";
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         InputStream imageStream = null;
@@ -240,17 +241,37 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
             }else {
+                download_image = new Updown_Image();
                 success = true;
                 String new_path = GlobalVar.saveImage(bitmapProfileDefault,pathDefault);
                 mView.member.setName_pic_path(GlobalVar.findPicName(new_path));
                 final String result = download_image.SendImageNode(_activity, new_path);
                 Log.i("Upload Image",result);
-                imagePaths.remove(imagePaths.size()-1);
+                for(int i=0;i<imagePaths.size();i++){
+                    if(imagePaths.get(i).getPath() == null || imagePaths.get(i).getPath().length()==0){
+                        imagePaths.remove(i);
+                    }else {
+                        imagePaths.get(i).setName(GlobalVar.findPicName(imagePaths.get(i).getPath()));
+                        final String result_img = download_image.SendImageNode(_activity, imagePaths.get(i).getPath());
+                        Log.i("Upload Image",result_img);
+                    }
+                }
 
             }
         }catch (Exception e){
             e.printStackTrace();
         }
         return success;
+    }
+
+    public void closeActivity(){
+        try {
+            Intent intent = new Intent(mView,LoginSecondActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            mView.finish();
+            mView.startActivity(intent);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

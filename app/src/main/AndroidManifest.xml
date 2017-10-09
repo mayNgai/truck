@@ -68,6 +68,14 @@
             android:screenOrientation="portrait"
             android:label="@string/app_name"/>
         <activity
+            android:name=".view.driver.activity.DriverBookingActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
+        <activity
+            android:name=".view.driver.activity.DriverHistoryActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
+        <activity
             android:name=".view.user.activity.UserMainActivity"
             android:screenOrientation="portrait"
             android:label="@string/app_name"/>
@@ -85,6 +93,10 @@
             android:label="@string/app_name"/>
         <activity
             android:name=".view.user.activity.UserBookActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
+        <activity
+            android:name=".view.user.activity.UserHistoryActivity"
             android:screenOrientation="portrait"
             android:label="@string/app_name"/>
         <activity

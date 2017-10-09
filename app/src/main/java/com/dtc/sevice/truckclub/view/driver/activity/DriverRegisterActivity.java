@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.dtc.sevice.truckclub.R;
@@ -205,11 +206,19 @@ public class DriverRegisterActivity extends FragmentActivity {
             if(success){
                 tblPicture = new ArrayList<TblPicture>();
                 tblPicture = mThird.imagePaths;
-                carDetail.setPicture(tblPicture);
-                member.setCar_detail(carDetail);
+                //carDetail.setPicture(tblPicture);
+                //member.setCar_detail(carDetail);
                 mApiService = new ApiService();
                 mDriverRegisterPresenter = new DriverRegisterPresenter(this,mApiService);
-                mDriverRegisterPresenter.loadRegister();
+                if(mDriverRegisterPresenter.successRegister()){
+                    Intent i = new Intent(DriverRegisterActivity.this, LoginSecondActivity.class);
+                    startActivity(i);
+                    finish();
+                }else {
+                    Intent i = new Intent(DriverRegisterActivity.this, LoginSecondActivity.class);
+                    startActivity(i);
+                    finish();
+                }
             }
 
         }catch (Exception e){
@@ -239,6 +248,22 @@ public class DriverRegisterActivity extends FragmentActivity {
             success = false;
         }
         return success;
+    }
+
+    public void updateRegister(TblMember tblMember){
+        try {
+            Intent i = new Intent(DriverRegisterActivity.this, LoginSecondActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.putExtra("authen" , tblMember.getAuthority());
+            i.putExtra("member_type" , tblMember.getMember_type());
+            i.putExtra("face_book_id" , tblMember.getFace_book_id());
+            i.putExtra("user_name" , tblMember.getUser_name());
+            i.putExtra("password" , tblMember.getPassword());
+            startActivity(i);
+            finish();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void askForPermission(String permission, Integer requestCode) {

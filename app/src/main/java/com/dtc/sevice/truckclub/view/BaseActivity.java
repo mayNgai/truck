@@ -28,8 +28,12 @@ import com.dtc.sevice.truckclub.presenters.BasePresenter;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.ApplicationController;
 import com.dtc.sevice.truckclub.until.TaskController;
+import com.dtc.sevice.truckclub.view.driver.activity.DriverBookingActivity;
+import com.dtc.sevice.truckclub.view.driver.activity.DriverHistoryActivity;
+import com.dtc.sevice.truckclub.view.driver.activity.DriverMainActivity2;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverProfileActivity;
 import com.dtc.sevice.truckclub.view.user.activity.UserBookActivity;
+import com.dtc.sevice.truckclub.view.user.activity.UserHistoryActivity;
 import com.dtc.sevice.truckclub.view.user.activity.UserProfileActivity;
 import com.facebook.AccessToken;
 import com.squareup.picasso.Picasso;
@@ -49,9 +53,10 @@ public class BaseActivity extends AppCompatActivity implements
     private ActionBarDrawerToggle drawerToggle;
     private int selectedNavItemId;
     private TaskController taskController;
-    public List<TblMember> listMembers;
+    public static List<TblMember> listMembers;
     private Activity _activity;
-    private MenuItem status;
+    private MenuItem status,txt_status;
+    private static DriverMainActivity2 driverMainActivity2;
 
     private ApiService mForum;
     private BasePresenter basePresenter;
@@ -63,24 +68,27 @@ public class BaseActivity extends AppCompatActivity implements
         super.setContentView(drawerLayout);
         taskController = new TaskController();
         _activity = BaseActivity.this;
+        driverMainActivity2 = new DriverMainActivity2();
         ApplicationController.setAppActivity(_activity);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         navigationView = (NavigationView) findViewById(R.id.navigationView);
         View header=navigationView.getHeaderView(0);
         Menu nav_Menu = navigationView.getMenu();
         getMember();
-        if(listMembers.get(0).getAuthority().equalsIgnoreCase(GlobalVar.chooseServiceDriver)){
+        if(listMembers != null && listMembers.get(0).getAuthority().equalsIgnoreCase(GlobalVar.chooseServiceDriver)){
             nav_Menu.findItem(R.id.action_wait_accept).setVisible(false);
             nav_Menu.findItem(R.id.action_books).setTitle(_activity.getString(R.string.txt_schedules));
+        }else if(listMembers != null && listMembers.get(0).getAuthority().equalsIgnoreCase(GlobalVar.chooseServiceUser)){
+            nav_Menu.findItem(R.id.action_books).setVisible(false);
         }
         TextView name = (TextView)header.findViewById(R.id.username);
         ImageView profile_image = (ImageView) header.findViewById(R.id.profile_image);
         name.setText(listMembers.get(0).getFirst_name());
-        if(listMembers.get(0).getMember_type() == 0){
+        if(listMembers != null &&listMembers.get(0).getMember_type() == 0){
             Picasso.with(_activity).load(GlobalVar.url_up_pic + listMembers.get(0).getName_pic_path())
                     .placeholder( R.drawable.progress_animation )
                     .fit().centerCrop().error( R.drawable.no_images ).into(profile_image);
-        }else if(listMembers.get(0).getMember_type() == 1){
+        }else if(listMembers != null &&listMembers.get(0).getMember_type() == 1){
             Picasso.with(_activity).load(ApiService.url_facebook + listMembers.get(0).getFace_book_id() + ApiService.pic_facebook)
                     .placeholder( R.drawable.progress_animation )
                     .fit().centerCrop().error( R.drawable.no_images ).into(profile_image);
@@ -133,21 +141,27 @@ public class BaseActivity extends AppCompatActivity implements
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_driver_menu, menu);
         status = menu.findItem(R.id.status);
+        txt_status = menu.findItem(R.id.txt_status);
         if(listMembers==null || listMembers.size()==0){
             getMember();
         }
         if(listMembers!=null && listMembers.size()>0){
             if(listMembers.get(0).getAuthority().equalsIgnoreCase(GlobalVar.chooseServiceDriver)){
                 status.setVisible(true);
+                txt_status.setVisible(true);
                 if(listMembers.get(0).getStatus_id()==1){
                     status.setIcon(R.drawable.driver_off);
+                    txt_status.setTitle("ไม่พร้อมใช้งาน");
+
                 }else if(listMembers.get(0).getStatus_id()==2){
                     status.setIcon(R.drawable.driver_on);
+                    txt_status.setTitle("พร้อมใช้งาน");
                 }else {
                     status.setIcon(R.drawable.driver_off);
                     status.setEnabled(false);
                 }
             }else {
+                txt_status.setVisible(false);
                 status.setVisible(false);
             }
         }
@@ -168,15 +182,10 @@ public class BaseActivity extends AppCompatActivity implements
 
                 return true;
             case R.id.action_books:
-                if(listMembers==null&&listMembers.size()>0){
-                    if(listMembers.get(0).getAuthority().equalsIgnoreCase("User")){
-                        Intent b = new Intent(this , UserBookActivity.class);
-                        startActivity(b);
-                        finish();
-                    }else if(listMembers.get(0).getAuthority().equalsIgnoreCase("Driver")){
-
-                    }
+                if(listMembers==null || listMembers.size()==0){
+                    getMember();
                 }
+                driverBookingPage();
                 return true;
             case R.id.action_wait_accept:
                 setDialogBottom("Wait accept");
@@ -186,8 +195,7 @@ public class BaseActivity extends AppCompatActivity implements
 
                 return true;
             case R.id.action_history:
-
-
+                historyPage();
                 return true;
             case R.id.action_setting:
                 setDialogBottom("Setting");
@@ -258,6 +266,23 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
+    private void driverBookingPage(){
+        if(listMembers.get(0).getAuthority().equalsIgnoreCase(_activity.getString(R.string.txtDriver))){
+            Intent i = new Intent(this , DriverBookingActivity.class);
+            startActivity(i);
+        }
+    }
+
+    private void historyPage(){
+        if(listMembers.get(0).getAuthority().equalsIgnoreCase(_activity.getString(R.string.txtUser))){
+            Intent i = new Intent(this , UserHistoryActivity.class);
+            startActivity(i);
+        }else if(listMembers.get(0).getAuthority().equalsIgnoreCase(_activity.getString(R.string.txtDriver))){
+            Intent i = new Intent(this , DriverHistoryActivity.class);
+            startActivity(i);
+        }
+    }
+
     private void setDialogBottom(String txtHead){
         try {
             LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -299,6 +324,7 @@ public class BaseActivity extends AppCompatActivity implements
             mForum = new ApiService();
             basePresenter = new BasePresenter(this,mForum);
             basePresenter.updateStatus();
+            driverMainActivity2.setShowSelectList();
 
         }catch (Exception e){
             e.printStackTrace();

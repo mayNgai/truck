@@ -179,7 +179,7 @@
                     android:weightSum="2">
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/hight_40"
                         android:orientation="horizontal"
                         android:paddingLeft="5dp"
                         android:background="@drawable/buttonshape_find_location_search_white"
@@ -219,7 +219,7 @@
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/hight_40"
                         android:orientation="horizontal"
                         android:paddingLeft="5dp"
                         android:background="@drawable/buttonshape_find_location_search_white"
@@ -303,7 +303,7 @@
                 <LinearLayout
                     android:id="@+id/linearLayout06"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="@dimen/hight_40"
                     android:orientation="horizontal"
                     android:background="@drawable/buttonshape_find_location_search_white"
                     android:layout_marginTop="10dp"
@@ -342,7 +342,7 @@
                 <LinearLayout
                     android:id="@+id/linearLayout05"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="@dimen/hight_40"
                     android:orientation="horizontal"
                     android:background="@drawable/buttonshape_find_location_search_white"
                     android:layout_marginTop="10dp"
@@ -376,6 +376,7 @@
                         android:gravity="center_vertical|center_horizontal"
                         android:hint="@string/Driver_BirthDate"
                         android:textSize="@dimen/font_18"
+                        android:textColor="@color/black_1"
                         android:enabled="false"/>
                     <ImageView
                         android:id="@+id/imvbirthDateUser"
@@ -389,7 +390,7 @@
                 <LinearLayout
                     android:id="@+id/linearLayout07"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="@dimen/hight_40"
                     android:orientation="horizontal"
                     android:background="@drawable/buttonshape_find_location_search_white"
                     android:layout_marginTop="10dp"
@@ -431,7 +432,7 @@
                 <LinearLayout
                     android:id="@+id/linearLayout010"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="@dimen/hight_40"
                     android:orientation="horizontal"
                     android:background="@drawable/buttonshape_find_location_search_white"
                     android:layout_marginTop="10dp"
@@ -447,7 +448,8 @@
                         android:layout_weight="4"
                         android:textSize="@dimen/font_18"
                         android:entries="@array/SexArray"
-                        android:textColor="@color/black_1" />
+                        android:textColor="@color/black_1"
+                        android:enabled="false"/>
 
                 </LinearLayout>
 
@@ -497,331 +499,444 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp"></LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/linearLayoutx"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:id="@+id/Driver_Pic_Edit_FullIm"
-                            android:layout_width="@dimen/margin_image_size_profile"
-                            android:layout_height="@dimen/margin_image_size_profile"
-                            android:clickable="true"
-                            android:src="@drawable/no_images" />
-                        <TextView
-                            android:id="@+id/textViewx10"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textSize="@dimen/font_18"
-                            android:gravity="center_horizontal"
-                            android:layout_marginTop="10dp"
-                            android:text="@string/Driver_Pic_full"
-                            android:visibility="gone"/>
-                    </LinearLayout>
-
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="@dimen/margin_image_size_profile"
-                        android:clickable="true"/>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:id="@+id/Driver_Pic_Edit_InsideIm"
-                            android:layout_width="@dimen/margin_image_size_profile"
-                            android:layout_height="@dimen/margin_image_size_profile"
-                            android:clickable="true"
-                            android:src="@drawable/no_images" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textSize="@dimen/font_18"
-                            android:layout_marginTop="10dp"
-                            android:gravity="center_horizontal"
-                            android:text="@string/Driver_Pic_inside"
-                            android:visibility="gone"/>
-                    </LinearLayout>
-
-
-                </LinearLayout>
-
-                <!--<LinearLayout-->
-                <!--android:id="@+id/linearLayoutx122"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginTop="15dp"-->
-                <!--android:orientation="horizontal"-->
-                <!--android:weightSum="3">-->
-
-                <!--<TextView-->
-                <!--android:id="@+id/textViewx10"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"-->
-                <!--android:textSize="@dimen/font_18"-->
-                <!--android:gravity="center_horizontal"-->
-                <!--android:text="@string/Driver_Pic_full" />-->
-                <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"-->
-                <!--android:gravity="center_horizontal" />-->
-
-                <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"-->
-                <!--android:textSize="@dimen/font_18"-->
-                <!--android:gravity="center_horizontal"-->
-                <!--android:text="@string/Driver_Pic_inside" />-->
-
-                <!--</LinearLayout>-->
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="15dp"></LinearLayout>
+                android:orientation="vertical" >
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
+                    android:orientation="vertical"
+                    android:padding="5dp">
                     <LinearLayout
-                        android:id="@+id/linearLayoutx25"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingLeft="5dp"
-                        android:background="@drawable/buttonshape_find_location_search_white"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:weightSum="4">
-
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:padding="10dp">
                         <TextView
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1.5"
-                            android:textSize="@dimen/font_18"
-                            android:paddingLeft="5dp"
-                            android:text="@string/Driver_Vehicle_ฺfuel" />
+                            android:text="Car Info"
+                            android:textSize="@dimen/font_22"
+                            android:textColor="@color/Gray11"
+                            android:textStyle="bold"/>
 
-                        <Spinner
-                            android:id="@+id/Spn_DriverFuel"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2.5"
-                            android:textSize="@dimen/font_18"
-                            android:entries="@array/VanFuel"
-                            android:textColor="@color/black_1" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="20dp"
+                        android:paddingLeft="20dp">
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                        </android.support.v7.widget.RecyclerView>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/linearLayoutx23"
+                        android:id="@+id/linear_car_brand"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingLeft="5dp"
-                        android:background="@drawable/buttonshape_find_location_search_white"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:layout_marginTop="10dp"
-                        android:weightSum="4">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1.5"
-                            android:textSize="@dimen/font_18"
-                            android:paddingLeft="5dp"
-                            android:text="@string/Driver_Group" />
-
-                        <Spinner
-                            android:id="@+id/Spn_DriverGroup"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2.5"
-                            android:textSize="@dimen/font_18"
-                            android:entries="@array/VanGroup"
-                            android:inputType="number"
-                            android:textColor="@color/black_1" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/linearLayoutx22"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/hight_40"
                         android:orientation="horizontal"
                         android:background="@drawable/buttonshape_find_location_search_white"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
                         android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:gravity="center_vertical"
                         android:weightSum="4">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:textSize="@dimen/font_18"
-                            android:paddingLeft="10dp"
-                            android:text="@string/Driver_VanWage_Per_Day" />
-
-                        <EditText
-                            android:id="@+id/Edt_Driver_VanWage_Per_Day"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1.5"
-                            android:textSize="@dimen/font_18"
-                            android:inputType="number"
-                            android:maxLength="5"
-                            android:background="@null"
-                            android:hint="price"
-                            android:textColor="@color/black_1"
-                            android:enabled="false"/>
-
-                        <TextView
+                        <ImageView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
+                            android:src="@drawable/ic_mail_black_24dp"
+                            android:visibility="invisible"/>
+
+                        <EditText
+                            android:id="@+id/edt_car_brand"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="3"
+                            android:background="@null"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:hint="@string/Driver_Vehicle_ฺBrand"
                             android:textSize="@dimen/font_18"
-                            android:text="@string/Bath" />
-
+                            android:ems="10"
+                            android:textColor="@color/black_1"
+                            android:enabled="false"/>
+                        <ImageView
+                            android:id="@+id/img_car_brand"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/cancel_button"
+                            android:visibility="gone"/>
                     </LinearLayout>
-
                     <LinearLayout
-                        android:id="@+id/linearLayoutx21"
+                        android:id="@+id/linear_car_model"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/hight_40"
                         android:orientation="horizontal"
-                        android:paddingLeft="5dp"
+                        android:background="@drawable/buttonshape_find_location_search_white"
                         android:layout_marginTop="10dp"
-                        android:weightSum="4">
-
-                        <TextView
-                            android:id="@+id/textViewx6"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/font_18"
-                            android:layout_weight="4"
-                            android:text="@string/Driver_Vehicle_ฺtools" />
-
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:id="@+id/linearLayout9"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:orientation="horizontal"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
                         android:gravity="center_vertical"
-                        android:paddingLeft="5dp"
                         android:weightSum="4">
-
-                        <CheckBox
-                            android:id="@+id/Cb_Driver_leather_sofa"
+                        <ImageView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:textSize="@dimen/font_18"
-                            android:text="@string/Driver_leather_sofa" />
+                            android:layout_weight="0.5"
+                            android:src="@drawable/ic_mail_black_24dp"
+                            android:visibility="invisible"/>
 
-                        <CheckBox
-                            android:id="@+id/Cb_Driver_Fire_Theque"
+                        <EditText
+                            android:id="@+id/edt_car_model"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="3"
+                            android:background="@null"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:hint="@string/Driver_Vehicle_ฺModel"
+                            android:textSize="@dimen/font_18"
+                            android:ems="10"
+                            android:textColor="@color/black_1"
+                            android:enabled="false"/>
+                        <ImageView
+                            android:id="@+id/img_car_model"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:textSize="@dimen/font_18"
-                            android:text="@string/Driver_Fire_Theque" />
-
+                            android:layout_weight="0.5"
+                            android:src="@drawable/cancel_button"
+                            android:visibility="gone"/>
                     </LinearLayout>
-
                     <LinearLayout
-                        android:id="@+id/linearLayoutx4"
+                        android:id="@+id/linear_license_plate"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="@dimen/hight_40"
                         android:orientation="horizontal"
+                        android:background="@drawable/buttonshape_find_location_search_white"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
                         android:gravity="center_vertical"
-                        android:paddingLeft="5dp"
                         android:weightSum="4">
-
-
-                        <CheckBox
-                            android:id="@+id/Cb_karaoke"
+                        <ImageView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:textSize="@dimen/font_18"
-                            android:text="@string/Driver_Karaoke" />
+                            android:layout_weight="0.5"
+                            android:src="@drawable/ic_mail_black_24dp"
+                            android:visibility="invisible"/>
 
-                        <CheckBox
-                            android:id="@+id/Cb_place_For_WheelChair"
+                        <EditText
+                            android:id="@+id/edt_license_plate"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="3"
+                            android:background="@null"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:hint="@string/Driver_Vehicle_ฺID"
+                            android:textSize="@dimen/font_18"
+                            android:ems="10"
+                            android:textColor="@color/black_1"
+                            android:enabled="false"/>
+                        <ImageView
+                            android:id="@+id/img_license_plate"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:textSize="@dimen/font_18"
-                            android:text="@string/Driver_Place_For_WheelChair" />
-
+                            android:layout_weight="0.5"
+                            android:src="@drawable/cancel_button"
+                            android:visibility="gone"/>
                     </LinearLayout>
-
                     <LinearLayout
+                        android:id="@+id/linear_license_province"
                         android:layout_width="match_parent"
-                        android:layout_height="10dp">
+                        android:layout_height="@dimen/hight_40"
+                        android:orientation="horizontal"
+                        android:background="@drawable/buttonshape_find_location_search_white"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:gravity="center_vertical"
+                        android:weightSum="4">
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/ic_mail_black_24dp"
+                            android:visibility="invisible"/>
 
+                        <EditText
+                            android:id="@+id/edt_license_province"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="3"
+                            android:background="@null"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:hint="@string/Driver_province"
+                            android:textSize="@dimen/font_18"
+                            android:ems="10"
+                            android:textColor="@color/black_1"
+                            android:enabled="false"/>
+                        <ImageView
+                            android:id="@+id/img_license_province"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/cancel_button"
+                            android:visibility="gone"/>
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="20dp"
-                        android:padding="10dp"
-                        android:visibility="gone">
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Type of car"
+                            android:textSize="@dimen/font_22"
+                            android:textColor="@color/Gray11"
+                            android:textStyle="bold"/>
 
-                        <ImageButton
-                            android:id="@+id/confiemEdit"
-                            android:layout_width="@dimen/button_confirm"
-                            android:layout_height="@dimen/button_confirm"
-                            android:background="@drawable/button_cricle"
-                            android:src="@drawable/check_login_white"
-                            android:textColor="@color/actionBar"
-                            android:textSize="20dp" />
-
-                        <ImageButton
-                            android:id="@+id/cancelEdit"
-                            android:layout_width="@dimen/button_confirm"
-                            android:layout_height="@dimen/button_confirm"
-                            android:background="@drawable/button_cricle_red"
-                            android:src="@drawable/cencel_profile"
-                            android:textColor="@color/stepLight"
-                            android:layout_marginLeft="70dp"
-                            android:textSize="20dp" />
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/buttonshape_find_location_search_white"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginTop="5dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp">
+                        <Spinner
+                            android:id="@+id/spn_car_group"
+                            android:layout_width="match_parent"
+                            android:textSize="@dimen/font_18"
+                            android:layout_gravity="center_vertical"
+                            android:layout_height="match_parent"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_group_option"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+                        <LinearLayout
+                            android:id="@+id/linear_tow"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginLeft="30dp"
+                            android:layout_marginRight="30dp"
+                            android:layout_marginTop="5dp"
+                            android:weightSum="3">
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="40dp"
+                                android:orientation="vertical"
+                                android:layout_weight="2.5"
+                                android:background="@drawable/buttonshape_find_location_search_white"
+                                android:gravity="center_vertical"
+                                android:paddingTop="5dp"
+                                android:paddingBottom="5dp">
+                                <Spinner
+                                    android:id="@+id/spn_tow"
+                                    android:layout_width="match_parent"
+                                    android:textSize="@dimen/font_18"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_height="match_parent"/>
+                            </LinearLayout>
+                            <TextView
+                                android:id="@+id/txt_sum"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:gravity="center_horizontal|center_vertical"
+                                android:text="พ่วง"
+                                android:textSize="@dimen/font_18"
+                                android:textStyle="bold"
+                                android:layout_weight="0.5"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginLeft="30dp"
+                            android:layout_marginRight="30dp"
+                            android:layout_marginTop="5dp"
+                            android:weightSum="3">
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="40dp"
+                                android:orientation="vertical"
+                                android:layout_weight="2.5"
+                                android:background="@drawable/buttonshape_find_location_search_white"
+                                android:gravity="center_vertical"
+                                android:paddingTop="5dp"
+                                android:paddingBottom="5dp">
+                                <EditText
+                                    android:id="@+id/edt_sum1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:ems="10"
+                                    android:hint="กรุณาใส่จำนวน"
+                                    android:gravity="center_horizontal|center_vertical"
+                                    android:textAlignment="center"
+                                    android:textSize="@dimen/font_18"
+                                    android:textColorHint="@color/DarkGray"
+                                    android:inputType="numberDecimal"
+                                    android:maxLength="2"
+                                    android:background="@null"/>
+                                <Spinner
+                                    android:id="@+id/spn_sum1"
+                                    android:layout_width="match_parent"
+                                    android:textSize="@dimen/font_18"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_height="match_parent"
+                                    android:visibility="gone"/>
+                            </LinearLayout>
+                            <TextView
+                                android:id="@+id/txt_sum"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:gravity="center_horizontal|center_vertical"
+                                android:text="ล้อ"
+                                android:textSize="@dimen/font_18"
+                                android:textStyle="bold"
+                                android:layout_weight="0.5"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginLeft="30dp"
+                            android:layout_marginRight="30dp"
+                            android:layout_marginTop="5dp"
+                            android:weightSum="3">
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="40dp"
+                                android:orientation="vertical"
+                                android:layout_weight="2.5"
+                                android:background="@drawable/buttonshape_find_location_search_white"
+                                android:gravity="center_vertical"
+                                android:paddingTop="5dp"
+                                android:paddingBottom="5dp">
+                                <EditText
+                                    android:id="@+id/edt_sum2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:ems="10"
+                                    android:hint="กรุณาใส่จำนวน"
+                                    android:gravity="center_horizontal|center_vertical"
+                                    android:textAlignment="center"
+                                    android:textSize="@dimen/font_18"
+                                    android:textColorHint="@color/DarkGray"
+                                    android:inputType="numberDecimal"
+                                    android:maxLength="3"
+                                    android:background="@null"/>
+                                <Spinner
+                                    android:id="@+id/spn_weight"
+                                    android:layout_width="match_parent"
+                                    android:textSize="@dimen/font_18"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_height="match_parent"
+                                    android:visibility="gone"/>
+                            </LinearLayout>
+                            <TextView
+                                android:id="@+id/txt_weight"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:gravity="center_horizontal|center_vertical"
+                                android:text="ตัน"
+                                android:textSize="@dimen/font_18"
+                                android:textStyle="bold"
+                                android:layout_weight="0.5"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="30dp"
+                            android:layout_marginRight="30dp"
+                            android:layout_marginTop="5dp"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp">
+                            <CheckBox
+                                android:id="@+id/chk_weight"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:text="ไม่รวมน้ำหนัก"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/linear_option"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="30dp"
+                            android:layout_marginRight="30dp"
+                            android:layout_marginTop="5dp"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:visibility="visible">
+                            <CheckBox
+                                android:id="@+id/chk_option"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:text="พื้นเรียบ"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/buttonshape_find_location_search_white"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginTop="5dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:visibility="gone">
+                        <Spinner
+                            android:id="@+id/spn_geo"
+                            android:layout_width="match_parent"
+                            android:textSize="@dimen/font_18"
+                            android:layout_gravity="center_vertical"
+                            android:layout_height="match_parent"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/buttonshape_find_location_search_white"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginTop="5dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:visibility="gone">
+                        <Spinner
+                            android:id="@+id/spn_province"
+                            android:layout_width="match_parent"
+                            android:textSize="@dimen/font_18"
+                            android:layout_gravity="center_vertical"
+                            android:layout_height="match_parent"/>
+                    </LinearLayout>
+
                 </LinearLayout>
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

@@ -5,6 +5,7 @@ import com.dtc.sevice.truckclub.model.TblCarGroup;
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblPicture;
 import com.dtc.sevice.truckclub.model.TblProvince;
+import com.dtc.sevice.truckclub.model.TblTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,16 +77,18 @@ public class ApiService {
         @FormUrlEncoded
         @POST("/create_member_and_car.php")
         public Observable<TblMember> createMemberAndCar(@Field("data") ArrayList<TblMember> data);
-//        @FormUrlEncoded
-//        @POST("/create_member_and_car.php")
-//        public Observable<TblMember> createMemberAndCar(@Field("first_name") String first_name, @Field("last_name") String last_name, @Field("email") String email,
-//                                                        @Field("user_name") String user_name, @Field("tel") String tel, @Field("birth_date") String birth_date, @Field("sex") String sex,
-//                                                        @Field("password") String password, @Field("member_type") int member_type, @Field("authority") String authority, @Field("device_id") String device_id,
-//                                                        @Field("face_book_id") String face_book_id, @Field("name_pic_path") String name_pic_path,@Field("car_detail") TblCarDetail car_detail);
 
         @FormUrlEncoded
         @POST("/user_login.php")
         public Observable<TblMember> getLogin(@Field("user_name") String user_name, @Field("password") String password,@Field("authority") String authority,@Field("member_type") int member_type, @Field("device_id") String device_id,@Field("face_book_id") String face_book_id,@Field("token_firebase") String token_firebase);
+
+        @FormUrlEncoded
+        @POST("/get_car_detail.php")
+        public Observable<TblCarDetail> getCarDetail(@Field("member_id") int member_id);
+
+        @FormUrlEncoded
+        @POST("/get_picture_car.php")
+        public Observable<List<TblPicture>> getPictureCar(@Field("car_id") int car_id);
 
         @FormUrlEncoded
         @POST("/update_status_member.php")
@@ -110,27 +113,13 @@ public class ApiService {
         @FormUrlEncoded
         @POST("/clear_member.php")
         public Observable<TblMember> logOut(@Field("member_id") int member_id,@Field("authority") String status);
-//        @POST("/category.php")
-//        public Observable<List<TblCategory>> getCategory();
-//
-//        @POST("/discount.php")
-//        public Observable<List<Tbldiscount>> getDiscount();
-//
-//        @FormUrlEncoded
-//        @POST("/myItem.php")
-//        public Observable<List<TblMyItem>> getMyItem(@Field("o_vendor_id") int o_vendor_id);
-//
-//        @FormUrlEncoded
-//        @POST("/getItemByType.php")
-//        public Observable<List<TblMyItem>> getItemByType(@Field("o_c_id") int o_c_id);
-//
 
-//        @FormUrlEncoded
-//        @POST("/loginAuthen.php")
-//        public Observable<TblMember> getLogin(@Field("email") String email, @Field("password") String password);
-//
-//        @FormUrlEncoded
-//        @POST("/updateProfile.php")
-//        public Observable<TblMember> updateProfile(@Field("id") String id,@Field("first_name") String first_name, @Field("last_name") String last_name,@Field("email") String email, @Field("tel") String tel);
+        @FormUrlEncoded
+        @POST("/sent_create_task.php")
+        public Observable<TblTask> sentCreateTask(@Field("user_id") int user_id,@Field("group_id") int group_id,@Field("service_type") String service_type,@Field("start_date") String start_date ,@Field("end_date") String end_date,
+                                                  @Field("date_count") int date_count,@Field("type_create") String type_create ,@Field("des_lat") float des_lat,@Field("des_lon") float des_lon,@Field("dest_location") String dest_location,
+                                                  @Field("dest_province") String dest_province,@Field("identify") String identify,@Field("time_wait") int time_wait);
+
+
     }
 }

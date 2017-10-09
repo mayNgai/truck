@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.view.LoginFirstActivity;
+import com.dtc.sevice.truckclub.view.driver.activity.DriverMainActivity2;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -47,14 +48,27 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService{
                 if(message.equalsIgnoreCase("log out")){
                     Activity _activity = ApplicationController.getAppActivity();
                     Intent i = new Intent(_activity, LoginFirstActivity.class);
-                    //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                     _activity.finish();
+                    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_ONE_SHOT);
 
-//                    intent = new Intent(this, LoginFirstActivity.class);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    notificationBuilder = new NotificationCompat.Builder(this)
+                            .setContentTitle(notification.getTitle())
+                            .setContentText(notification.getBody())
+                            .setAutoCancel(true)
+                            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                            .setContentIntent(pendingIntent)
+                            .setContentInfo(notification.getTitle())
+                            .setLargeIcon(icon)
+                            .setColor(Color.RED)
+                            .setSmallIcon(R.drawable.ic_truck_marker);
+                }else if(message.equalsIgnoreCase("new")){
+                    Activity _activity = ApplicationController.getAppActivity();
+                    Intent i = new Intent(_activity, DriverMainActivity2.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                    _activity.finish();
                     PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_ONE_SHOT);
 
                     notificationBuilder = new NotificationCompat.Builder(this)
