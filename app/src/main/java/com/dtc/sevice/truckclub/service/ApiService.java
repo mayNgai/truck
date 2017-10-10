@@ -120,6 +120,8 @@ public class ApiService {
                                                   @Field("date_count") int date_count,@Field("type_create") String type_create ,@Field("des_lat") float des_lat,@Field("des_lon") float des_lon,@Field("dest_location") String dest_location,
                                                   @Field("dest_province") String dest_province,@Field("identify") String identify,@Field("time_wait") int time_wait);
 
-
+        @FormUrlEncoded
+        @POST("/get_task.php")
+        public Observable<List<TblTask>> getTask(@Field("service_type") String service_type);
     }
 }

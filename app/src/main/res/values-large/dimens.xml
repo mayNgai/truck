@@ -79,6 +79,7 @@
     <dimen name="margin_top_login">15dp</dimen>
     <dimen name="hight_90">120dp</dimen>
     <dimen name="hight_100">100dp</dimen>
+    <dimen name="hight_300">400dp</dimen>
     <dimen name="hight_30">40dp</dimen>
     <dimen name="hight_40">60dp</dimen>
     <dimen name="item_offset">2dp</dimen>
@@ -87,6 +88,7 @@
     <dimen name="margin_50">60dp</dimen>
     <dimen name="padding_20">30dp</dimen>
     <dimen name="padding_10">10dp</dimen>
+    <dimen name="padding_2">4dp</dimen>
 
 </resources>
 

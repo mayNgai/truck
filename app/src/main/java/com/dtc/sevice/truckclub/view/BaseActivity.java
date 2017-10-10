@@ -314,11 +314,13 @@ public class BaseActivity extends AppCompatActivity implements
                 listMembers.get(0).setStatus_id(2);
                 listMembers.get(0).setStatus("Searching");
                 status.setIcon(R.drawable.driver_on);
+                txt_status.setTitle("พร้อมใช้งาน");
                 taskController.updateMember(listMembers.get(0));
             }else if(listMembers.get(0).getStatus_id()==2){
                 listMembers.get(0).setStatus_id(1);
                 listMembers.get(0).setStatus("Log in");
                 status.setIcon(R.drawable.driver_off);
+                txt_status.setTitle("ไม่พร้อมใช้งาน");
                 taskController.updateMember(listMembers.get(0));
             }
             mForum = new ApiService();

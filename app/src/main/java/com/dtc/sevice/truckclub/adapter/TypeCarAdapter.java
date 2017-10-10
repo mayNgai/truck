@@ -26,6 +26,7 @@ public class TypeCarAdapter extends RecyclerView.Adapter<TypeCarAdapter.ViewHold
     private static Context mcontext;
     private List<TblCarGroup> arrayList;
     private UserMainActivity2 mView;
+
     public TypeCarAdapter(Context context,List<TblCarGroup> _arrayList){
         this.arrayList = _arrayList;
         this.mcontext = context;

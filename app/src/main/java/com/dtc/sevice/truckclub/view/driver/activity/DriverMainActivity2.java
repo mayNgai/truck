@@ -2,7 +2,6 @@ package com.dtc.sevice.truckclub.view.driver.activity;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -10,19 +9,24 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.dtc.sevice.truckclub.R;
+import com.dtc.sevice.truckclub.adapter.TaskListAdapter;
 import com.dtc.sevice.truckclub.model.TblMember;
+import com.dtc.sevice.truckclub.model.TblTask;
+import com.dtc.sevice.truckclub.presenters.driver.DriverMainPresenter;
+import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.BaseActivity;
-import com.dtc.sevice.truckclub.view.LoginSecondActivity;
-import com.dtc.sevice.truckclub.view.user.activity.UserMainActivity;
-import com.dtc.sevice.truckclub.view.user.activity.UserMainActivity2;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -62,19 +66,31 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
 
     private TaskController taskController;
     public List<TblMember> members;
+    public static List<TblTask> listTasks;
     private Activity _activity;
     public static LinearLayout linear_select_type;
     private static BaseActivity baseActivity;
+    private ApiService mForum;
+    private DriverMainPresenter driverMainPresenter;
+    private static TaskListAdapter adapter;
+    private static RecyclerView recycler_view;
+    private SwipeRefreshLayout swipe_refresh;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         setContentView(R.layout.activity_main_driver2);
         init();
     }
 
     private void init(){
+        recycler_view = (RecyclerView)findViewById(R.id.recycler_view);
         linear_select_type = (LinearLayout)findViewById(R.id.linear_select_type);
+        swipe_refresh = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
         taskController =new TaskController();
         baseActivity = new BaseActivity();
         members = new ArrayList<TblMember>();
@@ -91,6 +107,8 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         setShowSelectList();
+        setRefreshList();
+//        setClickList();
     }
 
     public void setShowSelectList(){
@@ -100,6 +118,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
             }
             if(members.get(0).getStatus_id()==2){
                 linear_select_type.setVisibility(View.VISIBLE);
+                getTask();
             }else {
                 linear_select_type.setVisibility(View.GONE);
             }
@@ -108,6 +127,83 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
             e.printStackTrace();
         }
     }
+
+    private void getTask(){
+        try {
+            mForum = new ApiService();
+            driverMainPresenter = new DriverMainPresenter(DriverMainActivity2.this , mForum);
+            driverMainPresenter.loagTask();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void setListTask(List<TblTask> lists){
+        try {
+            recycler_view.setHasFixedSize(true);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+            recycler_view.setLayoutManager(mLayoutManager);
+            listTasks = new ArrayList<TblTask>();
+            listTasks = lists;
+            adapter = new TaskListAdapter(DriverMainActivity2.this,listTasks);
+            recycler_view.setAdapter(adapter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void setRefreshList(){
+        try {
+            swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    getTask();
+                    swipe_refresh.setRefreshing(false);
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+//    public void setClickList(){
+//        try {
+//            recycler_view.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    setDialogBottom();
+//                }
+//            });
+//
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//    }
+
+//    private static Dialog mBottomSheetDialog;
+//    private void setDialogBottom(){
+//        try {
+//            LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+//            View view = inflater.inflate (R.layout.dialog_driver_offer, null);
+//            ImageView img_cancel = (ImageView)view.findViewById( R.id.img_cancel);
+//            mBottomSheetDialog = new Dialog (this,R.style.MaterialDialogSheet);
+//            mBottomSheetDialog.setContentView (view);
+//            mBottomSheetDialog.setCancelable (true);
+//            mBottomSheetDialog.getWindow ().setLayout (LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
+//            mBottomSheetDialog.getWindow ().setGravity (Gravity.BOTTOM);
+//            mBottomSheetDialog.show ();
+//            img_cancel.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    mBottomSheetDialog.dismiss();
+//
+//                }
+//            });
+//
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()

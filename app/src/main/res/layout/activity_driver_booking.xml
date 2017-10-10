@@ -5,7 +5,7 @@
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/WhiteSmoke"
+    android:background="#FFFFFF"
     android:orientation="vertical">
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -24,17 +24,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_top_driver_book"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:background="#343434"
+        android:background="#FFFFFF"
         android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/header"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/WhiteSmoke"
+            android:background="#FFFFFF"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -42,7 +39,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:background="@drawable/background_listview"
                 android:orientation="horizontal"
                 android:padding="@dimen/padding_top_driver_book">
                 <FrameLayout
@@ -110,7 +106,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="S"
-                android:textColor="#ffffff" />
+                android:textColor="#343434" />
 
             <TextView
                 android:id="@+id/TextView05"
@@ -119,7 +115,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="M"
-                android:textColor="#ffffff" />
+                android:textColor="#343434" />
 
             <TextView
                 android:id="@+id/TextView04"
@@ -128,7 +124,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="T"
-                android:textColor="#ffffff" />
+                android:textColor="#343434" />
 
             <TextView
                 android:id="@+id/TextView03"
@@ -137,7 +133,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="W"
-                android:textColor="#ffffff" />
+                android:textColor="#343434" />
 
             <TextView
                 android:id="@+id/TextView02"
@@ -146,7 +142,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="T"
-                android:textColor="#ffffff" />
+                android:textColor="#343434" />
 
             <TextView
                 android:id="@+id/TextView01"
@@ -155,7 +151,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="F"
-                android:textColor="#ffffff" />
+                android:textColor="#343434" />
 
             <TextView
                 android:id="@+id/textView1"
@@ -164,7 +160,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="S"
-                android:textColor="#ffffff" />
+                android:textColor="#343434" />
 
         </TableRow>
 
@@ -193,7 +189,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="10dp"
-            android:background="#343434"
+            android:background="#FFFFFF"
             android:orientation="vertical">
 
         </LinearLayout>
@@ -225,13 +221,13 @@
 
 
 
-        <ListView
-            android:id="@+id/listview_job"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="@dimen/margin_top_driver_book"
-            android:paddingBottom="@dimen/margin_top_driver_book"
-            android:layout_marginTop="5dp"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp">
+        </android.support.v7.widget.RecyclerView>
     </LinearLayout>
 
 </LinearLayout>

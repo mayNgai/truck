@@ -410,10 +410,12 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 btn_now.setTextColor(getResources().getColor(R.color.black_1));
                 btn_booking.setTextColor(getResources().getColor(R.color.black_1));
                 removeMarkerDestination();
+                linear_select_type.setVisibility(View.VISIBLE);
                 break;
             case R.id.btn_now:
                 if(edt_start.getText().toString().length()>0){
                     linear_detail.setVisibility(View.VISIBLE);
+                    linear_select_type.setVisibility(View.INVISIBLE);
                     btn_now.setTextColor(getResources().getColor(R.color.colorPrimary));
                     btn_booking.setTextColor(getResources().getColor(R.color.black_1));
                     service_type = "Now";
@@ -422,6 +424,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
             case R.id.btn_booking:
                 if(edt_start.getText().toString().length()>0){
                     linear_detail.setVisibility(View.VISIBLE);
+                    linear_select_type.setVisibility(View.INVISIBLE);
                     btn_now.setTextColor(getResources().getColor(R.color.black_1));
                     btn_booking.setTextColor(getResources().getColor(R.color.colorPrimary));
                     service_type = "Booking";
