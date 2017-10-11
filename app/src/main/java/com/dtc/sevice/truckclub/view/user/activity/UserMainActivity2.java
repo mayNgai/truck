@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -29,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.dtc.sevice.truckclub.R;
@@ -39,6 +41,7 @@ import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.presenters.user.UserMainPresenter;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DateController;
+import com.dtc.sevice.truckclub.until.DialogController;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.BaseActivity;
 import com.google.android.gms.appindexing.Action;
@@ -69,10 +72,10 @@ import java.util.Locale;
 public class UserMainActivity2 extends BaseActivity implements View.OnClickListener,OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener , com.google.android.gms.location.LocationListener{
     private Button btn_now,btn_booking,btc_call_service;
-    private EditText edt_start,edt_count_date,edt_end_date,edt_start_date,edt_iden;
+    private EditText edt_start,edt_count_date,edt_end_date,edt_start_date,edt_iden,edt_start_time,edt_end_time;
     private CheckBox chk_cash,chk_credit;
     private ImageView img_start,img_del_start;
-    private LinearLayout linear_select_type,linear_current,linear_detail;
+    private LinearLayout linear_select_type,linear_current,linear_detail,linear_main1,linear_main2,linear_bottom,linear_head;
     private static TextView txtname_car;
     //private LinearLayout linear_detail;
     //Map
@@ -97,10 +100,11 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
     public static TblTask tblTask;
     private DateController dateController;
     private String service_type = "";
+    private DialogController dialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_user2);
+        setContentView(R.layout.activity_main_user4);
         init();
     }
 
@@ -110,6 +114,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         tblTask = new TblTask();
         _activity = new UserMainActivity2();
         dateController = new DateController();
+        dialog = new DialogController();
         //linear_detail = (LinearLayout)findViewById(R.id.linear_detail);
         btn_now = (Button)findViewById(R.id.btn_now);
         btn_booking = (Button)findViewById(R.id.btn_booking);
@@ -118,6 +123,8 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         edt_count_date = (EditText)findViewById(R.id.edt_count_date);
         edt_end_date = (EditText)findViewById(R.id.edt_end_date);
         edt_start_date = (EditText)findViewById(R.id.edt_start_date);
+        edt_end_time = (EditText)findViewById(R.id.edt_end_time);
+        edt_start_time = (EditText)findViewById(R.id.edt_start_time);
         edt_iden = (EditText)findViewById(R.id.edt_iden);
         chk_cash = (CheckBox)findViewById(R.id.chk_cash);
         img_start = (ImageView)findViewById(R.id.img_start);
@@ -125,6 +132,10 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         img_del_start = (ImageView)findViewById(R.id.img_del_start);
         linear_select_type = (LinearLayout)findViewById(R.id.linear_select_type);
         linear_detail = (LinearLayout)findViewById(R.id.linear_detail);
+        linear_main1 = (LinearLayout)findViewById(R.id.linear_main1);
+        linear_main2 = (LinearLayout)findViewById(R.id.linear_main2);
+        linear_bottom = (LinearLayout)findViewById(R.id.linear_bottom);
+        linear_head = (LinearLayout)findViewById(R.id.linear_head);
         txtname_car = (TextView)findViewById(R.id.txtname_car);
         //img_del_iden = (ImageView)findViewById(R.id.img_del_iden);
 
@@ -138,6 +149,8 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         btc_call_service.setOnClickListener(this);
         edt_end_date.setOnClickListener(this);
         edt_start_date.setOnClickListener(this);
+        edt_start_time.setOnClickListener(this);
+        edt_end_time.setOnClickListener(this);
         //img_del_iden.setOnClickListener(this);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -445,7 +458,22 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 setDatePicker(edt_start_date);
                 break;
             case R.id.edt_end_date:
-                setDatePicker(edt_end_date);
+                if(edt_start_date.getText().toString().length()>0&&edt_start_time.getText().toString().length()>0)
+                    setDatePicker(edt_end_date);
+                else
+                    dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDate));
+                break;
+            case R.id.edt_start_time:
+                if(edt_start_date.getText().toString().length()>0)
+                    setTimePicker(edt_start_time);
+                else
+                    dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDate));
+                break;
+            case R.id.edt_end_time:
+                if(edt_start_date.getText().toString().length()>0&&edt_start_time.getText().toString().length()>0&&edt_end_date.getText().toString().length()>0)
+                    setTimePicker(edt_end_time);
+                else
+                    dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDate));
                 break;
 
         }
@@ -456,7 +484,11 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
             boolean cancel = false;
             if(edt_start_date.getText().toString().length()==0){
                 cancel = true;
+            }else if(edt_start_time.getText().toString().length()==0){
+                cancel = true;
             }else if(edt_end_date.getText().toString().length()==0){
+                cancel = true;
+            }else if(edt_end_time.getText().toString().length()==0){
                 cancel = true;
             }
 
@@ -469,8 +501,8 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 tblTask.setIdentify(edt_iden.getText().toString());
                 if(service_type.equalsIgnoreCase("Now"))
                     tblTask.setTime_wait(10);
-                tblTask.setStart_date(dateController.convertDateFormat1To2(edt_start_date.getText().toString()));
-                tblTask.setEnd_date(dateController.convertDateFormat1To2(edt_end_date.getText().toString()));
+                tblTask.setStart_date(dateController.convertDateFormat1To2(edt_start_date.getText().toString()) + " " + edt_start_time.getText().toString());
+                tblTask.setEnd_date(dateController.convertDateFormat1To2(edt_end_date.getText().toString()) + " " + edt_end_time.getText().toString());
                 mApiService = new ApiService();
                 mUserMainPresenter = new UserMainPresenter(UserMainActivity2.this,mApiService);
                 mUserMainPresenter.sentCrarteTask();
@@ -507,6 +539,32 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         }, mYear, mMonth, mDay);
         datePickerDialog.show();
 
+    }
+
+    private void setTimePicker(final EditText editText){
+        // Get Current Time
+        final Calendar c = Calendar.getInstance();
+        int mHour = c.get(Calendar.HOUR_OF_DAY);
+        int mMinute = c.get(Calendar.MINUTE);
+
+        // Launch Time Picker Dialog
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                new TimePickerDialog.OnTimeSetListener() {
+
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay,
+                                          int minute) {
+                        if(minute<10) {
+                            String time = "0" + minute;
+                            //minute = Integer.parseInt(time);
+                            editText.setText(hourOfDay + ":" + time);
+                        }else {
+                            editText.setText(hourOfDay + ":" + minute);
+                        }
+
+                    }
+                }, mHour, mMinute, true);
+        timePickerDialog.show();
     }
     private void setCarGroup(){
         try {

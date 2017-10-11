@@ -52,7 +52,7 @@ public class DriverRegisterActivity extends FragmentActivity {
     private DialogController dialogController;
     private int limit = 3;
     public static TblMember member;
-    public static TblCarDetail carDetail;
+    public static List<TblCarDetail> carDetail;
     public static List<TblPicture> tblPicture;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -178,14 +178,14 @@ public class DriverRegisterActivity extends FragmentActivity {
                                     alertDialog.show();
                                 }else {
                                     success = true;
-                                    carDetail = new TblCarDetail();
-                                    carDetail = mSecond.carDetail;
+//                                    carDetail = new ArrayList<>();
+//                                    carDetail.add(mSecond.carDetail);
 
                                 }
                             }else {
                                 success = true;
-                                carDetail = new TblCarDetail();
-                                carDetail = mSecond.carDetail;
+//                                carDetail = new ArrayList<>();
+//                                carDetail.add(mSecond.carDetail);
                             }
 
                         }
@@ -204,21 +204,24 @@ public class DriverRegisterActivity extends FragmentActivity {
             }
 
             if(success){
+                carDetail = new ArrayList<>();
                 tblPicture = new ArrayList<TblPicture>();
                 tblPicture = mThird.imagePaths;
-                //carDetail.setPicture(tblPicture);
-                //member.setCar_detail(carDetail);
+                mSecond.carDetail.setPicture(tblPicture);
+                carDetail.add(mSecond.carDetail);
+                member.setCarDetail(carDetail);
                 mApiService = new ApiService();
                 mDriverRegisterPresenter = new DriverRegisterPresenter(this,mApiService);
-                if(mDriverRegisterPresenter.successRegister()){
-                    Intent i = new Intent(DriverRegisterActivity.this, LoginSecondActivity.class);
-                    startActivity(i);
-                    finish();
-                }else {
-                    Intent i = new Intent(DriverRegisterActivity.this, LoginSecondActivity.class);
-                    startActivity(i);
-                    finish();
-                }
+                mDriverRegisterPresenter.successRegister();
+//                if(mDriverRegisterPresenter.successRegister()){
+//                    Intent i = new Intent(_activity, LoginSecondActivity.class);
+//                    startActivity(i);
+//                    finish();
+//                }else {
+//                    Intent i = new Intent(_activity, LoginSecondActivity.class);
+//                    startActivity(i);
+//                    finish();
+//                }
             }
 
         }catch (Exception e){

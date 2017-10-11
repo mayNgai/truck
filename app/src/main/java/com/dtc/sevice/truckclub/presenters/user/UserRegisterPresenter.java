@@ -7,6 +7,7 @@ import android.util.Log;
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DialogController;
+import com.dtc.sevice.truckclub.until.NetworkUtils;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.LoginSecondActivity;
 import com.dtc.sevice.truckclub.view.user.activity.UserMainActivity;
@@ -37,31 +38,36 @@ public class UserRegisterPresenter {
 
     public void loadRegister(){
         try {
-            dialog = ProgressDialog.show(mView, "Wait", "loading...");
-            mForum.getApi()
-                    .createMember(mView.member.getFirst_name(),mView.member.getLast_name(),mView.member.getEmail(),
-                            mView.member.getUser_name(),mView.member.getTel(),mView.member.getBirth_date(),mView.member.getSex(),mView.member.getPassword()
-                            ,mView.member.getMember_type(),mView.member.getAuthority(),mView.member.getDevice_id(),mView.member.getFace_book_id(),mView.member.getName_pic_path())
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<TblMember>() {
-                        @Override
-                        public void onCompleted() {
-                            dialog.dismiss();
-                        }
+            if(!NetworkUtils.isConnected(mView)){
+                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+            }else {
+                dialog = ProgressDialog.show(mView, "Wait", "loading...");
+                mForum.getApi()
+                        .createMember(mView.member.getFirst_name(),mView.member.getLast_name(),mView.member.getEmail(),
+                                mView.member.getUser_name(),mView.member.getTel(),mView.member.getBirth_date(),mView.member.getSex(),mView.member.getPassword()
+                                ,mView.member.getMember_type(),mView.member.getAuthority(),mView.member.getDevice_id(),mView.member.getFace_book_id(),mView.member.getName_pic_path())
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<TblMember>() {
+                            @Override
+                            public void onCompleted() {
+                                dialog.dismiss();
+                            }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.e("userRegisterCall Error", e.getMessage());
-                            dialog.dismiss();
-                        }
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e("userRegisterCall Error", e.getMessage());
+                                dialog.dismiss();
+                            }
 
-                        @Override
-                        public void onNext(TblMember member) {
-                            updateSignUp(member);
-                            dialog.dismiss();
-                        }
-                    });
+                            @Override
+                            public void onNext(TblMember member) {
+                                updateSignUp(member);
+                                dialog.dismiss();
+                            }
+                        });
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }

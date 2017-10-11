@@ -6,6 +6,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by admin on 9/20/2017 AD.
@@ -133,6 +134,26 @@ public class TblTask implements Serializable {
     @Expose
     @DatabaseField( useGetSet = true)
     private int time_wait;
+
+    @SerializedName("last_name")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private String last_name;
+
+    @SerializedName("first_name")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private String first_name;
+
+    @SerializedName("name_group")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private String name_group;
+
+    @SerializedName("member")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private List<TblMember> member;
 
 
     public String getSuccess() {
@@ -341,5 +362,37 @@ public class TblTask implements Serializable {
 
     public void setUser_id(int user_id) {
         this.user_id = user_id;
+    }
+
+    public List<TblMember> getMember() {
+        return member;
+    }
+
+    public void setMember(List<TblMember> member) {
+        this.member = member;
+    }
+
+    public String getLast_name() {
+        return last_name;
+    }
+
+    public void setLast_name(String last_name) {
+        this.last_name = last_name;
+    }
+
+    public String getFirst_name() {
+        return first_name;
+    }
+
+    public void setFirst_name(String first_name) {
+        this.first_name = first_name;
+    }
+
+    public String getName_group() {
+        return name_group;
+    }
+
+    public void setName_group(String name_group) {
+        this.name_group = name_group;
     }
 }

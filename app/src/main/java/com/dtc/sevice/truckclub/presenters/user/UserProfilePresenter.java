@@ -6,6 +6,7 @@ import android.util.Log;
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DialogController;
+import com.dtc.sevice.truckclub.until.NetworkUtils;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.user.activity.UserProfileActivity;
 
@@ -35,31 +36,36 @@ public class UserProfilePresenter {
 
     public void updateProfile(){
         try {
-            dialog = ProgressDialog.show(mView, "Wait", "loading...");
-            mForum.getApi()
-                    .updateUserProfile(mView.listMembers.get(0).getMember_id(),mView.listMembers.get(0).getFirst_name(),mView.listMembers.get(0).getLast_name(),
-                            mView.listMembers.get(0).getEmail(),mView.listMembers.get(0).getTel(),mView.listMembers.get(0).getBirth_date(),mView.listMembers.get(0).getSex(),
-                            mView.listMembers.get(0).getName_pic_path())
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<TblMember>() {
-                        @Override
-                        public void onCompleted() {
-                            dialog.dismiss();
-                        }
+            if(!NetworkUtils.isConnected(mView)){
+                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+            }else {
+                dialog = ProgressDialog.show(mView, "Wait", "loading...");
+                mForum.getApi()
+                        .updateUserProfile(mView.listMembers.get(0).getMember_id(),mView.listMembers.get(0).getFirst_name(),mView.listMembers.get(0).getLast_name(),
+                                mView.listMembers.get(0).getEmail(),mView.listMembers.get(0).getTel(),mView.listMembers.get(0).getBirth_date(),mView.listMembers.get(0).getSex(),
+                                mView.listMembers.get(0).getName_pic_path())
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<TblMember>() {
+                            @Override
+                            public void onCompleted() {
+                                dialog.dismiss();
+                            }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.e("updateProfile Error", e.getMessage());
-                            dialog.dismiss();
-                        }
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e("updateProfile Error", e.getMessage());
+                                dialog.dismiss();
+                            }
 
-                        @Override
-                        public void onNext(TblMember member) {
-                            updateProfile(member);
-                            dialog.dismiss();
-                        }
-                    });
+                            @Override
+                            public void onNext(TblMember member) {
+                                updateProfile(member);
+                                dialog.dismiss();
+                            }
+                        });
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -8,6 +8,7 @@ import com.dtc.sevice.truckclub.model.TblProvince;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DialogController;
+import com.dtc.sevice.truckclub.until.NetworkUtils;
 import com.dtc.sevice.truckclub.view.user.activity.UserMainActivity;
 import com.dtc.sevice.truckclub.view.user.activity.UserMainActivity2;
 
@@ -64,32 +65,37 @@ public class UserMainPresenter {
 
     public void sentCrarteTask(){
         try {
-            mForum.getApi()
-                    .sentCreateTask(mView.tblTask.getUser_id(),mView.tblTask.getGroup_id(),mView.tblTask.getService_type(),mView.tblTask.getStart_date(),mView.tblTask.getEnd_date(),mView.tblTask.getDate_count(),
-                            mView.tblTask.getType_create(),mView.tblTask.getDes_lat(),mView.tblTask.getDes_lon(),mView.tblTask.getDest_location(),mView.tblTask.getDest_province(),mView.tblTask.getIdentify(),
-                            mView.tblTask.getTime_wait())
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<TblTask>() {
-                        @Override
-                        public void onCompleted() {
-                            //dialog.dismiss();
-                        }
+            if(!NetworkUtils.isConnected(mView)){
+                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+            }else {
+                mForum.getApi()
+                        .sentCreateTask(mView.tblTask.getUser_id(),mView.tblTask.getGroup_id(),mView.tblTask.getService_type(),mView.tblTask.getStart_date(),mView.tblTask.getEnd_date(),mView.tblTask.getDate_count(),
+                                mView.tblTask.getType_create(),mView.tblTask.getDes_lat(),mView.tblTask.getDes_lon(),mView.tblTask.getDest_location(),mView.tblTask.getDest_province(),mView.tblTask.getIdentify(),
+                                mView.tblTask.getTime_wait())
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<TblTask>() {
+                            @Override
+                            public void onCompleted() {
+                                //dialog.dismiss();
+                            }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.e("loadDriverInScope Error", e.getMessage());
-                            //dialog.dismiss();
-                        }
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e("loadDriverInScope Error", e.getMessage());
+                                //dialog.dismiss();
+                            }
 
-                        @Override
-                        public void onNext(TblTask tblTask) {
-                            updateMain(tblTask);
-                            //mView.updateMarkerDriverInScope(member);
-                            //dialog.dismiss();
-                            Log.i("sentCrarteTask", "Ok");
-                        }
-                    });
+                            @Override
+                            public void onNext(TblTask tblTask) {
+                                updateMain(tblTask);
+                                //mView.updateMarkerDriverInScope(member);
+                                //dialog.dismiss();
+                                Log.i("sentCrarteTask", "Ok");
+                            }
+                        });
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }

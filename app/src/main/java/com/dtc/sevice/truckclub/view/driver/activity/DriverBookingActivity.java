@@ -10,8 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dtc.sevice.truckclub.R;
@@ -19,10 +21,12 @@ import com.dtc.sevice.truckclub.adapter.CalendarAdapter;
 import com.dtc.sevice.truckclub.adapter.CalendarCollection;
 import com.dtc.sevice.truckclub.adapter.TaskListAdapter;
 import com.dtc.sevice.truckclub.model.SheduleTable;
+import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.presenters.driver.DriverBookingPresenter;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DateController;
+import com.dtc.sevice.truckclub.until.TaskController;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,14 +48,18 @@ public class DriverBookingActivity extends AppCompatActivity {
     private TextView tv_month;
     private ImageButton previous ;
     private ImageButton next;
+    private Spinner sp_job;
     private String action = "";
     private String strMonth="",strDate="";
     public static List<String> listFreeDate;
     private DateController dateController;
     private List<TblTask> listTasks;
+    public List<TblMember> members;
     private static TaskListAdapter adapter;
     private ApiService mForum;
     private DriverBookingPresenter driverBookingPresenter;
+    private String strType = "1";
+    private TaskController taskController;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +70,7 @@ public class DriverBookingActivity extends AppCompatActivity {
     private void init(){
         try {
             dateController = new DateController();
+            taskController = new TaskController();
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             gridview = (GridView) findViewById(R.id.gv_calendar);
             cal_month = (GregorianCalendar) GregorianCalendar.getInstance();
@@ -69,6 +78,7 @@ public class DriverBookingActivity extends AppCompatActivity {
             previous = (ImageButton) findViewById(R.id.ib_prev);
             next = (ImageButton) findViewById(R.id.Ib_next);
             recycler_view = (RecyclerView)findViewById(R.id.recycler_view);
+            sp_job = (Spinner) findViewById(R.id.sp_job);
             tv_month.setText(android.text.format.DateFormat.format("MMMM yyyy", cal_month));
             toolbar.setTitle("ตารางงาน");
             toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
@@ -112,9 +122,20 @@ public class DriverBookingActivity extends AppCompatActivity {
 
                 }
             });
+            getMember();
             getTask();
+            setSelectTask();
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    private void getMember(){
+        try {
+            members = new ArrayList<TblMember>();
+            members = taskController.getMember();
+        }catch (Exception e){
+
         }
     }
 
@@ -150,11 +171,38 @@ public class DriverBookingActivity extends AppCompatActivity {
         //setFreeDate();
     }
 
+    private void setSelectTask(){
+        try {
+            sp_job.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    if(i == 0){
+                        strType = "1";
+                    }else if(i == 1){
+                        strType = "3";
+                    }else if(i == 2){
+                        strType = "2";
+                    }else if(i == 3){
+                        strType = "4";
+                    }
+                    getTask();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void getTask(){
         try {
             mForum = new ApiService();
             driverBookingPresenter = new DriverBookingPresenter(DriverBookingActivity.this , mForum);
-            driverBookingPresenter.loadTask();
+            driverBookingPresenter.loadTask(strType);
         }catch (Exception e){
             e.printStackTrace();
         }

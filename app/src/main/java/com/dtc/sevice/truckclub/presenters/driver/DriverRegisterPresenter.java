@@ -10,6 +10,7 @@ import com.dtc.sevice.truckclub.model.TblPicture;
 import com.dtc.sevice.truckclub.model.TblProvince;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DialogController;
+import com.dtc.sevice.truckclub.until.NetworkUtils;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.LoginSecondActivity;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverRegisterActivity;
@@ -47,12 +48,49 @@ public class DriverRegisterPresenter {
 
     public boolean successRegister(){
         try {
-            loadRegister();
+//            if(!NetworkUtils.isConnected(mView)){
+//                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+//            }else {
+                loadRegisterAndCar();
+//            }
+
         }catch (Exception e){
             e.printStackTrace();
 
         }
         return success;
+    }
+
+    public void loadRegisterAndCar(){
+        try {
+            //dialog = ProgressDialog.show(mView, "Wait", "loading...");
+            mForum.getApi()
+                    .createMemberandcar(mView.member)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<List<TblMember>>() {
+                        @Override
+                        public void onCompleted() {
+                            // dialog.dismiss();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("loadRegister Error", e.getMessage());
+                            //dialog.dismiss();
+                        }
+
+                        @Override
+                        public void onNext(List<TblMember> member) {
+                            Log.i("loadRegisterAndCar", "OK");
+                            success = true;
+                            //updateSignUp(member);
+                            //dialog.dismiss();
+                        }
+                    });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void loadRegister(){
@@ -108,9 +146,9 @@ public class DriverRegisterPresenter {
         try {
             //dialog = ProgressDialog.show(mView, "Wait", "loading...");
             mForum.getApi()
-                    .createCar(member_id,mView.carDetail.getLicense_plate(),mView.carDetail.getCar_brand(),mView.carDetail.getProvince(),mView.carDetail.getCar_model(),
-                            mView.carDetail.getGroup_id(),mView.carDetail.getCar_tow(),mView.carDetail.getCar_wheels(),mView.carDetail.getCar_tons(),
-                            mView.carDetail.getOption_trailer(),mView.carDetail.getSum_weight())
+                    .createCar(member_id,mView.carDetail.get(0).getLicense_plate(),mView.carDetail.get(0).getCar_brand(),mView.carDetail.get(0).getProvince(),mView.carDetail.get(0).getCar_model(),
+                            mView.carDetail.get(0).getGroup_id(),mView.carDetail.get(0).getCar_tow(),mView.carDetail.get(0).getCar_wheels(),mView.carDetail.get(0).getCar_tons(),
+                            mView.carDetail.get(0).getOption_trailer(),mView.carDetail.get(0).getSum_weight())
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<TblCarDetail>() {

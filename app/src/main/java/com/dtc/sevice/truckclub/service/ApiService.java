@@ -17,7 +17,9 @@ import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.Header;
 import retrofit.http.Headers;
+import retrofit.http.Multipart;
 import retrofit.http.POST;
+import retrofit.http.Part;
 import retrofit.http.Query;
 import rx.Observable;
 
@@ -56,6 +58,10 @@ public class ApiService {
     }
 
     public interface ForumApi {
+
+        @FormUrlEncoded
+        @POST("/create_mamber_and-car.php")
+        public Observable<List<TblMember>> createMemberandcar(@Part("data") TblMember member);
 
         @FormUrlEncoded
         @POST("/member_register.php")
@@ -122,6 +128,14 @@ public class ApiService {
 
         @FormUrlEncoded
         @POST("/get_task.php")
-        public Observable<List<TblTask>> getTask(@Field("service_type") String service_type);
+        public Observable<List<TblTask>> getTask(@Field("service_type") String service_type,@Field("task_status") String task_status,@Field("authority") String authority,@Field("member_id") int member_id);
+
+        @FormUrlEncoded
+        @POST("/get_history_user.php")
+        public Observable<List<TblTask>> getHistoryUser(@Field("member_id") int member_id ,@Field("service_type") String service_type);
+
+        @FormUrlEncoded
+        @POST("/get_data_member.php")
+        public Observable<TblMember> getDataMember(@Field("member_id") int member_id ,@Field("authority") String authority);
     }
 }

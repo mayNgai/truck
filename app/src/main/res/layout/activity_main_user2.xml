@@ -127,21 +127,25 @@
                     <EditText
                         android:id="@+id/edt_start_date"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
-                        android:layout_weight="1.7"
+                        android:layout_weight="1.3"
                         android:background="@null"
-                        android:hint="กรุณาเลือกวันที่"
+                        android:hint="เลือกวันที่"
                         android:focusableInTouchMode="false"
                         android:textAlignment="center"
                         android:textSize="@dimen/font_18"/>
-                    <ImageView
+                    <EditText
+                        android:id="@+id/edt_start_time"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="0.3"
-                        android:padding="5dp"
-                        android:src="@drawable/cancel_button"
-                        android:visibility="invisible"/>
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="0.7"
+                        android:background="@null"
+                        android:hint="เวลา"
+                        android:focusableInTouchMode="false"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/font_18"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -162,19 +166,23 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
-                        android:layout_weight="1.7"
+                        android:layout_weight="1.3"
                         android:background="@null"
-                        android:hint="กรุณาเลือกวันที่"
+                        android:hint="เลือกวันที่"
                         android:focusableInTouchMode="false"
                         android:textAlignment="center"
                         android:textSize="@dimen/font_18"/>
-                    <ImageView
+                    <EditText
+                        android:id="@+id/edt_end_time"
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.3"
-                        android:padding="5dp"
-                        android:src="@drawable/cancel_button"
-                        android:visibility="invisible"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="0.7"
+                        android:background="@null"
+                        android:hint="เวลา"
+                        android:focusableInTouchMode="false"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/font_18"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -196,7 +204,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_weight="1.7"
-                        android:enabled="true"
+                        android:enabled="false"
+                        android:textAlignment="center"
                         android:textSize="@dimen/font_18"/>
                     <TextView
                         android:layout_width="0dp"

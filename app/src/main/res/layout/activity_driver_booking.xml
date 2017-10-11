@@ -212,7 +212,7 @@
             android:padding="7dp"
             android:orientation="vertical">
             <Spinner
-                android:id="@+id/sp_newJob"
+                android:id="@+id/sp_job"
                 android:dropDownWidth="fill_parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -9,6 +9,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,8 +24,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dtc.sevice.truckclub.R;
+import com.dtc.sevice.truckclub.adapter.TaskListAdapter;
+import com.dtc.sevice.truckclub.adapter.TaskListWaitAdapter;
+import com.dtc.sevice.truckclub.adapter.TypeCarAdapter;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblMember;
+import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.presenters.BasePresenter;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.ApplicationController;
@@ -188,20 +194,20 @@ public class BaseActivity extends AppCompatActivity implements
                 driverBookingPage();
                 return true;
             case R.id.action_wait_accept:
-                setDialogBottom("Wait accept");
+                getTaskWait();
                 return true;
             case R.id.action_report:
-                setDialogBottom("Report");
+                //setDialogBottom("Report");
 
                 return true;
             case R.id.action_history:
                 historyPage();
                 return true;
             case R.id.action_setting:
-                setDialogBottom("Setting");
+                //setDialogBottom("Setting");
                 return true;
             case R.id.action_about:
-                setDialogBottom("About");
+                //setDialogBottom("About");
                 return true;
             case R.id.status:
                 if(listMembers==null || listMembers.size()==0){
@@ -283,15 +289,42 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
+    private void getTaskWait(){
+        try {
+            mForum = new ApiService();
+            basePresenter = new BasePresenter(this,mForum);
+            basePresenter.loadTask("1");
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    List<TblTask> listTask = new ArrayList<TblTask>();
+    public void updateTaskWait(List<TblTask> tblTasks){
+        try {
+            listTask = new ArrayList<TblTask>();
+            listTask = tblTasks;
+            setDialogBottom("Wait accept");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void setDialogBottom(String txtHead){
         try {
             LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
             View view = inflater.inflate (R.layout.bottom_dialog_recycle, null);
             TextView txt_head = (TextView)view.findViewById( R.id.txt_head);
             ImageView img_down = (ImageView)view.findViewById( R.id.img_down);
+            RecyclerView recycler_view = (RecyclerView)view.findViewById( R.id.recycler_view);
             final Dialog mBottomSheetDialog = new Dialog (this,R.style.MaterialDialogSheet);
             mBottomSheetDialog.setContentView (view);
             mBottomSheetDialog.setCancelable (true);
+            recycler_view.setHasFixedSize(true);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+            recycler_view.setLayoutManager(mLayoutManager);
+            TaskListWaitAdapter adapter = new TaskListWaitAdapter(BaseActivity.this,listTask);
+            recycler_view.setAdapter(adapter);
             mBottomSheetDialog.getWindow ().setLayout (LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
             mBottomSheetDialog.getWindow ().setGravity (Gravity.BOTTOM);
             mBottomSheetDialog.show ();

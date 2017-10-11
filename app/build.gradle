@@ -11,6 +11,7 @@ android {
     }
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
+    useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.dtc.sevice.truckclub"
         minSdkVersion 15
@@ -56,6 +57,9 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.6.0'
     compile 'com.viewpagerindicator:library:2.4.1@aar'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.google.code.gson:gson:2.8.0'
+//    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+//    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'io.reactivex:rxjava:1.0.4'
     compile 'io.reactivex:rxandroid:0.24.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'

@@ -116,6 +116,10 @@ public class TblMember implements Serializable {
     @DatabaseField( useGetSet = true)
     private String token_firebase;
 
+    @SerializedName("car_detail")
+    @Expose
+    private List<TblCarDetail> carDetail = null;
+
     public String getSuccess() {
         return success;
     }
@@ -332,4 +336,11 @@ public class TblMember implements Serializable {
         this.token_firebase = token_firebase;
     }
 
+    public List<TblCarDetail> getCarDetail() {
+        return carDetail;
+    }
+
+    public void setCarDetail(List<TblCarDetail> carDetail) {
+        this.carDetail = carDetail;
+    }
 }

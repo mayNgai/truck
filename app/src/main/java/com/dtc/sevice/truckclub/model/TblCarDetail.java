@@ -79,6 +79,9 @@ public class TblCarDetail implements Serializable {
     @Expose
     @DatabaseField( useGetSet = true)
     private int sum_weight;
+    @SerializedName("picture")
+    @Expose
+    private List<TblPicture> picture = null;
 
     public String getSuccess() {
         return success;
@@ -225,4 +228,11 @@ public class TblCarDetail implements Serializable {
         this.group_id = group_id;
     }
 
+    public List<TblPicture> getPicture() {
+        return picture;
+    }
+
+    public void setPicture(List<TblPicture> picture) {
+        this.picture = picture;
+    }
 }

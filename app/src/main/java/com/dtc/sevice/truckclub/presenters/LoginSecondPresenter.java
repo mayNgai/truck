@@ -8,6 +8,7 @@ import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DialogController;
+import com.dtc.sevice.truckclub.until.NetworkUtils;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.LoginSecondActivity;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverMainActivity2;
@@ -38,33 +39,38 @@ public class LoginSecondPresenter {
 
     public void loadLogin(){
         try {
-            dialog = ProgressDialog.show(mView, "Wait", "loading...");
-            mForum.getApi()
-                    .getLogin(mView.str_user_name,mView.str_password,mView.str_authen,mView.member_type,mView.str_device_id,mView.id,mView.token)
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<TblMember>() {
-                        @Override
-                        public void onCompleted() {
-                            dialog.dismiss();
-                        }
+            if(!NetworkUtils.isConnected(mView)){
+                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+            }else {
+                dialog = ProgressDialog.show(mView, "Wait", "loading...");
+                mForum.getApi()
+                        .getLogin(mView.str_user_name,mView.str_password,mView.str_authen,mView.member_type,mView.str_device_id,mView.id,mView.token)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<TblMember>() {
+                            @Override
+                            public void onCompleted() {
+                                dialog.dismiss();
+                            }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.e("userLoginCall Error", e.getMessage());
-                            String[] s = e.getMessage().split(" ");
-                            int a = s.length;
-                            if(a>0)
-                                dialogController.dialogNolmal(mView,"Wanning", s[0] +" "+ s[1] +" " + s[2] + " " + "to server.tr");
-                            dialog.dismiss();
-                        }
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e("userLoginCall Error", e.getMessage());
+                                String[] s = e.getMessage().split(" ");
+                                int a = s.length;
+                                if(a>0)
+                                    dialogController.dialogNolmal(mView,"Wanning", s[0] +" "+ s[1] +" " + s[2] + " " + "to server.tr");
+                                dialog.dismiss();
+                            }
 
-                        @Override
-                        public void onNext(TblMember member) {
-                            updateLogin(member);
-                            dialog.dismiss();
-                        }
-                    });
+                            @Override
+                            public void onNext(TblMember member) {
+                                updateLogin(member);
+                                dialog.dismiss();
+                            }
+                        });
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }

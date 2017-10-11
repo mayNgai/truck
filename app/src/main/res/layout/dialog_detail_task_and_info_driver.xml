@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="5dp">
+    android:background="@color/WhiteSmoke"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="@color/actionBar"
+        android:gravity="center_vertical"
+        android:layout_height="50dp">
+        <ImageView
+            android:id="@+id/img_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back_page"/>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_margin="5dp"
         android:padding="10dp"
         android:background="@drawable/buttonshape_white_border_orange">
         <LinearLayout
@@ -54,7 +66,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="วันและเวลาเนัดหมาย :"
+                    android:text="วันและเวลานัดหมาย :"
                     android:textStyle="bold"
                     android:textSize="@dimen/font_22"/>
             </LinearLayout>
@@ -71,7 +83,22 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:src="@drawable/ic_query_builder_black_24dp"/>
+                    android:src="@drawable/ic_query_builder_black_24dp"
+                    android:visibility="gone"/>
+                <TextView
+                    android:id="@+id/txt_date_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:textSize="@dimen/font_24"
+                    android:text="เริ่ม"/>
+                <TextView
+                    android:id="@+id/txt_date_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:textSize="@dimen/font_24"
+                    android:text="03-10-2017"/>
                 <TextView
                     android:id="@+id/txt_time_start"
                     android:layout_width="wrap_content"
@@ -90,21 +117,41 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="5dp"
                 android:weightSum="2"
                 android:gravity="center_vertical">
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:src="@drawable/ic_event_note_black_24dp"/>
+                    android:src="@drawable/ic_event_note_black_24dp"
+                    android:visibility="gone"/>
                 <TextView
                     android:id="@+id/txt_date_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:textSize="@dimen/font_24"
+                    android:text=" ถึง"/>
+                <TextView
+                    android:id="@+id/txt_date_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:textSize="@dimen/font_24"
                     android:text="03-10-2017"/>
+                <TextView
+                    android:id="@+id/txt_time_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="@dimen/font_24"
+                    android:text="10:00"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="@dimen/font_24"
+                    android:text="น."/>
 
             </LinearLayout>
         </LinearLayout>
@@ -125,6 +172,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
+                android:textSize="@dimen/font_18"
+                android:padding="3dp"
                 android:text="39/12 เฉลิมพระเกียรติ ร.9,Prawet,Bangkok,Thailand"/>
 
         </LinearLayout>
@@ -177,7 +226,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:textSize="@dimen/font_24"
+                android:textSize="@dimen/font_20"
                 android:text="เทรลเลอร์"/>
 
         </LinearLayout>

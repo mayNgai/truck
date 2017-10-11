@@ -25,6 +25,7 @@ public class DateController {
     SimpleDateFormat dateFormat5 = new SimpleDateFormat("yyyy-MM");
     SimpleDateFormat dateFormat6 = new SimpleDateFormat("yyyy");
     SimpleDateFormat dateFormat7 = new SimpleDateFormat("MM/dd/yyyy");
+    SimpleDateFormat dateFormat8 = new SimpleDateFormat("HH:mm");
 
     public String getSystemTime(Context mContext) {
         long time;
@@ -153,6 +154,18 @@ public class DateController {
             ex.printStackTrace();
         }
         String newFormat = dateFormat2.format(testDate);
+        return newFormat;
+    }
+
+    public String convertDateFormat2To8(String date1){
+        String date = date1;
+        Date testDate = null;
+        try {
+            testDate = dateFormat8.parse(date);
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        String newFormat = dateFormat1.format(testDate);
         return newFormat;
     }
 
