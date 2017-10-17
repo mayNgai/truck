@@ -1,7 +1,5 @@
 package com.dtc.sevice.truckclub.view.driver.activity;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -27,8 +25,6 @@ import com.dtc.sevice.truckclub.presenters.driver.DriverBookingPresenter;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DateController;
 import com.dtc.sevice.truckclub.until.TaskController;
-
-import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,6 +53,7 @@ public class DriverBookingActivity extends AppCompatActivity {
     private DateController dateController;
     private List<TblTask> listTasks;
     public static List<TblMember> members;
+    public static TblTask tblTask;
     private static TaskListAdapter adapter;
     private static ApiService mForum;
     private static DriverBookingPresenter driverBookingPresenter;
@@ -204,9 +201,13 @@ public class DriverBookingActivity extends AppCompatActivity {
 
     private void getTask(){
         try {
+            tblTask = new TblTask();
+            tblTask.setService_type("Booking");
+            tblTask.setTask_status(Integer.parseInt(strType));
+            tblTask.setMember(members);
             mForum = new ApiService();
             driverBookingPresenter = new DriverBookingPresenter(DriverBookingActivity.this , mForum);
-            driverBookingPresenter.loadTask(strType);
+            driverBookingPresenter.loadTask();
         }catch (Exception e){
             e.printStackTrace();
         }

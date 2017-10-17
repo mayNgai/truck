@@ -63,7 +63,7 @@ public class BaseActivity extends AppCompatActivity implements
     private Activity _activity;
     private MenuItem status,txt_status;
     private static DriverMainActivity2 driverMainActivity2;
-
+    public static TblTask tblTask;
     private ApiService mForum;
     private BasePresenter basePresenter;
     @Override
@@ -291,9 +291,13 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void getTaskWait(){
         try {
+            tblTask = new TblTask();
+            tblTask.setService_type("Booking");
+            tblTask.setTask_status(1);
+            tblTask.setMember(listMembers);
             mForum = new ApiService();
             basePresenter = new BasePresenter(this,mForum);
-            basePresenter.loadTask("1");
+            basePresenter.loadTask();
 
         }catch (Exception e){
             e.printStackTrace();

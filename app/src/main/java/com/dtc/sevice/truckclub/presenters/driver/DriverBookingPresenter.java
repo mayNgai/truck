@@ -32,13 +32,13 @@ public class DriverBookingPresenter {
         dialogController = new DialogController();
     }
 
-    public void loadTask(String type){
+    public void loadTask(){
         try {
             if(!NetworkUtils.isConnected(mView)){
-                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+                dialogController.dialogNolmal(mView,"Warning","Internet is not stable.");
             }else {
                 mForum.getApi()
-                        .getTask("Booking",type,mView.members.get(0).getAuthority(),mView.members.get(0).getMember_id())
+                        .getTask(mView.tblTask)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<List<TblTask>>() {
@@ -66,7 +66,7 @@ public class DriverBookingPresenter {
     public void loadDataMember(){
         try {
             if(!NetworkUtils.isConnected(mView)){
-                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+                dialogController.dialogNolmal(mView,"Warning","Internet is not stable.");
             }else {
                 mForum.getApi()
                         .getDataMember(mView.members.get(0).getMember_id(),mView.members.get(0).getAuthority())

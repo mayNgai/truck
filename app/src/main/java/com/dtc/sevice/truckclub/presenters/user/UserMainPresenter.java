@@ -3,13 +3,12 @@ package com.dtc.sevice.truckclub.presenters.user;
 import android.app.ProgressDialog;
 import android.util.Log;
 
+import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.model.TblMember;
-import com.dtc.sevice.truckclub.model.TblProvince;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DialogController;
 import com.dtc.sevice.truckclub.until.NetworkUtils;
-import com.dtc.sevice.truckclub.view.user.activity.UserMainActivity;
 import com.dtc.sevice.truckclub.view.user.activity.UserMainActivity2;
 
 import java.util.List;
@@ -63,16 +62,14 @@ public class UserMainPresenter {
     }
 
 
-    public void sentCrarteTask(){
+    public void sentCreateTask(){
         try {
             if(!NetworkUtils.isConnected(mView)){
-                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+                dialogController.dialogNolmal(mView,mView.getString(R.string.txtWarning),mView.getString(R.string.txt_internet_is_not));
             }else {
-                dialog = ProgressDialog.show(mView, "Wait", "loading...");
+                dialog = ProgressDialog.show(mView, mView.getString(R.string.txtWait), mView.getString(R.string.txt_loading));
                 mForum.getApi()
-                        .sentCreateTask(mView.tblTask.getUser_id(),mView.tblTask.getGroup_id(),mView.tblTask.getService_type(),mView.tblTask.getStart_date(),mView.tblTask.getEnd_date(),mView.tblTask.getDate_count(),
-                                mView.tblTask.getType_create(),mView.tblTask.getDes_lat(),mView.tblTask.getDes_lon(),mView.tblTask.getDest_location(),mView.tblTask.getDest_province(),mView.tblTask.getIdentify(),
-                                mView.tblTask.getTime_wait())
+                        .sentCreateTask(mView.tblTask)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<TblTask>() {
@@ -91,7 +88,7 @@ public class UserMainPresenter {
                             public void onNext(TblTask tblTask) {
                                 mView.setDefault();
                                 dialog.dismiss();
-                                Log.i("sentCrarteTask", "Ok");
+                                Log.i("sentCreateTask", "Ok");
                             }
                         });
             }

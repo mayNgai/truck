@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -508,7 +507,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 tblTask.setEnd_date(dateController.convertDateFormat1To2(edt_end_date.getText().toString()) + " " + edt_end_time.getText().toString());
                 mApiService = new ApiService();
                 mUserMainPresenter = new UserMainPresenter(UserMainActivity2.this,mApiService);
-                mUserMainPresenter.sentCrarteTask();
+                mUserMainPresenter.sentCreateTask();
 
             }else {
                 dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDate));

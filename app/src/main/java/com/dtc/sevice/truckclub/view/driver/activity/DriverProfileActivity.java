@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -16,21 +18,23 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dtc.sevice.truckclub.R;
+import com.dtc.sevice.truckclub.adapter.AddImageAdapter;
+import com.dtc.sevice.truckclub.adapter.ItemOffsetDecoration;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblCarDetail;
+import com.dtc.sevice.truckclub.model.TblCarGroup;
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.presenters.driver.DriverProfilePresenter;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DateController;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.until.Updown_Image;
-import com.dtc.sevice.truckclub.view.user.activity.UserMainActivity;
-import com.dtc.sevice.truckclub.view.user.activity.UserProfileActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -48,8 +52,9 @@ public class DriverProfileActivity extends AppCompatActivity implements View.OnC
     private TextView txt_birth;
     private Spinner spn_sex,spn_car_group,spn_tow;
     private CheckBox chk_weight,chk_option;
+    private LinearLayout linear_tow;
     private ScrollView scroll_profile,scroll_vehicle;
-    private RecyclerView recycler_view;
+    private static RecyclerView recycler_view;
     private MenuItem save,edit;
     private boolean flagEdit = false;
     public static List<TblMember> listMembers;
@@ -57,10 +62,12 @@ public class DriverProfileActivity extends AppCompatActivity implements View.OnC
     private Updown_Image download_image;
     private DateController dateController;
     private Activity _activity;
+    private static List<TblCarGroup> listCarGroups;
 
     private DriverProfilePresenter driverProfilePresenter;
     private ApiService apiService;
     private static TblCarDetail carDetail;
+    private static AddImageAdapter mAdapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +106,7 @@ public class DriverProfileActivity extends AppCompatActivity implements View.OnC
         scroll_profile = (ScrollView)findViewById(R.id.scroll_profile);
         scroll_vehicle = (ScrollView)findViewById(R.id.scroll_vehicle);
         recycler_view = (RecyclerView)findViewById(R.id.recycler_view);
+        linear_tow = (LinearLayout)findViewById(R.id.linear_tow);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -116,6 +124,12 @@ public class DriverProfileActivity extends AppCompatActivity implements View.OnC
             setText();
             setCarDetail();
         }
+        recycler_view.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 3);
+        recycler_view.setLayoutManager(mLayoutManager);
+        recycler_view.setItemAnimator(new DefaultItemAnimator());
+        recycler_view.addItemDecoration(new ItemOffsetDecoration(this, R.dimen.item_offset));
+
     }
 
     private void getMember(){
@@ -169,6 +183,10 @@ public class DriverProfileActivity extends AppCompatActivity implements View.OnC
             edt_license_province.setText(carDetail.getProvince());
             edt_sum1.setText(String.valueOf(carDetail.getCar_wheels()));
             edt_sum2.setText(String.valueOf(carDetail.getCar_tons()));
+            if(carDetail.getGroup_id()==3)
+                linear_tow.setVisibility(View.VISIBLE);
+            else
+                linear_tow.setVisibility(View.GONE);
 
             if(carDetail.getOption_trailer()==0)
                 chk_option.setChecked(false);
@@ -179,6 +197,35 @@ public class DriverProfileActivity extends AppCompatActivity implements View.OnC
                 chk_weight.setChecked(false);
             else
                 chk_weight.setChecked(true);
+            setCarGroup();
+            setAdapter();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void setAdapter(){
+        try {
+            mAdapter = new AddImageAdapter(this,carDetail.getPicture());
+            recycler_view.setAdapter(mAdapter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void setCarGroup(){
+        try {
+            listCarGroups = taskController.getCarGroup();
+            setSpinnerCarGroup();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private void setSpinnerCarGroup(){
+        try {
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -188,12 +235,16 @@ public class DriverProfileActivity extends AppCompatActivity implements View.OnC
         switch (v.getId()) {
             case R.id.btn_info:
                 if(!flagEdit){
+                    btn_info.setBackgroundResource(R.drawable.buttonshape_orange);
+                    btn_vehicle.setBackgroundResource(R.drawable.buttonshape_find_location_search_white);
                     scroll_vehicle.setVisibility(View.GONE);
                     scroll_profile.setVisibility(View.VISIBLE);
                 }
                 break;
             case R.id.btn_vehicle:
                 if(!flagEdit){
+                    btn_vehicle.setBackgroundResource(R.drawable.buttonshape_orange);
+                    btn_info.setBackgroundResource(R.drawable.buttonshape_find_location_search_white);
                     scroll_profile.setVisibility(View.GONE);
                     scroll_vehicle.setVisibility(View.VISIBLE);
                 }

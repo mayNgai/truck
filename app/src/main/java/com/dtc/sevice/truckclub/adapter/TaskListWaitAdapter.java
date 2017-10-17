@@ -35,7 +35,7 @@ public class TaskListWaitAdapter extends RecyclerView.Adapter<TaskListWaitAdapte
     public void onBindViewHolder(final TaskListWaitAdapter.ViewHolder holder, final int i) {
         holder.txt_date_start.setText(dateController.convertDateFormat2To1(arrayList.get(i).getStart_date()));
         holder.txt_time_start.setText(arrayList.get(i).getStart_date().substring(10,16));
-//        holder.txt_driver_wait.setText(arrayList.get(i).getDest_location());
+        holder.txt_driver_wait.setText(String.valueOf(arrayList.get(i).getMember().size()));
         holder.txt_start_position.setText(arrayList.get(i).getDest_location());
         holder.linear_list.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +75,7 @@ public class TaskListWaitAdapter extends RecyclerView.Adapter<TaskListWaitAdapte
             txt_start_position.setText(arrayList.get(pos).getDest_location());
             txt_count_date.setText(String.valueOf(arrayList.get(pos).getDate_count()));
             txt_type_car.setText(arrayList.get(pos).getName_group());
-            //txt_count_driver.setText("");
+            txt_count_driver.setText(String.valueOf(arrayList.get(pos).getMember().size()));
             img_back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

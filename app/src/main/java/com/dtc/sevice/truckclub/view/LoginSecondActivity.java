@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
+import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.presenters.LoginSecondPresenter;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverRegisterActivity;
@@ -48,6 +49,7 @@ public class LoginSecondActivity extends AppCompatActivity implements View.OnCli
     private Activity _activity;
     private ApiService mApiService;
     private LoginSecondPresenter mUserLoginSecondPresenter;
+    public static TblMember tblMember;
 
     ///connect facebook //////////
     private LoginButton loginButton;
@@ -201,6 +203,14 @@ public class LoginSecondActivity extends AppCompatActivity implements View.OnCli
     private void callService(){
         try {
             token = FirebaseInstanceId.getInstance().getToken();
+            tblMember = new TblMember();
+            tblMember.setUser_name(str_user_name);
+            tblMember.setPassword(str_password);
+            tblMember.setAuthority(str_authen);
+            tblMember.setMember_type(member_type);
+            tblMember.setDevice_id(str_device_id);
+            tblMember.setFace_book_id(id);
+            tblMember.setToken_firebase(token);
             mApiService = new ApiService();
             mUserLoginSecondPresenter = new LoginSecondPresenter(LoginSecondActivity.this,mApiService);
             mUserLoginSecondPresenter.loadLogin();

@@ -41,11 +41,11 @@ public class LoginSecondPresenter {
     public void loadLogin(){
         try {
             if(!NetworkUtils.isConnected(mView)){
-                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+                dialogController.dialogNolmal(mView,mView.getString(R.string.txtWarning),mView.getString(R.string.txt_internet_is_not));
             }else {
-                dialog = ProgressDialog.show(mView, "Wait", "loading...");
+                dialog = ProgressDialog.show(mView, mView.getString(R.string.txtWait), mView.getString(R.string.txt_loading));
                 mForum.getApi()
-                        .getLogin(mView.str_user_name,mView.str_password,mView.str_authen,mView.member_type,mView.str_device_id,mView.id,mView.token)
+                        .getLogin(mView.tblMember)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<TblMember>() {
@@ -57,10 +57,6 @@ public class LoginSecondPresenter {
                             @Override
                             public void onError(Throwable e) {
                                 Log.e("userLoginCall Error", e.getMessage());
-                                String[] s = e.getMessage().split(" ");
-                                int a = s.length;
-                                if(a>0)
-                                    dialogController.dialogNolmal(mView,"Wanning", s[0] +" "+ s[1] +" " + s[2] + " " + "to server.tr");
                                 dialog.dismiss();
                             }
 
@@ -95,7 +91,7 @@ public class LoginSecondPresenter {
 
             }else if(members.getSuccess().equalsIgnoreCase("0")){
                 if(mView.member_type == 0){
-                    dialogController.dialogNolmal(mView,"Wanning",members.getMessage());
+                    dialogController.dialogNolmal(mView,mView.getString(R.string.txtWarning),members.getMessage());
                     Log.i("message", members.getMessage());
                 }else if(mView.member_type == 1){
                     if(mView.str_authen.equalsIgnoreCase(mView.getString(R.string.txtUser))){

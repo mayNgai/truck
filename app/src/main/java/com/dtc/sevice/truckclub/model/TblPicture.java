@@ -23,12 +23,12 @@ public class TblPicture implements Serializable {
     @DatabaseField(id = true, useGetSet = true)
     private String guid;
 
-    @SerializedName("id")
+    @SerializedName("picture_id")
     @Expose
     @DatabaseField(useGetSet = true)
     private String id;
 
-    @SerializedName("name")
+    @SerializedName("name_path")
     @Expose
     @DatabaseField(useGetSet = true)
     private String name;

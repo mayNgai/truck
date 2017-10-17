@@ -10,8 +10,6 @@ import com.dtc.sevice.truckclub.until.NetworkUtils;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.user.activity.UserProfileActivity;
 
-import java.util.List;
-
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -41,9 +39,7 @@ public class UserProfilePresenter {
             }else {
                 dialog = ProgressDialog.show(mView, "Wait", "loading...");
                 mForum.getApi()
-                        .updateUserProfile(mView.listMembers.get(0).getMember_id(),mView.listMembers.get(0).getFirst_name(),mView.listMembers.get(0).getLast_name(),
-                                mView.listMembers.get(0).getEmail(),mView.listMembers.get(0).getTel(),mView.listMembers.get(0).getBirth_date(),mView.listMembers.get(0).getSex(),
-                                mView.listMembers.get(0).getName_pic_path())
+                        .updateUserProfile(mView.listMembers.get(0))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<TblMember>() {

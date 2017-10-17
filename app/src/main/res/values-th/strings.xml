@@ -74,6 +74,9 @@
     <string name="txtDriver">Driver</string>
     <string name="txtUser">User</string>
     <string name="txtWarning">Warning</string>
+    <string name="txt_internet_is_not">Internet is not stable.</string>
+    <string name="txtWait">Wait</string>
+    <string name="txt_loading">loading...</string>
 
     <string name="confirmYouOver">ยืนยันว่าคุณขึ้นรถแล้ว</string>
 

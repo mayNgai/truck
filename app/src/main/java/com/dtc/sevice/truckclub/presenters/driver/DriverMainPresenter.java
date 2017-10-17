@@ -2,7 +2,6 @@ package com.dtc.sevice.truckclub.presenters.driver;
 
 import android.util.Log;
 
-import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DialogController;
@@ -30,13 +29,13 @@ public class DriverMainPresenter {
         dialogController = new DialogController();
     }
 
-    public void loagTask(){
+    public void loadTask(){
         try {
             if(!NetworkUtils.isConnected(mView)){
-                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+                dialogController.dialogNolmal(mView,"Warning","Internet is not stable.");
             }else {
                 mForum.getApi()
-                        .getTask("Now","1",mView.members.get(0).getAuthority(),mView.members.get(0).getMember_id())
+                        .getTask(mView.tblTask)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<List<TblTask>>() {

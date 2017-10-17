@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.tuay.service_transport.dtc.example.tuay.service_transport.Driver_Detail.Driver_Profile">
+    tools:context="com.dtc.sevice.truckclub.view.driver.activity.DriverProfileActivity">
     <LinearLayout
         android:id="@+id/layOutToolBar"
         android:layout_width="match_parent"
@@ -48,7 +48,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/buttonshape_find_location_search_white"
+                android:background="@drawable/buttonshape_orange"
                 android:shadowColor="#A8A8A8"
                 android:shadowDx="0"
                 android:shadowDy="0"
@@ -62,7 +62,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@null"
+                android:background="@drawable/buttonshape_find_location_search_white"
                 android:shadowColor="#A8A8A8"
                 android:shadowDx="0"
                 android:shadowDy="0"
@@ -753,7 +753,6 @@
                                     android:layout_height="match_parent"/>
                             </LinearLayout>
                             <TextView
-                                android:id="@+id/txt_sum"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:gravity="center_horizontal|center_vertical"

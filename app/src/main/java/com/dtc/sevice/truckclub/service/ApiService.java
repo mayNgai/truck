@@ -3,14 +3,22 @@ package com.dtc.sevice.truckclub.service;
 import com.dtc.sevice.truckclub.model.TblCarDetail;
 import com.dtc.sevice.truckclub.model.TblCarGroup;
 import com.dtc.sevice.truckclub.model.TblMember;
-import com.dtc.sevice.truckclub.model.TblPicture;
 import com.dtc.sevice.truckclub.model.TblProvince;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.POST;
+import rx.Observable;
 
 //import retrofit.RequestInterceptor;
 //import retrofit.RestAdapter;
@@ -23,15 +31,6 @@ import java.util.List;
 //import retrofit.http.POST;
 //import retrofit.http.Part;
 //import retrofit.http.Query;
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Body;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.POST;
-import rx.Observable;
 
 /**
  * Created by admin on 9/20/2017 AD.
@@ -68,7 +67,7 @@ public class ApiService {
     public interface ForumApi {
 
         @POST("create_member_and_car.php")
-        public Observable<TblMember> createMemberandcar(@Body TblMember member);
+        public Observable<TblMember> createMemberAndCar(@Body TblMember member);
 
         @FormUrlEncoded
         @POST("member_register.php")
@@ -77,31 +76,11 @@ public class ApiService {
                                                   @Field("password") String password, @Field("member_type") int member_type, @Field("authority") String authority, @Field("device_id") String device_id,
                                                   @Field("face_book_id") String face_book_id, @Field("name_pic_path") String name_pic_path);
 
-        @FormUrlEncoded
-        @POST("car_register.php")
-        public Observable<TblCarDetail> createCar(@Field("member_id") int member_id, @Field("license_plate") String license_plate, @Field("car_brand") String car_brand,@Field("province") String province,
-                                                  @Field("car_model") String car_model, @Field("group_id") int group_id,@Field("car_tow") int car_tow, @Field("car_wheels") int car_wheels,
-                                                  @Field("car_tons") int car_tons, @Field("option_trailer") int option_trailer,@Field("sum_weight") int sum_weight);
-
-        @FormUrlEncoded
-        @POST("create_picture.php")
-        public Observable<TblPicture> createPictureCar(@Field("car_id") int car_id, @Field("name_path") String name_path);
-
-        @FormUrlEncoded
-        @POST("create_member_and_car.php")
-        public Observable<TblMember> createMemberAndCar(@Field("data") ArrayList<TblMember> data);
-
-        @FormUrlEncoded
         @POST("user_login.php")
-        public Observable<TblMember> getLogin(@Field("user_name") String user_name, @Field("password") String password,@Field("authority") String authority,@Field("member_type") int member_type, @Field("device_id") String device_id,@Field("face_book_id") String face_book_id,@Field("token_firebase") String token_firebase);
+        public Observable<TblMember> getLogin(@Body TblMember member);
 
-        @FormUrlEncoded
         @POST("get_car_detail.php")
-        public Observable<TblCarDetail> getCarDetail(@Field("member_id") int member_id);
-
-        @FormUrlEncoded
-        @POST("/get_picture_car.php")
-        public Observable<List<TblPicture>> getPictureCar(@Field("car_id") int car_id);
+        public Observable<TblCarDetail> getCarDetail(@Body TblMember member);
 
         @FormUrlEncoded
         @POST("update_status_member.php")
@@ -117,25 +96,18 @@ public class ApiService {
         @POST("user_search_driver_in_scope.php")
         public Observable<List<TblMember>> getDriverInScope(@Field("member_id") int member_id, @Field("lat") float lat,@Field("lon") float lon,@Field("radius") double radius);
 
-        @FormUrlEncoded
         @POST("user_update_profile.php")
-        public Observable<TblMember> updateUserProfile(@Field("member_id") int member_id,@Field("first_name") String first_name, @Field("last_name") String last_name
-                                                                , @Field("email") String email,@Field("tel") String tel,@Field("birth_date") String birth_date
-                                                                ,@Field("sex") String sex,@Field("name_pic_path") String name_pic_path);
+        public Observable<TblMember> updateUserProfile(@Body TblMember member);
 
-        @FormUrlEncoded
+
         @POST("clear_member.php")
-        public Observable<TblMember> logOut(@Field("member_id") int member_id,@Field("authority") String status);
+        public Observable<TblMember> logOut(@Body TblMember member);
 
-        @FormUrlEncoded
         @POST("sent_create_task.php")
-        public Observable<TblTask> sentCreateTask(@Field("user_id") int user_id,@Field("group_id") int group_id,@Field("service_type") String service_type,@Field("start_date") String start_date ,@Field("end_date") String end_date,
-                                                  @Field("date_count") int date_count,@Field("type_create") String type_create ,@Field("des_lat") float des_lat,@Field("des_lon") float des_lon,@Field("dest_location") String dest_location,
-                                                  @Field("dest_province") String dest_province,@Field("identify") String identify,@Field("time_wait") int time_wait);
+        public Observable<TblTask> sentCreateTask(@Body TblTask task);
 
-        @FormUrlEncoded
         @POST("get_task.php")
-        public Observable<List<TblTask>> getTask(@Field("service_type") String service_type,@Field("task_status") String task_status,@Field("authority") String authority,@Field("member_id") int member_id);
+        public Observable<List<TblTask>> getTask(@Body TblTask task);
 
         @FormUrlEncoded
         @POST("get_history_user.php")

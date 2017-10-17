@@ -1,11 +1,8 @@
 package com.dtc.sevice.truckclub.adapter;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -17,17 +14,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.dtc.sevice.truckclub.R;
+import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblPicture;
 import com.dtc.sevice.truckclub.view.MultiPhotoSelectActivity;
 import com.dtc.sevice.truckclub.view.driver.fragment.RegisterDriverFragmentThird;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.Observable;
-
-import rx.subjects.PublishSubject;
 
 /**
  * Created by may on 9/25/2017.
@@ -47,8 +41,15 @@ public class AddImageAdapter extends RecyclerView.Adapter<AddImageAdapter.ViewHo
         holder.checkBox1.setVisibility(View.GONE);
         String url = "file://" + arrayList.get(i).getPath();
 //        File f = new File(arrayList.get(i).getPath());
-
-        if(arrayList.get(i).getPath().length()>0){
+        if(arrayList.get(i).getPath()==null){
+            String url2 = GlobalVar.url_up_pic + arrayList.get(i).getName();
+            Picasso.with(mcontext)
+                    .load(url2)
+                    .error(R.drawable.no_images)
+                    .resize(100, 100)
+                    .centerCrop()
+                    .into(holder.imageView);
+        }else if(arrayList.get(i).getPath().length()>0){
             Picasso.with(mcontext)
                     .load(url)
                     .error(R.drawable.no_images)

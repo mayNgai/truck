@@ -66,6 +66,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
 
     private TaskController taskController;
     public List<TblMember> members;
+    public static TblTask tblTask;
     public static List<TblTask> listTasks;
     private Activity _activity;
     public static LinearLayout linear_select_type;
@@ -130,9 +131,13 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
 
     private void getTask(){
         try {
+            tblTask = new TblTask();
+            tblTask.setService_type("Now");
+            tblTask.setTask_status(1);
+            tblTask.setMember(members);
             mForum = new ApiService();
             driverMainPresenter = new DriverMainPresenter(DriverMainActivity2.this , mForum);
-            driverMainPresenter.loagTask();
+            driverMainPresenter.loadTask();
         }catch (Exception e){
             e.printStackTrace();
         }

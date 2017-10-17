@@ -3,6 +3,7 @@ package com.dtc.sevice.truckclub.presenters;
 import android.content.Intent;
 import android.util.Log;
 
+import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.service.ApiService;
@@ -39,7 +40,7 @@ public class BasePresenter {
     public void updateStatus(){
         try {
             if(!NetworkUtils.isConnected(mView)){
-                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+                dialogController.dialogNolmal(mView,mView.getString(R.string.txtWarning),mView.getString(R.string.txt_internet_is_not));
             }else {
                 mForum.getApi()
                         .updateStatusMember(mView.listMembers.get(0).getMember_id(),mView.listMembers.get(0).getStatus(),mView.listMembers.get(0).getStatus_id())
@@ -72,7 +73,7 @@ public class BasePresenter {
     public void logOut(){
         try {
             mForum.getApi()
-                    .logOut(mView.listMembers.get(0).getMember_id(),mView.listMembers.get(0).getAuthority())
+                    .logOut(mView.listMembers.get(0))
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<TblMember>() {
@@ -114,13 +115,13 @@ public class BasePresenter {
         }
     }
 
-    public void loadTask(String type){
+    public void loadTask(){
         try {
             if(!NetworkUtils.isConnected(mView)){
-                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+                dialogController.dialogNolmal(mView,mView.getString(R.string.txtWarning),mView.getString(R.string.txt_internet_is_not));
             }else {
                 mForum.getApi()
-                        .getTask("Booking",type,mView.listMembers.get(0).getAuthority(),mView.listMembers.get(0).getMember_id())
+                        .getTask(mView.tblTask)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<List<TblTask>>() {
