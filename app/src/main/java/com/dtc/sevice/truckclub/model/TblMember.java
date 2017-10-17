@@ -118,7 +118,7 @@ public class TblMember implements Serializable {
 
     @SerializedName("car_detail")
     @Expose
-    private List<TblCarDetail> carDetail = null;
+    private List<TblCarDetail> car_detail = null;
 
     public String getSuccess() {
         return success;
@@ -336,11 +336,11 @@ public class TblMember implements Serializable {
         this.token_firebase = token_firebase;
     }
 
-    public List<TblCarDetail> getCarDetail() {
-        return carDetail;
+    public List<TblCarDetail> getCar_detail() {
+        return car_detail;
     }
 
-    public void setCarDetail(List<TblCarDetail> carDetail) {
-        this.carDetail = carDetail;
+    public void setCar_detail(List<TblCarDetail> car_detail) {
+        this.car_detail = car_detail;
     }
 }

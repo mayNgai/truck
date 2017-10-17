@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.model.TblTask;
+import com.dtc.sevice.truckclub.until.DateController;
 
 import java.util.List;
 
@@ -23,17 +24,19 @@ import java.util.List;
 public class TaskListWaitAdapter extends RecyclerView.Adapter<TaskListWaitAdapter.ViewHolder>{
     private static Context mcontext;
     private List<TblTask> arrayList;
+    private DateController dateController;
     public TaskListWaitAdapter(Context context, List<TblTask> _arrayList){
         this.arrayList = _arrayList;
         this.mcontext = context;
+        dateController = new DateController();
     }
 
     @Override
     public void onBindViewHolder(final TaskListWaitAdapter.ViewHolder holder, final int i) {
-//        holder.txt_date_start.setText(arrayList.get(i).getDest_location());
-//        holder.txt_time_start.setText(arrayList.get(i).getDest_location());
+        holder.txt_date_start.setText(dateController.convertDateFormat2To1(arrayList.get(i).getStart_date()));
+        holder.txt_time_start.setText(arrayList.get(i).getStart_date().substring(10,16));
 //        holder.txt_driver_wait.setText(arrayList.get(i).getDest_location());
-//        holder.txt_start_position.setText(arrayList.get(i).getDest_location());
+        holder.txt_start_position.setText(arrayList.get(i).getDest_location());
         holder.linear_list.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,6 +51,15 @@ public class TaskListWaitAdapter extends RecyclerView.Adapter<TaskListWaitAdapte
             LayoutInflater inflater = (LayoutInflater)v.getContext().getSystemService(v.getContext().LAYOUT_INFLATER_SERVICE);
             View view = inflater.inflate (R.layout.dialog_detail_task_and_info_driver, null);
             ImageView img_back = (ImageView)view.findViewById( R.id.img_back);
+            TextView txt_id = (TextView)view.findViewById(R.id.txt_id);
+            TextView txt_date_start = (TextView)view.findViewById(R.id.txt_date_start);
+            TextView txt_time_start = (TextView)view.findViewById(R.id.txt_time_start);
+            TextView txt_date_end = (TextView)view.findViewById(R.id.txt_date_end);
+            TextView txt_time_end = (TextView)view.findViewById(R.id.txt_time_end);
+            TextView txt_start_position = (TextView)view.findViewById(R.id.txt_start_position);
+            TextView txt_count_date = (TextView)view.findViewById(R.id.txt_count_date);
+            TextView txt_type_car = (TextView)view.findViewById(R.id.txt_type_car);
+            TextView txt_count_driver = (TextView)view.findViewById(R.id.txt_count_driver);
             final Dialog mBottomSheetDialog = new Dialog (v.getContext(),R.style.MaterialDialogSheet);
             mBottomSheetDialog.setContentView (view);
             mBottomSheetDialog.setCancelable (true);
@@ -55,6 +67,15 @@ public class TaskListWaitAdapter extends RecyclerView.Adapter<TaskListWaitAdapte
                     LinearLayout.LayoutParams.MATCH_PARENT);
             mBottomSheetDialog.getWindow ().setGravity (Gravity.BOTTOM);
             mBottomSheetDialog.show ();
+            txt_id.setText(arrayList.get(pos).getId());
+            txt_date_start.setText(dateController.convertDateFormat2To1(arrayList.get(pos).getStart_date()));
+            txt_time_start.setText(arrayList.get(pos).getStart_date().substring(10,16));
+            txt_date_end.setText(dateController.convertDateFormat2To1(arrayList.get(pos).getEnd_date()));
+            txt_time_end.setText(arrayList.get(pos).getEnd_date().substring(10,16));
+            txt_start_position.setText(arrayList.get(pos).getDest_location());
+            txt_count_date.setText(String.valueOf(arrayList.get(pos).getDate_count()));
+            txt_type_car.setText(arrayList.get(pos).getName_group());
+            //txt_count_driver.setText("");
             img_back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

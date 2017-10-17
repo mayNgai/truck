@@ -25,6 +25,7 @@ import com.dtc.sevice.truckclub.model.TblPicture;
 import com.dtc.sevice.truckclub.model.TblProvince;
 import com.dtc.sevice.truckclub.presenters.driver.DriverRegisterPresenter;
 import com.dtc.sevice.truckclub.service.ApiService;
+import com.dtc.sevice.truckclub.until.ApplicationController;
 import com.dtc.sevice.truckclub.until.DialogController;
 import com.dtc.sevice.truckclub.view.LoginSecondActivity;
 import com.dtc.sevice.truckclub.view.driver.fragment.RegisterDriverFragmentFirst;
@@ -54,15 +55,18 @@ public class DriverRegisterActivity extends FragmentActivity {
     public static TblMember member;
     public static List<TblCarDetail> carDetail;
     public static List<TblPicture> tblPicture;
+    private Intent extra;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment);
+        setIntentFromLogin();
         intit();
     }
 
     private void intit() {
         _activity = DriverRegisterActivity.this;
+        ApplicationController.setAppActivity(_activity);
         mFirst = new RegisterDriverFragmentFirst();
         mSecond = new RegisterDriverFragmentSecond();
         mThird = new RegisterDriverFragmentThird();
@@ -79,6 +83,33 @@ public class DriverRegisterActivity extends FragmentActivity {
         indicator.setRadius(5 * density);
         //getData();
         askForPermission(Manifest.permission.READ_EXTERNAL_STORAGE,READ_EXST);
+    }
+
+    private void setIntentFromLogin(){
+        try {
+            extra = getIntent();
+            if (extra != null) {
+                member = new TblMember();
+                if(extra.getStringExtra("authen")!=null)
+                    member.setAuthority(extra.getStringExtra("authen"));
+                if(extra.getStringExtra("member_type")!=null)
+                    member.setMember_type(Integer.parseInt(extra.getStringExtra("member_type")));
+                if(extra.getStringExtra("id")!=null)
+                    member.setFace_book_id(extra.getStringExtra("id"));
+                if(extra.getStringExtra("first_name")!=null)
+                    member.setFirst_name(extra.getStringExtra("first_name"));
+                if(extra.getStringExtra("last_name")!=null)
+                    member.setLast_name(extra.getStringExtra("last_name"));
+                if(extra.getStringExtra("email")!=null)
+                    member.setEmail(extra.getStringExtra("email"));
+                if(extra.getStringExtra("gender")!=null)
+                    member.setSex(extra.getStringExtra("gender"));
+                if(extra.getStringExtra("birthday")!=null)
+                    member.setBirth_date(extra.getStringExtra("birthday"));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void getData(){
@@ -126,6 +157,7 @@ public class DriverRegisterActivity extends FragmentActivity {
             mThird = new RegisterDriverFragmentThird();
             dialogController = new DialogController();
             boolean success = false;
+            boolean successAll = false;
             if(!mFirst.setCompletePageFirst(_activity)){
                 setPre(2);
             }else {
@@ -198,31 +230,34 @@ public class DriverRegisterActivity extends FragmentActivity {
             if(success){
                 if(!mThird.setCompleteThird(_activity)){
                     success = false;
+                    successAll = false;
                 }else{
                     success = true;
+                    successAll = true;
+                    carDetail = new ArrayList<>();
+                    tblPicture = new ArrayList<TblPicture>();
+                    tblPicture = mThird.imagePaths;
+                    mSecond.carDetail.setPicture(tblPicture);
+                    carDetail.add(mSecond.carDetail);
+                    member.setCar_detail(carDetail);
+                    mApiService = new ApiService();
+                    mDriverRegisterPresenter = new DriverRegisterPresenter(this,mApiService);
+                    mDriverRegisterPresenter.loadRegisterAndCar();
                 }
             }
 
-            if(success){
-                carDetail = new ArrayList<>();
-                tblPicture = new ArrayList<TblPicture>();
-                tblPicture = mThird.imagePaths;
-                mSecond.carDetail.setPicture(tblPicture);
-                carDetail.add(mSecond.carDetail);
-                member.setCarDetail(carDetail);
-                mApiService = new ApiService();
-                mDriverRegisterPresenter = new DriverRegisterPresenter(this,mApiService);
-                mDriverRegisterPresenter.successRegister();
-//                if(mDriverRegisterPresenter.successRegister()){
-//                    Intent i = new Intent(_activity, LoginSecondActivity.class);
-//                    startActivity(i);
-//                    finish();
-//                }else {
-//                    Intent i = new Intent(_activity, LoginSecondActivity.class);
-//                    startActivity(i);
-//                    finish();
-//                }
-            }
+//            if(successAll){
+//                carDetail = new ArrayList<>();
+//                tblPicture = new ArrayList<TblPicture>();
+//                tblPicture = mThird.imagePaths;
+//                mSecond.carDetail.setPicture(tblPicture);
+//                carDetail.add(mSecond.carDetail);
+//                member.setCar_detail(carDetail);
+//                mApiService = new ApiService();
+//                mDriverRegisterPresenter = new DriverRegisterPresenter(this,mApiService);
+//                mDriverRegisterPresenter.loadRegisterAndCar();
+//
+//            }
 
         }catch (Exception e){
             e.printStackTrace();
@@ -253,21 +288,6 @@ public class DriverRegisterActivity extends FragmentActivity {
         return success;
     }
 
-    public void updateRegister(TblMember tblMember){
-        try {
-            Intent i = new Intent(DriverRegisterActivity.this, LoginSecondActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            i.putExtra("authen" , tblMember.getAuthority());
-            i.putExtra("member_type" , tblMember.getMember_type());
-            i.putExtra("face_book_id" , tblMember.getFace_book_id());
-            i.putExtra("user_name" , tblMember.getUser_name());
-            i.putExtra("password" , tblMember.getPassword());
-            startActivity(i);
-            finish();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
     private void askForPermission(String permission, Integer requestCode) {
         if (ContextCompat.checkSelfPermission(DriverRegisterActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {

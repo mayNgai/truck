@@ -120,6 +120,11 @@ public class TblTask implements Serializable {
     @DatabaseField( useGetSet = true)
     private String date_task_create;
 
+    @SerializedName("date_task_last")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private String date_task_last;
+
     @SerializedName("type_create")
     @Expose
     @DatabaseField( useGetSet = true)
@@ -149,6 +154,16 @@ public class TblTask implements Serializable {
     @Expose
     @DatabaseField( useGetSet = true)
     private String name_group;
+
+    @SerializedName("driver_id")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private String driver_id;
+
+    @SerializedName("price_offer")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private String price_offer;
 
     @SerializedName("member")
     @Expose
@@ -394,5 +409,29 @@ public class TblTask implements Serializable {
 
     public void setName_group(String name_group) {
         this.name_group = name_group;
+    }
+
+    public String getDate_task_last() {
+        return date_task_last;
+    }
+
+    public void setDate_task_last(String date_task_last) {
+        this.date_task_last = date_task_last;
+    }
+
+    public String getDriver_id() {
+        return driver_id;
+    }
+
+    public void setDriver_id(String driver_id) {
+        this.driver_id = driver_id;
+    }
+
+    public String getPrice_offer() {
+        return price_offer;
+    }
+
+    public void setPrice_offer(String price_offer) {
+        this.price_offer = price_offer;
     }
 }

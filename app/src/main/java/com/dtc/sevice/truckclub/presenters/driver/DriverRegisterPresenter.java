@@ -1,5 +1,6 @@
 package com.dtc.sevice.truckclub.presenters.driver;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.util.Log;
@@ -9,6 +10,7 @@ import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblPicture;
 import com.dtc.sevice.truckclub.model.TblProvince;
 import com.dtc.sevice.truckclub.service.ApiService;
+import com.dtc.sevice.truckclub.until.ApplicationController;
 import com.dtc.sevice.truckclub.until.DialogController;
 import com.dtc.sevice.truckclub.until.NetworkUtils;
 import com.dtc.sevice.truckclub.until.TaskController;
@@ -38,6 +40,7 @@ public class DriverRegisterPresenter {
     private static int size = 0;
     private RegisterDriverFragmentThird fragmentThird;
     private static boolean success =false;
+    private static Activity _activity;
 
     public DriverRegisterPresenter(DriverRegisterActivity view , ApiService forum){
         mView = view;
@@ -68,7 +71,7 @@ public class DriverRegisterPresenter {
                     .createMemberandcar(mView.member)
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<List<TblMember>>() {
+                    .subscribe(new Observer<TblMember>() {
                         @Override
                         public void onCompleted() {
                             // dialog.dismiss();
@@ -81,10 +84,10 @@ public class DriverRegisterPresenter {
                         }
 
                         @Override
-                        public void onNext(List<TblMember> member) {
+                        public void onNext(TblMember member) {
                             Log.i("loadRegisterAndCar", "OK");
                             success = true;
-                            //updateSignUp(member);
+                            updateSignUp(member);
                             //dialog.dismiss();
                         }
                     });
@@ -127,13 +130,22 @@ public class DriverRegisterPresenter {
 
     public void updateSignUp(TblMember member){
         try {
+            _activity = ApplicationController.getAppActivity();
             if(member.getSuccess().equalsIgnoreCase("1")){
                 tblMember = new TblMember();
                 tblMember = member;
-                //taskController.createMember(member);
-                loadRegisterCar(member.getMember_id());
+                taskController.createMember(member);
+                //loadRegisterCar(member.getMember_id());
+                Intent i = new Intent(_activity,LoginSecondActivity.class);
+                i.putExtra("authen" , member.getAuthority());
+                i.putExtra("member_type" , member.getMember_type());
+                i.putExtra("face_book_id" , member.getFace_book_id());
+                i.putExtra("user_name" , member.getUser_name());
+                i.putExtra("password" , member.getPassword());
+                _activity.startActivity(i);
+                _activity.finish();
             }else if(member.getSuccess().equalsIgnoreCase("0")){
-                dialogController.dialogNolmal(mView,"Wanning",member.getMessage());
+                dialogController.dialogNolmal(_activity,"Wanning",member.getMessage());
                 Log.i("message", member.getMessage());
             }
 

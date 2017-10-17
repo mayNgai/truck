@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -71,11 +72,11 @@ import java.util.Locale;
 
 public class UserMainActivity2 extends BaseActivity implements View.OnClickListener,OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener , com.google.android.gms.location.LocationListener{
-    private Button btn_now,btn_booking,btc_call_service;
-    private EditText edt_start,edt_count_date,edt_end_date,edt_start_date,edt_iden,edt_start_time,edt_end_time;
+    private static Button btn_now,btn_booking,btc_call_service;
+    private static EditText edt_start,edt_count_date,edt_end_date,edt_start_date,edt_iden,edt_start_time,edt_end_time;
     private CheckBox chk_cash,chk_credit;
     private ImageView img_start,img_del_start;
-    private LinearLayout linear_select_type,linear_current,linear_detail,linear_main1,linear_main2,linear_bottom,linear_head;
+    private static LinearLayout linear_select_type,linear_current,linear_detail,linear_main1,linear_main2,linear_bottom,linear_head;
     private static TextView txtname_car;
     //private LinearLayout linear_detail;
     //Map
@@ -85,7 +86,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
     private SupportMapFragment dMapFragment2;
     private GoogleMap gMap;
     private Marker markerDriverRealTime;
-    private Marker markerDes;
+    private static Marker markerDes;
     private double longitude;
     private double latitude;
     private Marker[] markers = new Marker[10000];
@@ -101,6 +102,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
     private DateController dateController;
     private String service_type = "";
     private DialogController dialog;
+    private boolean flagCountDate =  false;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -418,12 +420,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 getDestinationBySearch();
                 break;
             case R.id.img_del_start:
-                edt_start.setText("");
-                linear_detail.setVisibility(View.GONE);
-                btn_now.setTextColor(getResources().getColor(R.color.black_1));
-                btn_booking.setTextColor(getResources().getColor(R.color.black_1));
-                removeMarkerDestination();
-                linear_select_type.setVisibility(View.VISIBLE);
+                setDefault();
                 break;
             case R.id.btn_now:
                 if(edt_start.getText().toString().length()>0){
@@ -455,12 +452,18 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
 
                 break;
             case R.id.edt_start_date:
+                flagCountDate = false;
+                edt_end_date.setText("");
+                edt_start_time.setText("");
+                edt_end_time.setText("");
+                edt_count_date.setText("");
                 setDatePicker(edt_start_date);
                 break;
             case R.id.edt_end_date:
-                if(edt_start_date.getText().toString().length()>0&&edt_start_time.getText().toString().length()>0)
+                if(edt_start_date.getText().toString().length()>0&&edt_start_time.getText().toString().length()>0) {
+                    flagCountDate = true;
                     setDatePicker(edt_end_date);
-                else
+                }else
                     dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDate));
                 break;
             case R.id.edt_start_time:
@@ -496,7 +499,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 tblTask.setUser_id(members.get(0).getMember_id());
                 tblTask.setGroup_id(position);
                 tblTask.setService_type(service_type);
-                tblTask.setDate_count(0);
+                tblTask.setDate_count(Integer.parseInt(edt_count_date.getText().toString()));
                 tblTask.setType_create("1");
                 tblTask.setIdentify(edt_iden.getText().toString());
                 if(service_type.equalsIgnoreCase("Now"))
@@ -507,6 +510,8 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 mUserMainPresenter = new UserMainPresenter(UserMainActivity2.this,mApiService);
                 mUserMainPresenter.sentCrarteTask();
 
+            }else {
+                dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDate));
             }
 
         }catch (Exception e){
@@ -535,6 +540,11 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                         aa = year + "-0" + (monthOfYear + 1) + "-0" + dayOfMonth;
                 }
                 editText.setText(dateController.convertDateFormat2To1(aa));
+                if(flagCountDate){
+                    int days = dateController.daysBetween(dateController.dateFormat1Tolong(edt_start_date.getText().toString()),dateController.dateFormat2Tolong(aa));
+                    //int days = Days.daysBetween(dateController.convertDateFormat2To1(edt_start_date.getText().toString()), aa).getDays();
+                    edt_count_date.setText(String.valueOf(days));
+                }
             }
         }, mYear, mMonth, mDay);
         datePickerDialog.show();
@@ -683,7 +693,12 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
 
     public void setDefault(){
         try {
-
+            edt_start.setText("");
+            linear_detail.setVisibility(View.GONE);
+            btn_now.setTextColor(getResources().getColor(R.color.black_1));
+            btn_booking.setTextColor(getResources().getColor(R.color.black_1));
+            removeMarkerDestination();
+            linear_select_type.setVisibility(View.VISIBLE);
         }catch (Exception e){
             e.printStackTrace();
         }

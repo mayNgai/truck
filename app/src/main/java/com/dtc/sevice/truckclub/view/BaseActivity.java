@@ -3,6 +3,8 @@ package com.dtc.sevice.truckclub.view;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,9 +26,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dtc.sevice.truckclub.R;
-import com.dtc.sevice.truckclub.adapter.TaskListAdapter;
+import com.dtc.sevice.truckclub.adapter.AboutAdapter;
 import com.dtc.sevice.truckclub.adapter.TaskListWaitAdapter;
-import com.dtc.sevice.truckclub.adapter.TypeCarAdapter;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
@@ -38,7 +39,6 @@ import com.dtc.sevice.truckclub.view.driver.activity.DriverBookingActivity;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverHistoryActivity;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverMainActivity2;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverProfileActivity;
-import com.dtc.sevice.truckclub.view.user.activity.UserBookActivity;
 import com.dtc.sevice.truckclub.view.user.activity.UserHistoryActivity;
 import com.dtc.sevice.truckclub.view.user.activity.UserProfileActivity;
 import com.facebook.AccessToken;
@@ -145,7 +145,7 @@ public class BaseActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_driver_menu, menu);
+        inflater.inflate(R.menu.main_menu, menu);
         status = menu.findItem(R.id.status);
         txt_status = menu.findItem(R.id.txt_status);
         if(listMembers==null || listMembers.size()==0){
@@ -207,7 +207,7 @@ public class BaseActivity extends AppCompatActivity implements
                 //setDialogBottom("Setting");
                 return true;
             case R.id.action_about:
-                //setDialogBottom("About");
+                setDialogAbout("About");
                 return true;
             case R.id.status:
                 if(listMembers==null || listMembers.size()==0){
@@ -324,6 +324,45 @@ public class BaseActivity extends AppCompatActivity implements
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
             recycler_view.setLayoutManager(mLayoutManager);
             TaskListWaitAdapter adapter = new TaskListWaitAdapter(BaseActivity.this,listTask);
+            recycler_view.setAdapter(adapter);
+            mBottomSheetDialog.getWindow ().setLayout (LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
+            mBottomSheetDialog.getWindow ().setGravity (Gravity.BOTTOM);
+            mBottomSheetDialog.show ();
+            txt_head.setText(txtHead);
+            img_down.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mBottomSheetDialog.dismiss();
+
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void setDialogAbout(String txtHead){
+        try {
+            LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate (R.layout.bottom_dialog_recycle, null);
+            TextView txt_head = (TextView)view.findViewById( R.id.txt_head);
+            ImageView img_down = (ImageView)view.findViewById( R.id.img_down);
+            RecyclerView recycler_view = (RecyclerView)view.findViewById( R.id.recycler_view);
+            final Dialog mBottomSheetDialog = new Dialog (this,R.style.MaterialDialogSheet);
+            mBottomSheetDialog.setContentView (view);
+            mBottomSheetDialog.setCancelable (true);
+            recycler_view.setHasFixedSize(true);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+            recycler_view.setLayoutManager(mLayoutManager);
+            List<String> aboutArray = new ArrayList<String>();
+            PackageManager manager = BaseActivity.this.getPackageManager();
+            PackageInfo info = null;
+            info = manager.getPackageInfo(BaseActivity.this.getPackageName(), 0);
+            String version = info.versionName;
+            String www = getResources().getString(R.string.wwwdtc);
+            aboutArray.add(getResources().getString(R.string.version) + " " + version + " " + getResources().getString(R.string.checkUpdate));
+            aboutArray.add(www);
+            AboutAdapter adapter = new AboutAdapter(BaseActivity.this,aboutArray);
             recycler_view.setAdapter(adapter);
             mBottomSheetDialog.getWindow ().setLayout (LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
             mBottomSheetDialog.getWindow ().setGravity (Gravity.BOTTOM);

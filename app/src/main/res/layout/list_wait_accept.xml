@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="5dp">
 
     <LinearLayout
@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:text="เวลานัดหมาย :"
                     android:textStyle="bold"
-                    android:textSize="@dimen/font_22"/>
+                    android:textSize="@dimen/font_20"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                         android:id="@+id/txt_time_start"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginLeft="5dp"
                         android:textSize="@dimen/font_24"
                         android:text="10:00"/>
                     <TextView
@@ -113,6 +113,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_14"
                         android:text="จำนวนคนขับเสนอราคา"
                         android:textStyle="bold"/>
                 </LinearLayout>

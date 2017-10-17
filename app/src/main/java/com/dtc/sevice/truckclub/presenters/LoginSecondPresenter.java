@@ -12,6 +12,7 @@ import com.dtc.sevice.truckclub.until.NetworkUtils;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.LoginSecondActivity;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverMainActivity2;
+import com.dtc.sevice.truckclub.view.driver.activity.DriverRegisterActivity;
 import com.dtc.sevice.truckclub.view.user.activity.UserMainActivity2;
 import com.dtc.sevice.truckclub.view.user.activity.UserRegisterActivity;
 
@@ -99,6 +100,18 @@ public class LoginSecondPresenter {
                 }else if(mView.member_type == 1){
                     if(mView.str_authen.equalsIgnoreCase(mView.getString(R.string.txtUser))){
                         Intent i = new Intent(mView, UserRegisterActivity.class);
+                        i.putExtra("member_type", String.valueOf(mView.member_type));
+                        i.putExtra("authen",mView.str_authen);
+                        i.putExtra("id", mView.id);
+                        i.putExtra("first_name",mView.first_name);
+                        i.putExtra("last_name", mView.last_name);
+                        i.putExtra("email",mView.email);
+                        i.putExtra("gender", mView.gender);
+                        i.putExtra("birthday",mView.birthday);
+                        mView.startActivity(i);
+                        mView.finish();
+                    }else if(mView.str_authen.equalsIgnoreCase(mView.getString(R.string.txtDriver))){
+                        Intent i = new Intent(mView, DriverRegisterActivity.class);
                         i.putExtra("member_type", String.valueOf(mView.member_type));
                         i.putExtra("authen",mView.str_authen);
                         i.putExtra("id", mView.id);

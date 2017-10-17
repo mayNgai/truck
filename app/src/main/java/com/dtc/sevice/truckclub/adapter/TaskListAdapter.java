@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -17,6 +18,8 @@ import android.widget.TextView;
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.until.DateController;
+import com.dtc.sevice.truckclub.until.DialogController;
+import com.dtc.sevice.truckclub.view.driver.activity.DriverBookingActivity;
 
 import java.util.List;
 
@@ -28,11 +31,17 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
     private static Context mcontext;
     private List<TblTask> arrayList;
     private DateController dateController;
+    private DialogController dialogController;
+    private static DriverBookingActivity mView;
+    private int select_position;
 
-    public TaskListAdapter(Context context, List<TblTask> _arrayList){
+    public TaskListAdapter(Context context, List<TblTask> _arrayList,int _select_position){
         this.arrayList = _arrayList;
         this.mcontext = context;
+        this.select_position = _select_position;
         dateController = new DateController();
+        dialogController = new DialogController();
+        mView = new DriverBookingActivity();
     }
 
     @Override
@@ -47,7 +56,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         });
 
     }
-
+    private static Dialog mBottomSheetDialog;
     private void setDialogBottom(View v,final int pos){
         try {
             LayoutInflater inflater = (LayoutInflater)v.getContext().getSystemService(v.getContext().LAYOUT_INFLATER_SERVICE);
@@ -62,10 +71,11 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
             TextView txt_surname = (TextView)view.findViewById( R.id.txt_driver_surname);
             TextView txt_start_position = (TextView)view.findViewById( R.id.txt_start_position);
             TextView txt_type_car = (TextView)view.findViewById( R.id.txt_type_car);
-            EditText edt_price = (EditText)view.findViewById( R.id.edt_price);
+            final EditText edt_price = (EditText)view.findViewById( R.id.edt_price);
             ImageButton img_ok = (ImageButton)view.findViewById( R.id.img_ok);
+            Button btn_travel = (Button)view.findViewById( R.id.btn_travel);
             RatingBar rating = (RatingBar)view.findViewById( R.id.rating);
-            final Dialog mBottomSheetDialog = new Dialog (v.getContext(),R.style.MaterialDialogSheet);
+            mBottomSheetDialog = new Dialog (v.getContext(),R.style.MaterialDialogSheet);
             mBottomSheetDialog.setContentView (view);
             mBottomSheetDialog.setCancelable (true);
             mBottomSheetDialog.getWindow ().setLayout (LinearLayout.LayoutParams.MATCH_PARENT,
@@ -81,12 +91,41 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
             txt_surname.setText(arrayList.get(pos).getLast_name());
             txt_start_position.setText(arrayList.get(pos).getDest_location());
             txt_type_car.setText(arrayList.get(pos).getName_group());
+            if(select_position == 1 ||select_position == 2){
+                edt_price.setText(arrayList.get(pos).getPrice_offer());
+                edt_price.setEnabled(false);
+                img_ok.setVisibility(View.GONE);
+            }else if(select_position == 3){
+                edt_price.setText(arrayList.get(pos).getPrice_offer());
+                edt_price.setEnabled(false);
+                img_ok.setVisibility(View.GONE);
+                btn_travel.setVisibility(View.VISIBLE);
+            }
             img_cancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mBottomSheetDialog.dismiss();
                 }
             });
+            img_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(edt_price.getText().toString().length()>0){
+                        mView = new DriverBookingActivity();
+                        mView.sentOfferPrice(Integer.parseInt(arrayList.get(pos).getId()),Integer.parseInt(edt_price.getText().toString()));
+                    }else {
+                        dialogController.dialogNolmal(mcontext,"Warnning","กรุณาใส่ราคาก่อน..");
+                    }
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void closeDriverOffer(){
+        try {
+            mBottomSheetDialog.dismiss();
         }catch (Exception e){
             e.printStackTrace();
         }

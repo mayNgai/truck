@@ -8,7 +8,8 @@
         app:showAsAction="always">
 
         <item
-            android:id="@+id/countDown"
+            android:id="@+id/booking"
+            android:icon="@drawable/ic_event_note_black_24dp"
             android:orderInCategory="103"
             android:title=""
             app:showAsAction="always" />

@@ -33,11 +33,13 @@ import com.dtc.sevice.truckclub.adapter.AddImageAdapter;
 import com.dtc.sevice.truckclub.adapter.ItemOffsetDecoration;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblPicture;
+import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.ApplicationController;
 import com.dtc.sevice.truckclub.until.Updown_Image;
 import com.dtc.sevice.truckclub.view.LoginSecondActivity;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverRegisterActivity;
 import com.dtc.sevice.truckclub.view.user.activity.UserRegisterActivity;
+import com.squareup.picasso.Picasso;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -65,11 +67,13 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
     private ApplicationController _appController;
     public static ArrayList<String> selectedItems;
     private Updown_Image download_image;
+    private boolean flag_select_profile;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_register_driver_third, container, false);
         init();
+        setImageFromFacebook();
         return rootView;
     }
 
@@ -111,6 +115,24 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
         }
     }
 
+    private void setImageFromFacebook(){
+        try {
+            mView = new DriverRegisterActivity();
+            if(mView.member != null){
+                flag_select_profile = false;
+                defaultPicProfile = false;
+                if(mView.member.getMember_type()==1){
+                    Picasso.with(getActivity())
+                            .load(ApiService.url_facebook + mView.member.getFace_book_id() + ApiService.pic_facebook)
+                            .into(img_profile);
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -118,7 +140,8 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
                 mView.setComplete();
                 break;
             case R.id.img_profile:
-                setSelectImage();
+                if(flag_select_profile)
+                    setSelectImage();
                 break;
 
         }
@@ -241,12 +264,15 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
             }else {
-                download_image = new Updown_Image();
                 success = true;
-                String new_path = GlobalVar.saveImage(bitmapProfileDefault,pathDefault);
-                mView.member.setName_pic_path(GlobalVar.findPicName(new_path));
-                final String result = download_image.SendImageNode(_activity, new_path);
-                Log.i("Upload Image",result);
+                download_image = new Updown_Image();
+                if(bitmapProfileDefault!=null){
+                    String new_path = GlobalVar.saveImage(bitmapProfileDefault,pathDefault);
+                    mView.member.setName_pic_path(GlobalVar.findPicName(new_path));
+                    final String result = download_image.SendImageNode(_activity, new_path);
+                    Log.i("Upload Image",result);
+                }
+
                 for(int i=0;i<imagePaths.size();i++){
                     if(imagePaths.get(i).getPath() == null || imagePaths.get(i).getPath().length()==0){
                         imagePaths.remove(i);

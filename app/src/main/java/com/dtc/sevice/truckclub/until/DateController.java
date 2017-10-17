@@ -169,6 +169,10 @@ public class DateController {
         return newFormat;
     }
 
+    public int daysBetween(long t1, long t2) {
+        return (int) ((t2 - t1) / (1000 * 60 * 60 * 24));
+    }
+
     public List<String> daysOfWeek(){
         List<String> list = new ArrayList<>();
         Calendar cal = Calendar.getInstance();

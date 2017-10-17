@@ -25,11 +25,14 @@ import android.widget.TextView;
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblMember;
+import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DateController;
 import com.dtc.sevice.truckclub.until.DialogController;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.LoginSecondActivity;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverRegisterActivity;
+import com.facebook.AccessToken;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by May on 9/21/2017.
@@ -48,13 +51,14 @@ public class RegisterDriverFragmentFirst extends Fragment implements View.OnClic
     public boolean flagSex = false;
     public static TblMember tblMember;
     private static DriverRegisterActivity mView;
-    private int member_type = 0;
-    private String face_book_id="";
+    private static int member_type = 0;
+    private static String face_book_id="";
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_register_driver_first, container, false);
         init();
+        setDataText();
         setSpinnerSex();
         return rootView;
     }
@@ -82,6 +86,7 @@ public class RegisterDriverFragmentFirst extends Fragment implements View.OnClic
                 @Override
                 public void onClick(View v) {
                     //getActivity().onBackPressed();
+                    AccessToken.setCurrentAccessToken(null);
                     Intent i = new Intent(getActivity(), LoginSecondActivity.class);
                     i.putExtra("authen","Driver");
                     getActivity().startActivity(i);
@@ -94,6 +99,29 @@ public class RegisterDriverFragmentFirst extends Fragment implements View.OnClic
             e.printStackTrace();
         }
     }
+
+    private void setDataText(){
+        try {
+            if(mView.member != null){
+                tblMember = new TblMember();
+                tblMember = mView.member;
+                if(tblMember.getMember_type()==1){
+                    member_type = 1;
+                    face_book_id = tblMember.getFace_book_id();
+                    edt_first_name.setText(tblMember.getFirst_name());
+                    edt_last_name.setText(tblMember.getLast_name());
+                    edt_email.setText(tblMember.getEmail());
+                    edt_tel.setText(tblMember.getTel());
+                    txt_date_of_birth.setText(((tblMember.getBirth_date() == null) || (tblMember.getBirth_date().length()==0) ? "" : dateController.convertDateFormat7To1(tblMember.getBirth_date())));
+                }
+
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
     private void setSpinnerSex(){
         try {
@@ -176,8 +204,8 @@ public class RegisterDriverFragmentFirst extends Fragment implements View.OnClic
                 success = true;
                 tblMember = new TblMember();
                 tblMember.setUser_name(edt_user_name.getText().toString());
-                tblMember.setFirst_name(edt_first_name.getText().toString());
-                tblMember.setLast_name(edt_last_name.getText().toString());
+                tblMember.setFirst_name(edt_first_name.getText().toString().replace("'"," "));
+                tblMember.setLast_name(edt_last_name.getText().toString().replace("'"," "));
                 tblMember.setEmail(edt_email.getText().toString());
                 tblMember.setTel(edt_tel.getText().toString());
                 tblMember.setPassword(edt_password.getText().toString());

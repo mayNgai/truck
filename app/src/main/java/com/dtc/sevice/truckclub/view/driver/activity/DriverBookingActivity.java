@@ -28,6 +28,8 @@ import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DateController;
 import com.dtc.sevice.truckclub.until.TaskController;
 
+import org.json.JSONObject;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,12 +56,13 @@ public class DriverBookingActivity extends AppCompatActivity {
     public static List<String> listFreeDate;
     private DateController dateController;
     private List<TblTask> listTasks;
-    public List<TblMember> members;
+    public static List<TblMember> members;
     private static TaskListAdapter adapter;
-    private ApiService mForum;
-    private DriverBookingPresenter driverBookingPresenter;
+    private static ApiService mForum;
+    private static DriverBookingPresenter driverBookingPresenter;
     private String strType = "1";
     private TaskController taskController;
+    private static int select_position = 0;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,6 +179,7 @@ public class DriverBookingActivity extends AppCompatActivity {
             sp_job.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    select_position = i;
                     if(i == 0){
                         strType = "1";
                     }else if(i == 1){
@@ -208,6 +212,24 @@ public class DriverBookingActivity extends AppCompatActivity {
         }
     }
 
+    public void sentOfferPrice(int id , int price){
+        try {
+            mForum = new ApiService();
+            driverBookingPresenter = new DriverBookingPresenter(DriverBookingActivity.this , mForum);
+            driverBookingPresenter.sentOfferPrice(id, price);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void updateSentOfferPrice(){
+        try {
+            adapter.closeDriverOffer();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void setListTask(List<TblTask> lists){
         try {
             recycler_view.setHasFixedSize(true);
@@ -215,7 +237,7 @@ public class DriverBookingActivity extends AppCompatActivity {
             recycler_view.setLayoutManager(mLayoutManager);
             listTasks = new ArrayList<TblTask>();
             listTasks = lists;
-            adapter = new TaskListAdapter(DriverBookingActivity.this,listTasks);
+            adapter = new TaskListAdapter(DriverBookingActivity.this,listTasks,select_position);
             recycler_view.setAdapter(adapter);
 
         }catch (Exception e){

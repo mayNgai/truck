@@ -81,6 +81,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService{
                             .setLargeIcon(icon)
                             .setColor(Color.RED)
                             .setSmallIcon(R.drawable.ic_truck_marker);
+                }else {
+                    Activity _activity = ApplicationController.getAppActivity();
+                    Intent i = new Intent(_activity, LoginFirstActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                    _activity.finish();
+                    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_ONE_SHOT);
+
+                    notificationBuilder = new NotificationCompat.Builder(this)
+                            .setContentTitle(notification.getTitle())
+                            .setContentText(notification.getBody())
+                            .setAutoCancel(true)
+                            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                            .setContentIntent(pendingIntent)
+                            .setContentInfo(notification.getTitle())
+                            .setLargeIcon(icon)
+                            .setColor(Color.RED)
+                            .setSmallIcon(R.drawable.ic_truck_marker);
                 }
 //                URL url = new URL(picture_url);
 //                Bitmap bigPicture = BitmapFactory.decodeStream(url.openConnection().getInputStream());

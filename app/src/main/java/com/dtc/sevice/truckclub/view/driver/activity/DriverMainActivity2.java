@@ -145,7 +145,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
             recycler_view.setLayoutManager(mLayoutManager);
             listTasks = new ArrayList<TblTask>();
             listTasks = lists;
-            adapter = new TaskListAdapter(DriverMainActivity2.this,listTasks);
+            adapter = new TaskListAdapter(DriverMainActivity2.this,listTasks,0);
             recycler_view.setAdapter(adapter);
         }catch (Exception e){
             e.printStackTrace();

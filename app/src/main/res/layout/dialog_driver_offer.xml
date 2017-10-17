@@ -270,6 +270,7 @@
         android:layout_marginTop="5dp"/>
 
     <ImageButton
+        android:visibility="visible"
         android:id="@+id/img_ok"
         android:layout_width="@dimen/margin_60"
         android:layout_height="@dimen/margin_60"
@@ -278,5 +279,17 @@
         android:layout_marginBottom="20dp"
         android:background="@drawable/button_cricle"
         android:src="@drawable/check_login_white" />
+    <Button
+        android:visibility="gone"
+        android:id="@+id/btn_travel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_60"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:textColor="#FFFFFF"
+        android:text="Go.."
+        android:textSize="@dimen/font_20"
+        android:background="@drawable/buttonshape_orange"/>
 
 </RelativeLayout>

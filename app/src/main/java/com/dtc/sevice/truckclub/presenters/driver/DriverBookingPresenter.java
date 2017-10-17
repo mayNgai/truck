@@ -1,5 +1,6 @@
 package com.dtc.sevice.truckclub.presenters.driver;
 
+import android.app.ProgressDialog;
 import android.util.Log;
 
 import com.dtc.sevice.truckclub.model.TblMember;
@@ -20,6 +21,7 @@ import rx.schedulers.Schedulers;
  */
 
 public class DriverBookingPresenter {
+    private static ProgressDialog dialog;
     private ApiService mForum;
     private DriverBookingActivity mView;
     private DialogController dialogController;
@@ -86,6 +88,41 @@ public class DriverBookingPresenter {
                             }
                         });
             }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void sentOfferPrice(int id , int price){
+        try {
+//            if(!NetworkUtils.isConnected(mView)){
+//                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+//            }else {
+               // dialog = ProgressDialog.show(mView, "Wait", "loading...");
+                mForum.getApi()
+                        .sentOfferPrice(id , mView.members.get(0).getMember_id() , price , 0)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<TblTask>() {
+                            @Override
+                            public void onCompleted() {
+                                //dialog.dismiss();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e("loadDataMember Error", e.getMessage());
+                               // dialog.dismiss();
+                            }
+
+                            @Override
+                            public void onNext(TblTask tblTasks) {
+                                mView.updateSentOfferPrice();
+                              //  dialog.dismiss();
+                            }
+                        });
+//            }
 
         }catch (Exception e){
             e.printStackTrace();

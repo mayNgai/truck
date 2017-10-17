@@ -35,8 +35,9 @@
                 android:layout_marginLeft="10dp"
                 android:textStyle="bold"
                 android:textSize="@dimen/font_22"
-                android:text="รหัสงาน :"/>
+                android:text="เลขที่งาน :"/>
             <TextView
+                android:id="@+id/txt_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -86,7 +87,6 @@
                     android:src="@drawable/ic_query_builder_black_24dp"
                     android:visibility="gone"/>
                 <TextView
-                    android:id="@+id/txt_date_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
@@ -126,7 +126,6 @@
                     android:src="@drawable/ic_event_note_black_24dp"
                     android:visibility="gone"/>
                 <TextView
-                    android:id="@+id/txt_date_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
@@ -190,7 +189,7 @@
                 android:layout_height="wrap_content"
                 android:text="จำนวนขอใช้งาน"
                 android:textStyle="bold"
-                android:textSize="@dimen/font_24"/>
+                android:textSize="@dimen/font_20"/>
             <TextView
                 android:id="@+id/txt_count_date"
                 android:layout_width="wrap_content"
@@ -203,7 +202,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:textSize="@dimen/font_24"
+                android:textSize="@dimen/font_20"
                 android:text="วัน"/>
 
         </LinearLayout>
@@ -220,7 +219,7 @@
                 android:layout_height="wrap_content"
                 android:text="ประเภทรถ"
                 android:textStyle="bold"
-                android:textSize="@dimen/font_24"/>
+                android:textSize="@dimen/font_20"/>
             <TextView
                 android:id="@+id/txt_type_car"
                 android:layout_width="wrap_content"
@@ -249,9 +248,9 @@
             android:text="จำนวนคนขับรถที่รอการตอบรับ"
             android:textStyle="bold"
             android:layout_marginLeft="10dp"
-            android:textSize="@dimen/font_18"/>
+            android:textSize="@dimen/font_16"/>
         <TextView
-            android:id="@+id/txt_type_car"
+            android:id="@+id/txt_count_driver"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -260,8 +259,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:textSize="@dimen/font_24"
+            android:layout_marginLeft="16dp"
+            android:textSize="@dimen/font_16"
             android:text="คน"/>
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
