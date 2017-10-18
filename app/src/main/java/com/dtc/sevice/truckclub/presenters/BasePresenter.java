@@ -136,7 +136,12 @@ public class BasePresenter {
 
                             @Override
                             public void onNext(List<TblTask> tblTasks) {
-                                mView.updateTaskWait(tblTasks);
+                                if(tblTasks.get(0).getTask_status()>2){
+                                    mView.updateTaskBooking(tblTasks);
+                                }else {
+                                    mView.updateTaskWait(tblTasks);
+                                }
+
                             }
                         });
             }

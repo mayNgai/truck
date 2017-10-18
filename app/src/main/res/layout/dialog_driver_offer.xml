@@ -177,14 +177,21 @@
                         android:layout_marginLeft="15dp"
                         android:text="นามสกุล"/>
                 </LinearLayout>
-                <RatingBar
-                    android:id="@+id/rating"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:isIndicator="true"
-                    android:numStars="5"
-                    android:scaleX="0.5"
-                    android:scaleY="0.5" />
+                    android:gravity="center_horizontal">
+                    <RatingBar
+                        android:id="@+id/rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:isIndicator="true"
+                        android:clickable="false"
+                        android:numStars="5"
+                        android:scaleX="0.5"
+                        android:scaleY="0.5" />
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
         <LinearLayout

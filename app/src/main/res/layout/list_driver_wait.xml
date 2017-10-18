@@ -5,6 +5,7 @@
     android:padding="5dp">
 
     <LinearLayout
+        android:id="@+id/linear_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/buttonshape_white_border_orange"
@@ -138,9 +139,10 @@
                 </LinearLayout>
                 <RatingBar
                     android:id="@+id/rating_driver"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:isIndicator="true"
+                    android:clickable="false"
                     android:numStars="5"
                     android:scaleX="0.5"
                     android:scaleY="0.5" />

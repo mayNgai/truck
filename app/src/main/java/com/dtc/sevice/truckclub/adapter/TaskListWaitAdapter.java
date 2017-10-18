@@ -2,6 +2,7 @@ package com.dtc.sevice.truckclub.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -60,9 +61,15 @@ public class TaskListWaitAdapter extends RecyclerView.Adapter<TaskListWaitAdapte
             TextView txt_count_date = (TextView)view.findViewById(R.id.txt_count_date);
             TextView txt_type_car = (TextView)view.findViewById(R.id.txt_type_car);
             TextView txt_count_driver = (TextView)view.findViewById(R.id.txt_count_driver);
+            RecyclerView recycler_view = (RecyclerView)view.findViewById(R.id.recycler_view);
             final Dialog mBottomSheetDialog = new Dialog (v.getContext(),R.style.MaterialDialogSheet);
             mBottomSheetDialog.setContentView (view);
-            mBottomSheetDialog.setCancelable (true);
+            mBottomSheetDialog.setCancelable (false);
+            recycler_view.setHasFixedSize(true);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mcontext);
+            recycler_view.setLayoutManager(mLayoutManager);
+            DriverWaitAcceptAdapter adapter = new DriverWaitAcceptAdapter(mcontext,arrayList.get(pos).getMember());
+            recycler_view.setAdapter(adapter);
             mBottomSheetDialog.getWindow ().setLayout (LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT);
             mBottomSheetDialog.getWindow ().setGravity (Gravity.BOTTOM);

@@ -27,7 +27,9 @@ import android.widget.TextView;
 
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.adapter.AboutAdapter;
+import com.dtc.sevice.truckclub.adapter.TaskListAdapter;
 import com.dtc.sevice.truckclub.adapter.TaskListWaitAdapter;
+import com.dtc.sevice.truckclub.adapter.UserBookingMathedAdapter;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
@@ -61,7 +63,7 @@ public class BaseActivity extends AppCompatActivity implements
     private TaskController taskController;
     public static List<TblMember> listMembers;
     private Activity _activity;
-    private MenuItem status,txt_status;
+    private MenuItem status,txt_status,booking;
     private static DriverMainActivity2 driverMainActivity2;
     public static TblTask tblTask;
     private ApiService mForum;
@@ -148,6 +150,7 @@ public class BaseActivity extends AppCompatActivity implements
         inflater.inflate(R.menu.main_menu, menu);
         status = menu.findItem(R.id.status);
         txt_status = menu.findItem(R.id.txt_status);
+        booking = menu.findItem(R.id.booking);
         if(listMembers==null || listMembers.size()==0){
             getMember();
         }
@@ -214,6 +217,9 @@ public class BaseActivity extends AppCompatActivity implements
                     getMember();
                 }
                 setStatus();
+                return true;
+            case R.id.booking:
+                getTaskBooking();
                 return true;
             case R.id.action_logout:
                 if(listMembers==null || listMembers.size()==0){
@@ -303,12 +309,35 @@ public class BaseActivity extends AppCompatActivity implements
             e.printStackTrace();
         }
     }
+    private void getTaskBooking(){
+        try {
+            tblTask = new TblTask();
+            tblTask.setService_type("Booking");
+            tblTask.setTask_status(3);
+            tblTask.setMember(listMembers);
+            mForum = new ApiService();
+            basePresenter = new BasePresenter(this,mForum);
+            basePresenter.loadTask();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     List<TblTask> listTask = new ArrayList<TblTask>();
     public void updateTaskWait(List<TblTask> tblTasks){
         try {
             listTask = new ArrayList<TblTask>();
             listTask = tblTasks;
             setDialogBottom("Wait accept");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void updateTaskBooking(List<TblTask> tblTasks){
+        try {
+            listTask = new ArrayList<TblTask>();
+            listTask = tblTasks;
+            setDialogBottom("Booking");
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -323,12 +352,18 @@ public class BaseActivity extends AppCompatActivity implements
             RecyclerView recycler_view = (RecyclerView)view.findViewById( R.id.recycler_view);
             final Dialog mBottomSheetDialog = new Dialog (this,R.style.MaterialDialogSheet);
             mBottomSheetDialog.setContentView (view);
-            mBottomSheetDialog.setCancelable (true);
+            mBottomSheetDialog.setCancelable (false);
             recycler_view.setHasFixedSize(true);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
             recycler_view.setLayoutManager(mLayoutManager);
-            TaskListWaitAdapter adapter = new TaskListWaitAdapter(BaseActivity.this,listTask);
-            recycler_view.setAdapter(adapter);
+            if(txtHead.equalsIgnoreCase("Wait accept")){
+                TaskListWaitAdapter adapter = new TaskListWaitAdapter(BaseActivity.this,listTask);
+                recycler_view.setAdapter(adapter);
+            }else {
+                UserBookingMathedAdapter adapter = new UserBookingMathedAdapter(BaseActivity.this,listTask);
+                recycler_view.setAdapter(adapter);
+            }
+
             mBottomSheetDialog.getWindow ().setLayout (LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
             mBottomSheetDialog.getWindow ().setGravity (Gravity.BOTTOM);
             mBottomSheetDialog.show ();

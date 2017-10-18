@@ -116,6 +116,16 @@ public class TblMember implements Serializable {
     @DatabaseField( useGetSet = true)
     private String token_firebase;
 
+    @SerializedName("price_offer")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private String price_offer;
+
+    @SerializedName("date_offer_create")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private String date_offer_create;
+
     @SerializedName("car_detail")
     @Expose
     private List<TblCarDetail> car_detail = null;
@@ -342,5 +352,21 @@ public class TblMember implements Serializable {
 
     public void setCar_detail(List<TblCarDetail> car_detail) {
         this.car_detail = car_detail;
+    }
+
+    public String getPrice_offer() {
+        return price_offer;
+    }
+
+    public void setPrice_offer(String price_offer) {
+        this.price_offer = price_offer;
+    }
+
+    public String getDate_offer_create() {
+        return date_offer_create;
+    }
+
+    public void setDate_offer_create(String date_offer_create) {
+        this.date_offer_create = date_offer_create;
     }
 }

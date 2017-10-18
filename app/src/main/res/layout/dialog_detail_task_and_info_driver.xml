@@ -4,6 +4,7 @@
     android:background="@color/WhiteSmoke"
     android:layout_height="match_parent">
     <LinearLayout
+        android:id="@+id/linear_title"
         android:layout_width="match_parent"
         android:background="@color/actionBar"
         android:gravity="center_vertical"
@@ -15,6 +16,7 @@
             android:src="@drawable/back_page"/>
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/linear_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -232,44 +234,51 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linear_list_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="5dp"
-        android:gravity="center_vertical"
-        android:padding="10dp">
-        <ImageView
-            android:layout_width="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_query_builder_black_24dp"/>
-        <TextView
-            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
+            android:padding="10dp">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_query_builder_black_24dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="จำนวนคนขับรถที่รอการตอบรับ"
+                android:textStyle="bold"
+                android:layout_marginLeft="10dp"
+                android:textSize="@dimen/font_16"/>
+            <TextView
+                android:id="@+id/txt_count_driver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:textSize="@dimen/font_24"
+                android:text="20"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:textSize="@dimen/font_16"
+                android:text="คน"/>
+        </LinearLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="จำนวนคนขับรถที่รอการตอบรับ"
-            android:textStyle="bold"
-            android:layout_marginLeft="10dp"
-            android:textSize="@dimen/font_16"/>
-        <TextView
-            android:id="@+id/txt_count_driver"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:textSize="@dimen/font_24"
-            android:text="20"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:textSize="@dimen/font_16"
-            android:text="คน"/>
+            android:layout_marginLeft="@dimen/padding_10"
+            android:layout_marginRight="@dimen/padding_10"
+            android:layout_marginBottom="5dp">
+        </android.support.v7.widget.RecyclerView>
     </LinearLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/padding_10"
-        android:layout_marginRight="@dimen/padding_10"
-        android:layout_marginBottom="5dp">
-    </android.support.v7.widget.RecyclerView>
+
 
 </LinearLayout>
