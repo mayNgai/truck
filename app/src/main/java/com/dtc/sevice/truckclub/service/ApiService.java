@@ -109,6 +109,9 @@ public class ApiService {
         @POST("get_task.php")
         public Observable<List<TblTask>> getTask(@Body TblTask task);
 
+        @POST("get_schedules_driver.php")
+        public Observable<List<TblTask>> getSchedulesDriver(@Body TblMember member);
+
         @FormUrlEncoded
         @POST("get_history_user.php")
         public Observable<List<TblTask>> getHistoryUser(@Field("member_id") int member_id ,@Field("service_type") String service_type);

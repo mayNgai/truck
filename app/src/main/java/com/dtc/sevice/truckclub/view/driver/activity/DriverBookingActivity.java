@@ -52,6 +52,7 @@ public class DriverBookingActivity extends AppCompatActivity {
     public static List<String> listFreeDate;
     private DateController dateController;
     private List<TblTask> listTasks;
+    private List<TblTask> listSchedulesTasks;
     public static List<TblMember> members;
     public static TblTask tblTask;
     private static TaskListAdapter adapter;
@@ -213,6 +214,15 @@ public class DriverBookingActivity extends AppCompatActivity {
         }
     }
 
+    private void getSchedules(){
+        try {
+            driverBookingPresenter = new DriverBookingPresenter(DriverBookingActivity.this , mForum);
+            driverBookingPresenter.loadSchedules();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void sentOfferPrice(int id , int price){
         try {
             mForum = new ApiService();
@@ -241,6 +251,15 @@ public class DriverBookingActivity extends AppCompatActivity {
             adapter = new TaskListAdapter(DriverBookingActivity.this,listTasks,select_position);
             recycler_view.setAdapter(adapter);
 
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void setListSchedulesTasks(List<TblTask> lists){
+        try {
+            listSchedulesTasks = new ArrayList<TblTask>();
+            listSchedulesTasks = lists;
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -14,13 +14,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -30,11 +30,8 @@ import android.widget.Toast;
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.adapter.AddImageAdapter;
 import com.dtc.sevice.truckclub.adapter.ItemOffsetDecoration;
-import com.dtc.sevice.truckclub.adapter.TypeCarAdapter;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
-import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
-import com.dtc.sevice.truckclub.service.ApiService;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -51,9 +48,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by May on 10/18/2017.
  */
@@ -63,8 +57,9 @@ public class UserTaskActivity extends AppCompatActivity implements View.OnClickL
     private TblTask tblTask;
     private Toolbar toolbar;
     private ImageView img_profile;
-    private TextView txt_name,txt_last;
+    private TextView txt_name,txt_last,txt_step1,txt_step2,txt_step3;
     private LinearLayout linear_select_detail,linear_finish;
+    private ImageButton img_step1,img_step2,img_step3;
     private Activity _activity;
 
     private GoogleApiClient client;
@@ -88,7 +83,8 @@ public class UserTaskActivity extends AppCompatActivity implements View.OnClickL
                 tblTask = (TblTask) extra.getSerializableExtra("select_task");
         }
         init();
-        setinfo();
+        setStatusTitle();
+        setInfo();
     }
 
     private void init(){
@@ -99,6 +95,12 @@ public class UserTaskActivity extends AppCompatActivity implements View.OnClickL
             txt_last = (TextView)findViewById(R.id.txt_last);
             linear_select_detail = (LinearLayout)findViewById(R.id.linear_select_detail);
             linear_finish = (LinearLayout)findViewById(R.id.linear_finish);
+            img_step1 = (ImageButton)findViewById(R.id.img_step1);
+            img_step2 = (ImageButton)findViewById(R.id.img_step2);
+            img_step3 = (ImageButton)findViewById(R.id.img_step3);
+            txt_step1 = (TextView)findViewById(R.id.txt_step1);
+            txt_step2 = (TextView)findViewById(R.id.txt_step2);
+            txt_step3 = (TextView)findViewById(R.id.txt_step3);
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -127,13 +129,49 @@ public class UserTaskActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void setinfo(){
+    private void setInfo(){
         try {
             Picasso.with(_activity).load(GlobalVar.url_up_pic + tblTask.getMember().get(0).getName_pic_path())
                     .placeholder( R.drawable.progress_animation )
                     .fit().centerCrop().error( R.drawable.no_images ).into(img_profile);
             txt_name.setText(tblTask.getMember().get(0).getFirst_name());
             txt_last.setText(tblTask.getMember().get(0).getLast_name());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void setStatusTitle(){
+        try {
+            if(tblTask.getMember().get(0).getComplete_status() == 3){
+                img_step1.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                img_step2.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                img_step3.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                txt_step1.setTextColor(getResources().getColor(R.color.LightGray));
+                txt_step2.setTextColor(getResources().getColor(R.color.LightGray));
+                txt_step3.setTextColor(getResources().getColor(R.color.LightGray));
+            }else if(tblTask.getMember().get(0).getComplete_status() == 4){
+                img_step1.setBackgroundResource(R.drawable.button_cricle_orange);
+                img_step2.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                img_step3.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                txt_step1.setTextColor(getResources().getColor(R.color.black_1));
+                txt_step2.setTextColor(getResources().getColor(R.color.LightGray));
+                txt_step3.setTextColor(getResources().getColor(R.color.LightGray));
+            }else if(tblTask.getMember().get(0).getComplete_status() == 5){
+                img_step1.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                img_step2.setBackgroundResource(R.drawable.button_cricle_orange);
+                img_step3.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                txt_step1.setTextColor(getResources().getColor(R.color.LightGray));
+                txt_step2.setTextColor(getResources().getColor(R.color.black_1));
+                txt_step3.setTextColor(getResources().getColor(R.color.LightGray));
+            }else if(tblTask.getMember().get(0).getComplete_status() == 6){
+                img_step1.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                img_step2.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                img_step3.setBackgroundResource(R.drawable.button_cricle_orange);
+                txt_step1.setTextColor(getResources().getColor(R.color.LightGray));
+                txt_step2.setTextColor(getResources().getColor(R.color.LightGray));
+                txt_step3.setTextColor(getResources().getColor(R.color.black_1));
+            }
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -125,6 +125,10 @@ public class TblMember implements Serializable {
     @Expose
     @DatabaseField( useGetSet = true)
     private String date_offer_create;
+    @SerializedName("complete_status")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private int complete_status;
 
     @SerializedName("car_detail")
     @Expose
@@ -368,5 +372,13 @@ public class TblMember implements Serializable {
 
     public void setDate_offer_create(String date_offer_create) {
         this.date_offer_create = date_offer_create;
+    }
+
+    public int getComplete_status() {
+        return complete_status;
+    }
+
+    public void setComplete_status(int complete_status) {
+        this.complete_status = complete_status;
     }
 }

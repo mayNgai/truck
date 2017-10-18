@@ -31,6 +31,35 @@ public class DriverBookingPresenter {
         mView = view;
         dialogController = new DialogController();
     }
+    public void loadSchedules(){
+        try {
+            if(!NetworkUtils.isConnected(mView)){
+                dialogController.dialogNolmal(mView,"Warning","Internet is not stable.");
+            }else {
+                mForum.getApi()
+                        .getSchedulesDriver(mView.members.get(0))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<List<TblTask>>() {
+                            @Override
+                            public void onCompleted() {
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e("loadSchedules Error", e.getMessage());
+                            }
+
+                            @Override
+                            public void onNext(List<TblTask> tblTasks) {
+                                mView.setListSchedulesTasks(tblTasks);
+                            }
+                        });
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     public void loadTask(){
         try {
@@ -48,7 +77,7 @@ public class DriverBookingPresenter {
 
                             @Override
                             public void onError(Throwable e) {
-                                Log.e("loagTask Error", e.getMessage());
+                                Log.e("loadTask Error", e.getMessage());
                             }
 
                             @Override
