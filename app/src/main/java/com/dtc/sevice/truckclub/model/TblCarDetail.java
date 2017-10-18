@@ -79,6 +79,10 @@ public class TblCarDetail implements Serializable {
     @Expose
     @DatabaseField( useGetSet = true)
     private int sum_weight;
+    @SerializedName("group_name")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private String group_name;
     @SerializedName("picture")
     @Expose
     private List<TblPicture> picture = null;
@@ -234,5 +238,13 @@ public class TblCarDetail implements Serializable {
 
     public void setPicture(List<TblPicture> picture) {
         this.picture = picture;
+    }
+
+    public String getGroup_name() {
+        return group_name;
+    }
+
+    public void setGroup_name(String group_name) {
+        this.group_name = group_name;
     }
 }

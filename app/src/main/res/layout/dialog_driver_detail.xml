@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/WhiteSmoke">
+    <LinearLayout
+        android:id="@+id/linear_head"
+        android:layout_width="match_parent"
+        android:background="@color/actionBar"
+        android:gravity="center_vertical"
+        android:layout_height="50dp">
+        <ImageView
+            android:id="@+id/img_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back_page"/>
+    </LinearLayout>
     <ScrollView
+        android:layout_below="@+id/linear_head"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/linear_accept"
@@ -28,22 +42,31 @@
                 android:id="@+id/txt_driver_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/font_18"
                 android:text="นาย นั่งนิ่ง"/>
             <TextView
                 android:id="@+id/txt_driver_surname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:textSize="@dimen/font_18"
                 android:text="นามสกุล"/>
         </LinearLayout>
-        <RatingBar
-            android:id="@+id/rating_driver"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:isIndicator="true"
-            android:numStars="5"
-            android:scaleX="0.5"
-            android:scaleY="0.5" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal">
+                <RatingBar
+                    android:id="@+id/rating_driver"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:clickable="false"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5" />
+            </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,6 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
+                android:textSize="@dimen/font_18"
                 android:text="รูปโปรไฟล์"/>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"
@@ -206,6 +230,7 @@
             android:id="@+id/btn_accept"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:textSize="@dimen/font_18"
             android:background="@drawable/buttonshape_orange"
             android:text="OK" />
     </LinearLayout>

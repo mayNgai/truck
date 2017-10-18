@@ -67,7 +67,9 @@ public class AddImageAdapter extends RecyclerView.Adapter<AddImageAdapter.ViewHo
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                if(arrayList.get(i).getPath().length()==0){
+                if(arrayList.get(i).getPath()==null){
+
+                }else if(arrayList.get(i).getPath().length()==0){
                     Intent i = new Intent(v.getContext(), MultiPhotoSelectActivity.class);
                     v.getContext().startActivity(i);
                 }else {
