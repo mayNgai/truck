@@ -21,6 +21,7 @@ import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.until.DateController;
+import com.dtc.sevice.truckclub.view.BaseActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -33,10 +34,14 @@ public class DriverWaitAcceptAdapter extends RecyclerView.Adapter<DriverWaitAcce
     private static Context mcontext;
     private List<TblMember> arrayList;
     private DateController dateController;
-    public DriverWaitAcceptAdapter(Context context, List<TblMember> _arrayList){
+    private BaseActivity mView;
+    private int id;
+    public DriverWaitAcceptAdapter(Context context, List<TblMember> _arrayList ,int _id){
         this.arrayList = _arrayList;
         this.mcontext = context;
+        this.id = _id;
         dateController = new DateController();
+        mView = new BaseActivity();
     }
 
     @Override
@@ -101,6 +106,13 @@ public class DriverWaitAcceptAdapter extends RecyclerView.Adapter<DriverWaitAcce
             img_back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    mBottomSheetDialog.dismiss();
+                }
+            });
+            btn_accept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mView.callServiceUserAccept(id,arrayList.get(pos));
                     mBottomSheetDialog.dismiss();
                 }
             });

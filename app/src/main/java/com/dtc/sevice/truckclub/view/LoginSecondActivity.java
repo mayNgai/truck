@@ -29,6 +29,7 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONObject;
 
@@ -203,6 +204,8 @@ public class LoginSecondActivity extends AppCompatActivity implements View.OnCli
     private void callService(){
         try {
             token = FirebaseInstanceId.getInstance().getToken();
+            if(str_authen.equalsIgnoreCase("Driver"))
+                FirebaseMessaging.getInstance().subscribeToTopic("news");
             tblMember = new TblMember();
             tblMember.setUser_name(str_user_name);
             tblMember.setPassword(str_password);

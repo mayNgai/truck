@@ -15,8 +15,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dtc.sevice.truckclub.R;
@@ -64,7 +67,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     private Marker[] markers = new Marker[10000];
     private int subLastText = 25;
 
-    private TaskController taskController;
+    private static TaskController taskController;
     public List<TblMember> members;
     public static TblTask tblTask;
     public static List<TblTask> listTasks;
@@ -76,6 +79,10 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     private static TaskListAdapter adapter;
     private static RecyclerView recycler_view;
     private SwipeRefreshLayout swipe_refresh;
+    private static RelativeLayout linear_title;
+    private static ImageButton img_step1,img_step2,img_step3;
+    private static TextView txt_step1,txt_step2,txt_step3;
+    private static Button btn_done,btn_arrive;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,12 +93,22 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         setContentView(R.layout.activity_main_driver2);
         init();
+        getSchedulesDriver();
     }
 
     private void init(){
         recycler_view = (RecyclerView)findViewById(R.id.recycler_view);
         linear_select_type = (LinearLayout)findViewById(R.id.linear_select_type);
         swipe_refresh = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
+        linear_title = (RelativeLayout)findViewById(R.id.linear_title);
+        img_step1 = (ImageButton)findViewById(R.id.img_step1);
+        img_step2 = (ImageButton)findViewById(R.id.img_step2);
+        img_step3 = (ImageButton)findViewById(R.id.img_step3);
+        txt_step1 = (TextView)findViewById(R.id.txt_step1);
+        txt_step2 = (TextView)findViewById(R.id.txt_step2);
+        txt_step3 = (TextView)findViewById(R.id.txt_step3);
+        btn_done = (Button)findViewById(R.id.btn_done);
+        btn_arrive = (Button)findViewById(R.id.btn_arrive);
         taskController =new TaskController();
         baseActivity = new BaseActivity();
         members = new ArrayList<TblMember>();
@@ -108,8 +125,45 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         setShowSelectList();
+        setTitle();
         setRefreshList();
+        btn_arrive.setOnClickListener(this);
+        btn_done.setOnClickListener(this);
 //        setClickList();
+    }
+
+    public void setTitle(){
+        try {
+            if(members == null ||members.size()==0){
+                members = baseActivity.listMembers;
+            }
+            if(members.get(0).getStatus_id()>3){
+                linear_title.setVisibility(View.VISIBLE);
+                if(members.get(0).getStatus_id()==4){
+                    img_step1.setBackgroundResource(R.drawable.button_cricle_orange);
+                    img_step2.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                    img_step3.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                    txt_step1.setTextColor(getResources().getColor(R.color.black_1));
+                    txt_step2.setTextColor(getResources().getColor(R.color.LightGray));
+                    txt_step3.setTextColor(getResources().getColor(R.color.LightGray));
+                    btn_arrive.setVisibility(View.VISIBLE);
+                    btn_done.setVisibility(View.GONE);
+                }else if(members.get(0).getStatus_id()==5){
+                    img_step1.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                    img_step2.setBackgroundResource(R.drawable.button_cricle_orange);
+                    img_step3.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                    txt_step1.setTextColor(getResources().getColor(R.color.LightGray));
+                    txt_step2.setTextColor(getResources().getColor(R.color.black_1));
+                    txt_step3.setTextColor(getResources().getColor(R.color.LightGray));
+                    btn_arrive.setVisibility(View.GONE);
+                    btn_done.setVisibility(View.VISIBLE);
+                }
+            }else {
+                linear_title.setVisibility(View.GONE);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void setShowSelectList(){
@@ -152,6 +206,24 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
             listTasks = lists;
             adapter = new TaskListAdapter(DriverMainActivity2.this,listTasks,0);
             recycler_view.setAdapter(adapter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void getSchedulesDriver(){
+        try {
+            mForum = new ApiService();
+            driverMainPresenter = new DriverMainPresenter(DriverMainActivity2.this , mForum);
+            driverMainPresenter.loadSchedulesDriver();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void setUpdateListSchedulesTask(List<TblTask> lists){
+        try {
+            taskController.createTask(lists);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -338,12 +410,14 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
 
     public void onClick(View v) {
         switch (v.getId()) {
-//            case R.id.img_current:
-//                getCurrentLocation();
-//                break;
-//            case R.id.img_start:
-//                getDestinationBySearch();
-//                break;
+            case R.id.btn_done:
+
+                break;
+            case R.id.btn_arrive:
+                mForum = new ApiService();
+                driverMainPresenter = new DriverMainPresenter(DriverMainActivity2.this , mForum);
+//                driverMainPresenter.loadTask();
+                break;
 //            case R.id.img_del_start:
 //                edt_start.setText("");
 //                removeMarkerDestination();

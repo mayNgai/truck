@@ -130,6 +130,11 @@ public class TblMember implements Serializable {
     @DatabaseField( useGetSet = true)
     private int complete_status;
 
+    @SerializedName("task_id")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private String task_id;
+
     @SerializedName("car_detail")
     @Expose
     private List<TblCarDetail> car_detail = null;
@@ -380,5 +385,13 @@ public class TblMember implements Serializable {
 
     public void setComplete_status(int complete_status) {
         this.complete_status = complete_status;
+    }
+
+    public String getTask_id() {
+        return task_id;
+    }
+
+    public void setTask_id(String task_id) {
+        this.task_id = task_id;
     }
 }

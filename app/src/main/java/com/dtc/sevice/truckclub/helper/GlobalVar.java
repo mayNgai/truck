@@ -28,6 +28,8 @@ import android.widget.Toast;
 
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.model.TblTask;
+import com.dtc.sevice.truckclub.until.DateController;
+import com.dtc.sevice.truckclub.until.TaskController;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -980,6 +982,56 @@ public class GlobalVar {
             e.printStackTrace();
         }
         return countDate;
+    }
+
+    public static boolean checkSchedulesDriver(Context context , List<TblTask> taskList) {
+        boolean success = false;
+        Date dateobj = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        System.out.println(sdf.format(dateobj));
+        String strCurrent = sdf.format(dateobj);
+        DateController dateController = new DateController();
+        long current = dateController.dateFormat2Tolong(strCurrent);
+        for(TblTask t : taskList){
+            long start = dateController.dateFormat2Tolong(t.getStart_date());
+            long end = dateController.dateFormat2Tolong(t.getEnd_date());
+            if(current>=start &&current<=end){
+                success = false;
+                break;
+            }else{
+                success = true;
+            }
+        }
+        return success;
+    }
+
+    public static boolean checkNotiTaskBooking(String str_start_date){
+        boolean success = false;
+        try {
+            TaskController taskController = new TaskController();
+            DateController dateController = new DateController();
+            List<TblTask> taskList = new ArrayList<TblTask>();
+            taskList = taskController.getTask();
+            long current = dateController.dateFormat2Tolong(str_start_date);
+            if(taskList!= null || taskList.size()>0){
+                for(TblTask t : taskList){
+                    long start = dateController.dateFormat2Tolong(t.getStart_date());
+                    long end = dateController.dateFormat2Tolong(t.getEnd_date());
+                    if(current>=start &&current<=end){
+                        success = false;
+                        break;
+                    }else{
+                        success = true;
+                    }
+                }
+            }else {
+                success = true;
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return success;
     }
 
     public static boolean GPSEnable(Context context) {

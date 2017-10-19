@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.dtc.sevice.truckclub.model.TblCarGroup;
 import com.dtc.sevice.truckclub.model.TblMember;
+import com.dtc.sevice.truckclub.model.TblTask;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
@@ -19,6 +20,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "truckclub.db";
     private static final int DATABASE_VERSION = 1;
     private RuntimeExceptionDao<TblMember, String> tblMember;
+    private RuntimeExceptionDao<TblTask, String> tblTask;
     private RuntimeExceptionDao<TblCarGroup, String> tblCarGroup;
     private static DatabaseHelper instance;
     public static synchronized DatabaseHelper getHelper(Context context) {
@@ -39,6 +41,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             Log.i(DatabaseHelper.class.getName(), "onCreate");
             TableUtils.createTable(connectionSource, TblMember.class);
             TableUtils.createTable(connectionSource, TblCarGroup.class);
+            TableUtils.createTable(connectionSource, TblTask.class);
         }catch (Exception e){
             e.printStackTrace();
             Log.i("DatabaseHelper.onCreate",(e.getMessage() != null) ? e.getMessage() : "error");
@@ -53,6 +56,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             onDropTable(connectionSource);
             TableUtils.createTable(connectionSource, TblMember.class);
             TableUtils.createTable(connectionSource, TblCarGroup.class);
+            TableUtils.createTable(connectionSource, TblTask.class);
         }catch (Exception e){
             e.printStackTrace();
             Log.i("DatabaseHelper.onUpgrade",(e.getMessage() != null) ? e.getMessage() : "error");
@@ -66,6 +70,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             Log.i(DatabaseHelper.class.getName(), "dropTable");
             TableUtils.dropTable(connectionSource, TblMember.class, true);
             TableUtils.dropTable(connectionSource, TblCarGroup.class, true);
+            TableUtils.dropTable(connectionSource, TblTask.class, true);
         }catch (Exception e){
             e.printStackTrace();
             Log.i("DatabaseHelper.onDropTable",(e.getMessage() != null) ? e.getMessage() : "error");
@@ -84,5 +89,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             tblCarGroup = getRuntimeExceptionDao(TblCarGroup.class);
         }
         return tblCarGroup;
+    }
+
+    public RuntimeExceptionDao<TblTask, String> getTblTask() {
+        if (tblTask == null) {
+            tblTask = getRuntimeExceptionDao(TblTask.class);
+        }
+        return tblTask;
     }
 }

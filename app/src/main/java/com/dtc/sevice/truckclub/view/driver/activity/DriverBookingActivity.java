@@ -1,5 +1,6 @@
 package com.dtc.sevice.truckclub.view.driver.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -25,6 +27,7 @@ import com.dtc.sevice.truckclub.presenters.driver.DriverBookingPresenter;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DateController;
 import com.dtc.sevice.truckclub.until.TaskController;
+import com.j256.ormlite.stmt.query.In;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -58,7 +61,7 @@ public class DriverBookingActivity extends AppCompatActivity {
     private static TaskListAdapter adapter;
     private static ApiService mForum;
     private static DriverBookingPresenter driverBookingPresenter;
-    private String strType = "1";
+    private static String strType = "1";
     private TaskController taskController;
     private static int select_position = 0;
     @Override
@@ -88,7 +91,7 @@ public class DriverBookingActivity extends AppCompatActivity {
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    finish();
+                    backButton();
                 }
             });
             listFreeDate = new ArrayList<>();
@@ -124,6 +127,7 @@ public class DriverBookingActivity extends AppCompatActivity {
                 }
             });
             getMember();
+            getSchedulesLocal();
             getTask();
             setSelectTask();
         }catch (Exception e){
@@ -135,6 +139,15 @@ public class DriverBookingActivity extends AppCompatActivity {
         try {
             members = new ArrayList<TblMember>();
             members = taskController.getMember();
+        }catch (Exception e){
+
+        }
+    }
+
+    private void getSchedulesLocal(){
+        try {
+            listSchedulesTasks = new ArrayList<TblTask>();
+            listSchedulesTasks = taskController.getTask();
         }catch (Exception e){
 
         }
@@ -225,9 +238,26 @@ public class DriverBookingActivity extends AppCompatActivity {
 
     public void sentOfferPrice(int id , int price){
         try {
+            TblTask tblTask = new TblTask();
+            tblTask.setId(String.valueOf(id));
+            tblTask.setPrice_offer(String.valueOf(price));
+            tblTask.setTask_status(0);
+            tblTask.setService_type("Booking");
+            tblTask.setMember(members);
             mForum = new ApiService();
             driverBookingPresenter = new DriverBookingPresenter(DriverBookingActivity.this , mForum);
-            driverBookingPresenter.sentOfferPrice(id, price);
+            driverBookingPresenter.sentOfferPrice(tblTask);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void sentGoing(TblTask tblTask){
+        try {
+            tblTask.setTask_status(4);
+            mForum = new ApiService();
+            driverBookingPresenter = new DriverBookingPresenter(DriverBookingActivity.this , mForum);
+            driverBookingPresenter.sentUpdateDriver(tblTask);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -236,6 +266,17 @@ public class DriverBookingActivity extends AppCompatActivity {
     public void updateSentOfferPrice(){
         try {
             adapter.closeDriverOffer();
+            getTask();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void updateGoing(){
+        try {
+            adapter.closeDriverOffer();
+            Intent i = new Intent(DriverBookingActivity.this , DriverMainActivity2.class);
+            startActivity(i);
+            finish();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -243,14 +284,46 @@ public class DriverBookingActivity extends AppCompatActivity {
 
     public void setListTask(List<TblTask> lists){
         try {
+            listTasks = new ArrayList<TblTask>();
+            if(strType.equalsIgnoreCase("1")){
+                List<TblTask> listNewTasks = new ArrayList<TblTask>();
+                listTasks = lists;
+                if(listSchedulesTasks != null && listSchedulesTasks.size()>0){
+                    for(TblTask t : lists){
+                        for(TblTask s : listSchedulesTasks){
+                            long start_new = dateController.dateFormat2Tolong(t.getStart_date());
+                            long end_new = dateController.dateFormat2Tolong(t.getEnd_date());
+                            long start_schedules = dateController.dateFormat2Tolong(s.getStart_date());
+                            long end_schedules = dateController.dateFormat2Tolong(s.getEnd_date());
+                            if(start_new >= start_schedules&&start_new <= end_schedules){
+                                listNewTasks.add(t);
+                            }
+                        }
+                    }
+                    listTasks.removeAll(listNewTasks);
+                    setAdapter();
+                }else {
+                    listTasks = lists;
+                    setAdapter();
+                }
+
+            }else {
+                listTasks = lists;
+                setAdapter();
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void setAdapter(){
+        try {
             recycler_view.setHasFixedSize(true);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
             recycler_view.setLayoutManager(mLayoutManager);
-            listTasks = new ArrayList<TblTask>();
-            listTasks = lists;
             adapter = new TaskListAdapter(DriverBookingActivity.this,listTasks,select_position);
             recycler_view.setAdapter(adapter);
-
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -260,6 +333,7 @@ public class DriverBookingActivity extends AppCompatActivity {
         try {
             listSchedulesTasks = new ArrayList<TblTask>();
             listSchedulesTasks = lists;
+            taskController.createTask(lists);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -323,5 +397,21 @@ public class DriverBookingActivity extends AppCompatActivity {
         Log.d("fff", String.valueOf(dateBetween));
         return dateBetween;
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            backButton();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void backButton(){
+        Intent i = new Intent(DriverBookingActivity.this,DriverMainActivity2.class);
+        startActivity(i);
+        finish();
     }
 }

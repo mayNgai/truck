@@ -24,6 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.adapter.AboutAdapter;
@@ -36,6 +37,7 @@ import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.presenters.BasePresenter;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.ApplicationController;
+import com.dtc.sevice.truckclub.until.DialogController;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverBookingActivity;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverHistoryActivity;
@@ -62,12 +64,14 @@ public class BaseActivity extends AppCompatActivity implements
     private int selectedNavItemId;
     private TaskController taskController;
     public static List<TblMember> listMembers;
+    public static List<TblTask> tblTasks;
     private Activity _activity;
     private MenuItem status,txt_status,booking;
     private static DriverMainActivity2 driverMainActivity2;
     public static TblTask tblTask;
     private ApiService mForum;
     private BasePresenter basePresenter;
+    private DialogController dialogController;
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         drawerLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.activity_base, null);
@@ -75,6 +79,7 @@ public class BaseActivity extends AppCompatActivity implements
         getLayoutInflater().inflate(layoutResID, activityContainer, true);
         super.setContentView(drawerLayout);
         taskController = new TaskController();
+        dialogController = new DialogController();
         _activity = BaseActivity.this;
         driverMainActivity2 = new DriverMainActivity2();
         ApplicationController.setAppActivity(_activity);
@@ -265,6 +270,14 @@ public class BaseActivity extends AppCompatActivity implements
             e.printStackTrace();
         }
     }
+    private void getTask(){
+        try {
+            tblTasks = new ArrayList<TblTask>();
+            tblTasks = taskController.getTask();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     private void profilePage(){
         if(listMembers.get(0).getAuthority().equalsIgnoreCase(_activity.getString(R.string.txtUser))){
@@ -294,7 +307,7 @@ public class BaseActivity extends AppCompatActivity implements
             startActivity(i);
         }
     }
-
+    /////////////////User Task Wait /////////////////
     private void getTaskWait(){
         try {
             tblTask = new TblTask();
@@ -309,6 +322,36 @@ public class BaseActivity extends AppCompatActivity implements
             e.printStackTrace();
         }
     }
+
+    List<TblTask> listTask = new ArrayList<TblTask>();
+    public void updateTaskWait(List<TblTask> tblTasks){
+        try {
+            listTask = new ArrayList<TblTask>();
+            listTask = tblTasks;
+            setDialogBottom("Wait accept");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void callServiceUserAccept(int id , TblMember list){
+        try {
+            List<TblMember> tblMembers = new ArrayList<TblMember>();
+            tblMembers.add(list);
+            TblTask tblTask = new TblTask();
+            tblTask.setId(String.valueOf(id));
+            tblTask.setTask_status(3);
+            tblTask.setService_type("Booking");
+            tblTask.setMember(tblMembers);
+            mForum = new ApiService();
+            basePresenter = new BasePresenter(this,mForum);
+            basePresenter.callWaitAccept(tblTask);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /////////////////User Task Booking /////////////////
     private void getTaskBooking(){
         try {
             tblTask = new TblTask();
@@ -319,16 +362,6 @@ public class BaseActivity extends AppCompatActivity implements
             basePresenter = new BasePresenter(this,mForum);
             basePresenter.loadTask();
 
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-    List<TblTask> listTask = new ArrayList<TblTask>();
-    public void updateTaskWait(List<TblTask> tblTasks){
-        try {
-            listTask = new ArrayList<TblTask>();
-            listTask = tblTasks;
-            setDialogBottom("Wait accept");
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -380,6 +413,8 @@ public class BaseActivity extends AppCompatActivity implements
         }
     }
 
+    ///////////////////////////////////////////////////////
+
     private void setDialogAbout(String txtHead){
         try {
             LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -421,23 +456,48 @@ public class BaseActivity extends AppCompatActivity implements
 
     private void setStatus(){
         try {
-            if(listMembers.get(0).getStatus_id()==1){
-                listMembers.get(0).setStatus_id(2);
-                listMembers.get(0).setStatus("Searching");
-                status.setIcon(R.drawable.driver_on);
-                txt_status.setTitle("พร้อมใช้งาน");
-                taskController.updateMember(listMembers.get(0));
-            }else if(listMembers.get(0).getStatus_id()==2){
-                listMembers.get(0).setStatus_id(1);
-                listMembers.get(0).setStatus("Log in");
-                status.setIcon(R.drawable.driver_off);
-                txt_status.setTitle("ไม่พร้อมใช้งาน");
-                taskController.updateMember(listMembers.get(0));
+            getTask();
+            if(tblTasks == null || tblTasks.size()==0){
+                if(listMembers.get(0).getStatus_id()==1){
+                    listMembers.get(0).setStatus_id(2);
+                    listMembers.get(0).setStatus("searching");
+                    status.setIcon(R.drawable.driver_on);
+                    txt_status.setTitle("พร้อมใช้งาน");
+                    taskController.updateMember(listMembers.get(0));
+                }else if(listMembers.get(0).getStatus_id()==2){
+                    listMembers.get(0).setStatus_id(1);
+                    listMembers.get(0).setStatus("log in");
+                    status.setIcon(R.drawable.driver_off);
+                    txt_status.setTitle("ไม่พร้อมใช้งาน");
+                    taskController.updateMember(listMembers.get(0));
+                }
+                mForum = new ApiService();
+                basePresenter = new BasePresenter(this,mForum);
+                basePresenter.updateStatus();
+                driverMainActivity2.setShowSelectList();
+            }else if(tblTasks != null || tblTasks.size()>0){
+                if(GlobalVar.checkSchedulesDriver(this,tblTasks)){
+                    if(listMembers.get(0).getStatus_id()==1){
+                        listMembers.get(0).setStatus_id(2);
+                        listMembers.get(0).setStatus("searching");
+                        status.setIcon(R.drawable.driver_on);
+                        txt_status.setTitle("พร้อมใช้งาน");
+                        taskController.updateMember(listMembers.get(0));
+                    }else if(listMembers.get(0).getStatus_id()==2){
+                        listMembers.get(0).setStatus_id(1);
+                        listMembers.get(0).setStatus("log in");
+                        status.setIcon(R.drawable.driver_off);
+                        txt_status.setTitle("ไม่พร้อมใช้งาน");
+                        taskController.updateMember(listMembers.get(0));
+                    }
+                    mForum = new ApiService();
+                    basePresenter = new BasePresenter(this,mForum);
+                    basePresenter.updateStatus();
+                    driverMainActivity2.setShowSelectList();
+                }else {
+                    dialogController.dialogNolmal(this,"Warning","มีตารางงานตรงกับวันนี้");
+                }
             }
-            mForum = new ApiService();
-            basePresenter = new BasePresenter(this,mForum);
-            basePresenter.updateStatus();
-            driverMainActivity2.setShowSelectList();
 
         }catch (Exception e){
             e.printStackTrace();

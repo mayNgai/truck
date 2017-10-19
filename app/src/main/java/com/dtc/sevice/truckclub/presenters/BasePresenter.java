@@ -1,5 +1,6 @@
 package com.dtc.sevice.truckclub.presenters;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
@@ -7,11 +8,13 @@ import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.service.ApiService;
+import com.dtc.sevice.truckclub.until.ApplicationController;
 import com.dtc.sevice.truckclub.until.DialogController;
 import com.dtc.sevice.truckclub.until.NetworkUtils;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.BaseActivity;
 import com.dtc.sevice.truckclub.view.LoginFirstActivity;
+import com.dtc.sevice.truckclub.view.user.activity.UserMainActivity2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,7 @@ public class BasePresenter {
     private BaseActivity mView;
     private TaskController taskController;
     private DialogController dialogController;
+    private Activity _activity;
 
     public BasePresenter(BaseActivity view,ApiService forum){
         mForum = forum;
@@ -145,6 +149,77 @@ public class BasePresenter {
                             }
                         });
             }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void loadMember(){
+        try {
+            if(!NetworkUtils.isConnected(mView)){
+                dialogController.dialogNolmal(mView,mView.getString(R.string.txtWarning),mView.getString(R.string.txt_internet_is_not));
+            }else {
+                mForum.getApi()
+                        .getTask(mView.tblTask)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<List<TblTask>>() {
+                            @Override
+                            public void onCompleted() {
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e("loagTask Error", e.getMessage());
+                            }
+
+                            @Override
+                            public void onNext(List<TblTask> tblTasks) {
+                                if(tblTasks.get(0).getTask_status()>2){
+                                    mView.updateTaskBooking(tblTasks);
+                                }else {
+                                    mView.updateTaskWait(tblTasks);
+                                }
+
+                            }
+                        });
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void callWaitAccept(TblTask tblTask){
+        try {
+//            if(!NetworkUtils.isConnected(mView)){
+//                dialogController.dialogNolmal(mView,mView.getString(R.string.txtWarning),mView.getString(R.string.txt_internet_is_not));
+//            }else {
+                mForum.getApi()
+                        .sentUpdateTask(tblTask)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<TblTask>() {
+                            @Override
+                            public void onCompleted() {
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e("callWaitAccept Error", e.getMessage());
+                            }
+
+                            @Override
+                            public void onNext(TblTask tblTasks) {
+                                _activity = ApplicationController.getAppActivity();
+                                Intent i = new Intent(_activity, UserMainActivity2.class);
+                                _activity.startActivity(i);
+                                _activity.finish();
+
+                            }
+                        });
+//            }
 
         }catch (Exception e){
             e.printStackTrace();

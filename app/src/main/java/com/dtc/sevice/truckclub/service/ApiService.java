@@ -86,7 +86,7 @@ public class ApiService {
         @POST("update_status_member.php")
         public Observable<TblMember> updateStatusMember(@Field("member_id") int member_id,@Field("status") String status,@Field("status_id") int status_id);
 
-        @POST("/get_province.php")
+        @POST("get_province.php")
         public Observable<List<TblProvince>> getProvince();
 
         @POST("get_car_group.php")
@@ -120,8 +120,13 @@ public class ApiService {
         @POST("get_data_member.php")
         public Observable<TblMember> getDataMember(@Field("member_id") int member_id ,@Field("authority") String authority);
 
-        @FormUrlEncoded
         @POST("sent_offer_price.php")
-        public Observable<TblTask> sentOfferPrice(@Field("id") int id , @Field("member_id") int member_id, @Field("price") int price, @Field("temp_offer_status") int temp_offer_status);
+        public Observable<TblTask> sentOfferPrice(@Body TblTask task);
+
+        @POST("update_task.php")
+        public Observable<TblTask> sentUpdateTask(@Body TblTask task);
+
+        @POST("update_driver.php")
+        public Observable<TblTask> sentUpdateDriver(@Body TblTask task);
     }
 }

@@ -4,7 +4,111 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/linear_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/linear_title"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:background="@color/WhiteSmoke">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_marginTop="@dimen/padding_15"
+                android:layout_marginLeft="@dimen/margin_55"
+                android:layout_marginRight="@dimen/margin_55"
+                android:background="@color/color_background">
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageButton
+                        android:id="@+id/img_step1"
+                        android:layout_width="@dimen/hight_30"
+                        android:layout_height="@dimen/hight_30"
+                        android:background="@drawable/button_cricle_orange_stock"/>
+
+                    <TextView
+                        android:id="@+id/txt_step1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:gravity="center"
+                        android:padding="3dp"
+                        android:text="กำลังเดินทาง"
+                        android:textColor="@color/LightGray" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageButton
+                        android:id="@+id/img_step2"
+                        android:layout_width="@dimen/hight_30"
+                        android:layout_height="@dimen/hight_30"
+                        android:background="@drawable/button_cricle_orange_stock"/>
+                    <TextView
+                        android:id="@+id/txt_step2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:padding="3dp"
+                        android:gravity="center"
+                        android:textColor="@color/LightGray"
+                        android:text="เริ่มใช้งาน"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="3dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageButton
+                        android:id="@+id/img_step3"
+                        android:layout_width="@dimen/hight_30"
+                        android:layout_height="@dimen/hight_30"
+                        android:background="@drawable/button_cricle_orange_stock"/>
+                    <TextView
+                        android:id="@+id/txt_step3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:padding="3dp"
+                        android:gravity="center"
+                        android:textColor="@color/LightGray"
+                        android:text="จบงาน"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+    </LinearLayout>
     <fragment
+        android:layout_below="@+id/linear_head"
         android:id="@+id/DriverMap"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
@@ -81,5 +185,34 @@
 
         </LinearLayout>
     </LinearLayout>
+
+    <Button
+        android:visibility="gone"
+        android:id="@+id/btn_done"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_60"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:textColor="#FFFFFF"
+        android:text="Done"
+        android:textSize="@dimen/font_20"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/buttonshape_orange"/>
+    <Button
+        android:visibility="gone"
+        android:id="@+id/btn_arrive"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_60"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:textColor="#FFFFFF"
+        android:text="Arrive"
+        android:textSize="@dimen/font_20"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/buttonshape_orange"/>
 
 </RelativeLayout>

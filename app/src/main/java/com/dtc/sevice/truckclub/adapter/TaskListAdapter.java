@@ -87,8 +87,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
             txt_end_date.setText(dateController.convertDateFormat2To1(arrayList.get(pos).getEnd_date()));
             txt_start_time.setText(arrayList.get(pos).getEnd_date().substring(10,16));
             txt_end_time.setText(arrayList.get(pos).getEnd_date().substring(10,16));
-            txt_name.setText(arrayList.get(pos).getFirst_name());
-            txt_surname.setText(arrayList.get(pos).getLast_name());
+            txt_name.setText(arrayList.get(pos).getMember().get(0).getFirst_name());
+            txt_surname.setText(arrayList.get(pos).getMember().get(0).getLast_name());
             txt_start_position.setText(arrayList.get(pos).getDest_location());
             txt_type_car.setText(arrayList.get(pos).getName_group());
             if(select_position == 1 ||select_position == 2){
@@ -116,6 +116,14 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
                     }else {
                         dialogController.dialogNolmal(mcontext,"Warnning","กรุณาใส่ราคาก่อน..");
                     }
+                }
+            });
+
+            btn_travel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mView = new DriverBookingActivity();
+                    mView.sentGoing(arrayList.get(pos));
                 }
             });
 

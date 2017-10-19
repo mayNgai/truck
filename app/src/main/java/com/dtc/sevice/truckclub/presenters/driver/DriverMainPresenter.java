@@ -29,6 +29,38 @@ public class DriverMainPresenter {
         dialogController = new DialogController();
     }
 
+    public void loadSchedulesDriver(){
+        try {
+            if(!NetworkUtils.isConnected(mView)){
+                dialogController.dialogNolmal(mView,"Warning","Internet is not stable.");
+            }else {
+                mForum.getApi()
+                        .getSchedulesDriver(mView.members.get(0))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<List<TblTask>>() {
+                            @Override
+                            public void onCompleted() {
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e("loadSchedulesDriver Error", e.getMessage());
+                            }
+
+                            @Override
+                            public void onNext(List<TblTask> tblTasks) {
+                                mView.setUpdateListSchedulesTask(tblTasks);
+                            }
+                        });
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void loadTask(){
         try {
             if(!NetworkUtils.isConnected(mView)){
@@ -55,6 +87,41 @@ public class DriverMainPresenter {
                         });
             }
 
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void sentUpdateDriver(TblTask tblTask){
+        try {
+//            if(!NetworkUtils.isConnected(mView)){
+//                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+//            }else {
+            // dialog = ProgressDialog.show(mView, "Wait", "loading...");
+            mForum.getApi()
+                    .sentUpdateDriver(tblTask)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<TblTask>() {
+                        @Override
+                        public void onCompleted() {
+                            //dialog.dismiss();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("loadDataMember Error", e.getMessage());
+                            // dialog.dismiss();
+                        }
+
+                        @Override
+                        public void onNext(TblTask tblTasks) {
+                            mView.setTitle();
+                            //  dialog.dismiss();
+                        }
+                    });
+//            }
 
         }catch (Exception e){
             e.printStackTrace();

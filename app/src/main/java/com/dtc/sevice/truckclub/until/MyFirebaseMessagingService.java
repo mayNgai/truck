@@ -13,8 +13,11 @@ import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
 
 import com.dtc.sevice.truckclub.R;
+import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.view.LoginFirstActivity;
+import com.dtc.sevice.truckclub.view.driver.activity.DriverBookingActivity;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverMainActivity2;
+import com.dtc.sevice.truckclub.view.user.activity.UserMainActivity2;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -39,67 +42,67 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService{
     }
     private void sendNotification(RemoteMessage.Notification notification, Map<String, String> data) {
         Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_truck_club);
-
+        boolean success = true;
         //Intent intent ;
         NotificationCompat.Builder notificationBuilder = null;
+        Intent i= null;
         try {
             String message = data.get("message");
+
             if (message != null && !"".equals(message)) {
                 if(message.equalsIgnoreCase("log out")){
                     Activity _activity = ApplicationController.getAppActivity();
-                    Intent i = new Intent(_activity, LoginFirstActivity.class);
+                    i = new Intent(_activity, LoginFirstActivity.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                     _activity.finish();
-                    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_ONE_SHOT);
 
-                    notificationBuilder = new NotificationCompat.Builder(this)
-                            .setContentTitle(notification.getTitle())
-                            .setContentText(notification.getBody())
-                            .setAutoCancel(true)
-                            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                            .setContentIntent(pendingIntent)
-                            .setContentInfo(notification.getTitle())
-                            .setLargeIcon(icon)
-                            .setColor(Color.RED)
-                            .setSmallIcon(R.drawable.ic_truck_marker);
-                }else if(message.equalsIgnoreCase("new")){
+                }else if(message.equalsIgnoreCase("new_now")||message.equalsIgnoreCase("accept")) {
                     Activity _activity = ApplicationController.getAppActivity();
-                    Intent i = new Intent(_activity, DriverMainActivity2.class);
+                    i = new Intent(_activity, DriverMainActivity2.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                     _activity.finish();
-                    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_ONE_SHOT);
+                }else if(message.equalsIgnoreCase("new_booking")){
+                        String start_date = data.get("start_date");
+                        if(GlobalVar.checkNotiTaskBooking(start_date)){
+                            Activity _activity = ApplicationController.getAppActivity();
+                            i = new Intent(_activity, DriverBookingActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(i);
+                            _activity.finish();
+                        }else {
+                            success = false;
+                        }
 
-                    notificationBuilder = new NotificationCompat.Builder(this)
-                            .setContentTitle(notification.getTitle())
-                            .setContentText(notification.getBody())
-                            .setAutoCancel(true)
-                            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                            .setContentIntent(pendingIntent)
-                            .setContentInfo(notification.getTitle())
-                            .setLargeIcon(icon)
-                            .setColor(Color.RED)
-                            .setSmallIcon(R.drawable.ic_truck_marker);
+                }else if(message.equalsIgnoreCase("offer_now")||message.equalsIgnoreCase("offer_booking")||message.equalsIgnoreCase("wait arrive")||message.equalsIgnoreCase("arrive")
+                        ||message.equalsIgnoreCase("done")){
+                    Activity _activity = ApplicationController.getAppActivity();
+                    i = new Intent(_activity, UserMainActivity2.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                    _activity.finish();
+
                 }else {
                     Activity _activity = ApplicationController.getAppActivity();
-                    Intent i = new Intent(_activity, LoginFirstActivity.class);
+                    i = new Intent(_activity, LoginFirstActivity.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                     _activity.finish();
-                    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_ONE_SHOT);
-
-                    notificationBuilder = new NotificationCompat.Builder(this)
-                            .setContentTitle(notification.getTitle())
-                            .setContentText(notification.getBody())
-                            .setAutoCancel(true)
-                            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                            .setContentIntent(pendingIntent)
-                            .setContentInfo(notification.getTitle())
-                            .setLargeIcon(icon)
-                            .setColor(Color.RED)
-                            .setSmallIcon(R.drawable.ic_truck_marker);
                 }
+
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_ONE_SHOT);
+
+                notificationBuilder = new NotificationCompat.Builder(this)
+                        .setContentTitle(notification.getTitle())
+                        .setContentText(notification.getBody())
+                        .setAutoCancel(true)
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                        .setContentIntent(pendingIntent)
+                        .setContentInfo(notification.getTitle())
+                        .setLargeIcon(icon)
+                        .setColor(Color.RED)
+                        .setSmallIcon(R.drawable.ic_truck_marker);
 //                URL url = new URL(picture_url);
 //                Bitmap bigPicture = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 //                notificationBuilder.setStyle(
@@ -110,10 +113,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService{
             e.printStackTrace();
         }
 
-        notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
-        notificationBuilder.setLights(Color.YELLOW, 1000, 300);
+        if(success){
+            notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
+            notificationBuilder.setLights(Color.YELLOW, 1000, 300);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(0, notificationBuilder.build());
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(0, notificationBuilder.build());
+        }
+
     }
 }

@@ -68,7 +68,7 @@ public class TaskListWaitAdapter extends RecyclerView.Adapter<TaskListWaitAdapte
             recycler_view.setHasFixedSize(true);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mcontext);
             recycler_view.setLayoutManager(mLayoutManager);
-            DriverWaitAcceptAdapter adapter = new DriverWaitAcceptAdapter(mcontext,arrayList.get(pos).getMember());
+            DriverWaitAcceptAdapter adapter = new DriverWaitAcceptAdapter(mcontext,arrayList.get(pos).getMember(),Integer.parseInt(arrayList.get(pos).getId()));
             recycler_view.setAdapter(adapter);
             mBottomSheetDialog.getWindow ().setLayout (LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT);

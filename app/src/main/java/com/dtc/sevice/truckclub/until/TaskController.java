@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.dtc.sevice.truckclub.helper.DatabaseHelper;
 import com.dtc.sevice.truckclub.model.TblCarGroup;
 import com.dtc.sevice.truckclub.model.TblMember;
+import com.dtc.sevice.truckclub.model.TblTask;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class TaskController {
     protected static DatabaseHelper databaseHelper = null;
     private RuntimeExceptionDao<TblMember, String> tblMemberRuntimeDao;
     private RuntimeExceptionDao<TblCarGroup, String> tblCarGroupRuntimeDao;
+    private RuntimeExceptionDao<TblTask, String> tblTaskRuntimeDao;
     private Activity _activity;
     private void getConnectDatabaseHelper() {
         try {
@@ -26,7 +28,7 @@ public class TaskController {
             databaseHelper  = DatabaseHelper.getHelper(_activity);
             tblMemberRuntimeDao = databaseHelper.getTblMember();
             tblCarGroupRuntimeDao = databaseHelper.getTblCarGroup();
-
+            tblTaskRuntimeDao = databaseHelper.getTblTask();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,6 +66,27 @@ public class TaskController {
             }
             member.setGuid(UUID.randomUUID().toString());
             tblMemberRuntimeDao.create(member);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean createTask(List<TblTask> taskList){
+        try {
+            getConnectDatabaseHelper();
+            List<TblTask> list = new ArrayList<TblTask>();
+            list = checkTask();
+            if(list.size()>0){
+                deleteTask(list);
+
+            }
+            for(TblTask t : taskList){
+                t.setGuid(UUID.randomUUID().toString());
+                tblTaskRuntimeDao.create(t);
+            }
 
         }catch (Exception e){
             e.printStackTrace();
@@ -126,6 +149,18 @@ public class TaskController {
         return list;
     }
 
+    public List<TblTask> getTask(){
+        List<TblTask> list = new ArrayList<TblTask>();
+        try {
+            getConnectDatabaseHelper();
+            list = tblTaskRuntimeDao.queryForAll();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public boolean updateMember(TblMember member){
         try {
             getConnectDatabaseHelper();
@@ -149,10 +184,34 @@ public class TaskController {
         return list;
     }
 
+    public List<TblTask> checkTask(){
+        List<TblTask> list = new ArrayList<TblTask>();
+        try {
+            getConnectDatabaseHelper();
+            list = tblTaskRuntimeDao.queryForAll();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public boolean deleteMember(List<TblMember> member){
         try {
             getConnectDatabaseHelper();
             tblMemberRuntimeDao.delete(member);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean deleteTask(List<TblTask> taskList){
+        try {
+            getConnectDatabaseHelper();
+            tblTaskRuntimeDao.delete(taskList);
 
         }catch (Exception e){
             e.printStackTrace();
