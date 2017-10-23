@@ -158,15 +158,15 @@ public class UserTaskActivity extends AppCompatActivity implements View.OnClickL
                 txt_step2.setTextColor(getResources().getColor(R.color.LightGray));
                 txt_step3.setTextColor(getResources().getColor(R.color.LightGray));
             }else if(tblTask.getMember().get(0).getComplete_status() == 5){
-                img_step1.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                img_step1.setBackgroundResource(R.drawable.button_cricle_orange);
                 img_step2.setBackgroundResource(R.drawable.button_cricle_orange);
                 img_step3.setBackgroundResource(R.drawable.button_cricle_orange_stock);
                 txt_step1.setTextColor(getResources().getColor(R.color.LightGray));
                 txt_step2.setTextColor(getResources().getColor(R.color.black_1));
                 txt_step3.setTextColor(getResources().getColor(R.color.LightGray));
             }else if(tblTask.getMember().get(0).getComplete_status() == 6){
-                img_step1.setBackgroundResource(R.drawable.button_cricle_orange_stock);
-                img_step2.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                img_step1.setBackgroundResource(R.drawable.button_cricle_orange);
+                img_step2.setBackgroundResource(R.drawable.button_cricle_orange);
                 img_step3.setBackgroundResource(R.drawable.button_cricle_orange);
                 txt_step1.setTextColor(getResources().getColor(R.color.LightGray));
                 txt_step2.setTextColor(getResources().getColor(R.color.LightGray));
@@ -221,7 +221,7 @@ public class UserTaskActivity extends AppCompatActivity implements View.OnClickL
         // position on right bottom
         rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
         rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-        rlp.setMargins(0, 1100, 0, 0);
+        rlp.setMargins(0,40, 0, 0);
         if(tblTask!=null){
             if(tblTask.getTask_status() > 3){
                 LatLng latLng = new LatLng(tblTask.getMember().get(0).getLat(), tblTask.getMember().get(0).getLon());

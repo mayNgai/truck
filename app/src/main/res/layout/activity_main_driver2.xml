@@ -11,7 +11,7 @@
         android:orientation="vertical">
         <RelativeLayout
             android:id="@+id/linear_title"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -118,6 +118,7 @@
         android:layout_alignParentStart="true"/>
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/linear_select_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -185,34 +186,111 @@
 
         </LinearLayout>
     </LinearLayout>
+    <LinearLayout
+        android:visibility="visible"
+        android:id="@+id/linear_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp">
+        <LinearLayout
+            android:id="@+id/linear_data_task"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="5dp"
+            android:padding="1dp"
+            android:background="@drawable/buttonshape_find_location_search_white">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal|center_vertical"
+                android:padding="7dp"
+                android:background="@color/WhiteSmoke"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/button_onoff_indicator_off"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:background="@color/WhiteSmoke"
+                android:weightSum="3">
+                <ImageView
+                    android:id="@+id/img_profile"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/hight_40"
+                    android:layout_weight="0.5"
+                    android:src="@drawable/no_images"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2.5"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_18"
+                            android:layout_marginLeft="10dp"
+                            android:textStyle="bold"
+                            android:text="ชื่อ"/>
+                        <TextView
+                            android:id="@+id/txt_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_18"
+                            android:layout_marginLeft="10dp"
+                            android:textStyle="bold"
+                            android:text="ตรงนี้ชื่อ"/>
+                        <TextView
+                            android:id="@+id/txt_last"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_18"
+                            android:layout_marginLeft="20dp"
+                            android:textStyle="bold"
+                            android:text="ตรงนี้นามสกุล"/>
+                    </LinearLayout>
+                </LinearLayout>
 
-    <Button
-        android:visibility="gone"
-        android:id="@+id/btn_done"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/margin_60"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
-        android:textColor="#FFFFFF"
-        android:text="Done"
-        android:textSize="@dimen/font_20"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/buttonshape_orange"/>
-    <Button
-        android:visibility="gone"
-        android:id="@+id/btn_arrive"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/margin_60"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
-        android:textColor="#FFFFFF"
-        android:text="Arrive"
-        android:textSize="@dimen/font_20"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/buttonshape_orange"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:visibility="gone"
+            android:id="@+id/btn_done"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_60"
+            android:textColor="#FFFFFF"
+            android:text="Done"
+            android:textSize="@dimen/font_20"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/buttonshape_orange"/>
+        <Button
+            android:visibility="gone"
+            android:id="@+id/btn_arrive"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin_60"
+            android:textColor="#FFFFFF"
+            android:text="Arrive"
+            android:textSize="@dimen/font_20"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/buttonshape_orange"/>
+    </LinearLayout>
 
 </RelativeLayout>

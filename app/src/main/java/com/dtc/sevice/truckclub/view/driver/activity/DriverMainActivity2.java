@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -81,8 +82,10 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     private SwipeRefreshLayout swipe_refresh;
     private static RelativeLayout linear_title;
     private static ImageButton img_step1,img_step2,img_step3;
-    private static TextView txt_step1,txt_step2,txt_step3;
+    private static TextView txt_step1,txt_step2,txt_step3,txt_name,txt_last;
     private static Button btn_done,btn_arrive;
+    private LinearLayout linear_data_task,linear_bottom;
+    private ImageView img_profile;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -109,6 +112,11 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         txt_step3 = (TextView)findViewById(R.id.txt_step3);
         btn_done = (Button)findViewById(R.id.btn_done);
         btn_arrive = (Button)findViewById(R.id.btn_arrive);
+        linear_data_task = (LinearLayout)findViewById(R.id.linear_data_task);
+        linear_bottom = (LinearLayout)findViewById(R.id.linear_bottom);
+        img_profile = (ImageView)findViewById(R.id.img_profile);
+        txt_name = (TextView)findViewById(R.id.txt_name);
+        txt_last = (TextView)findViewById(R.id.txt_last);
         taskController =new TaskController();
         baseActivity = new BaseActivity();
         members = new ArrayList<TblMember>();
@@ -129,6 +137,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         setRefreshList();
         btn_arrive.setOnClickListener(this);
         btn_done.setOnClickListener(this);
+        linear_data_task.setOnClickListener(this);
 //        setClickList();
     }
 
@@ -138,7 +147,9 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
                 members = baseActivity.listMembers;
             }
             if(members.get(0).getStatus_id()>3){
+                linear_bottom.setVisibility(View.VISIBLE);
                 linear_title.setVisibility(View.VISIBLE);
+                linear_select_type.setVisibility(View.GONE);
                 if(members.get(0).getStatus_id()==4){
                     img_step1.setBackgroundResource(R.drawable.button_cricle_orange);
                     img_step2.setBackgroundResource(R.drawable.button_cricle_orange_stock);
@@ -149,7 +160,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
                     btn_arrive.setVisibility(View.VISIBLE);
                     btn_done.setVisibility(View.GONE);
                 }else if(members.get(0).getStatus_id()==5){
-                    img_step1.setBackgroundResource(R.drawable.button_cricle_orange_stock);
+                    img_step1.setBackgroundResource(R.drawable.button_cricle_orange);
                     img_step2.setBackgroundResource(R.drawable.button_cricle_orange);
                     img_step3.setBackgroundResource(R.drawable.button_cricle_orange_stock);
                     txt_step1.setTextColor(getResources().getColor(R.color.LightGray));
@@ -159,6 +170,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
                     btn_done.setVisibility(View.VISIBLE);
                 }
             }else {
+                linear_bottom.setVisibility(View.GONE);
                 linear_title.setVisibility(View.GONE);
             }
         }catch (Exception e){
@@ -418,10 +430,9 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
                 driverMainPresenter = new DriverMainPresenter(DriverMainActivity2.this , mForum);
 //                driverMainPresenter.loadTask();
                 break;
-//            case R.id.img_del_start:
-//                edt_start.setText("");
-//                removeMarkerDestination();
-//                break;
+            case R.id.linear_data_task:
+
+                break;
 //            case R.id.btn_now:
 //
 //                break;
