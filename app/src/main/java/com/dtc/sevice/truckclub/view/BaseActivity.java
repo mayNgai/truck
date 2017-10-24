@@ -24,11 +24,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.adapter.AboutAdapter;
-import com.dtc.sevice.truckclub.adapter.TaskListAdapter;
 import com.dtc.sevice.truckclub.adapter.TaskListWaitAdapter;
 import com.dtc.sevice.truckclub.adapter.UserBookingMathedAdapter;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
@@ -43,7 +41,6 @@ import com.dtc.sevice.truckclub.view.driver.activity.DriverBookingActivity;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverHistoryActivity;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverMainActivity2;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverProfileActivity;
-import com.dtc.sevice.truckclub.view.user.activity.UserHistoryActivity;
 import com.dtc.sevice.truckclub.view.user.activity.UserProfileActivity;
 import com.facebook.AccessToken;
 import com.squareup.picasso.Picasso;
@@ -88,6 +85,7 @@ public class BaseActivity extends AppCompatActivity implements
         View header=navigationView.getHeaderView(0);
         Menu nav_Menu = navigationView.getMenu();
         getMember();
+        loadDataMember();
         if(listMembers != null && listMembers.get(0).getAuthority().equalsIgnoreCase(GlobalVar.chooseServiceDriver)){
             nav_Menu.findItem(R.id.action_wait_accept).setVisible(false);
             nav_Menu.findItem(R.id.action_books).setTitle(_activity.getString(R.string.txt_schedules));
@@ -163,6 +161,7 @@ public class BaseActivity extends AppCompatActivity implements
             if(listMembers.get(0).getAuthority().equalsIgnoreCase(GlobalVar.chooseServiceDriver)){
                 status.setVisible(true);
                 txt_status.setVisible(true);
+                booking.setVisible(false);
                 if(listMembers.get(0).getStatus_id()==1){
                     status.setIcon(R.drawable.driver_off);
                     txt_status.setTitle("ไม่พร้อมใช้งาน");
@@ -172,7 +171,9 @@ public class BaseActivity extends AppCompatActivity implements
                     txt_status.setTitle("พร้อมใช้งาน");
                 }else {
                     status.setIcon(R.drawable.driver_off);
+                    txt_status.setTitle("ไม่พร้อมใช้งาน");
                     status.setEnabled(false);
+                    booking.setVisible(true);
                 }
             }else {
                 txt_status.setVisible(false);
@@ -224,7 +225,16 @@ public class BaseActivity extends AppCompatActivity implements
                 setStatus();
                 return true;
             case R.id.booking:
-                getTaskBooking();
+                if(listMembers==null || listMembers.size()==0){
+                    getMember();
+                }
+                if(listMembers.size()>0) {
+                    if (listMembers.get(0).getAuthority().equalsIgnoreCase("User")) {
+                        getTaskBooking();
+                    } else if (listMembers.get(0).getAuthority().equalsIgnoreCase("Driver")) {
+                        getTaskByID();
+                    }
+                }
                 return true;
             case R.id.action_logout:
                 if(listMembers==null || listMembers.size()==0){
@@ -241,6 +251,8 @@ public class BaseActivity extends AppCompatActivity implements
 //                            Intent i = new Intent(_activity,LoginFirstActivity.class);
 //                            startActivity(i);
 //                            finish();
+                        }else {
+                            dialogController.dialogNolmal(this,"Warning","อยู่ระหว่างการใช้งานไม่สามารถออกจากระบบได้");
                         }
                     }else if(listMembers.get(0).getAuthority().equalsIgnoreCase("Driver")){
                         if(listMembers.get(0).getStatus_id()<3){
@@ -252,6 +264,8 @@ public class BaseActivity extends AppCompatActivity implements
 //                            Intent i = new Intent(_activity,LoginFirstActivity.class);
 //                            startActivity(i);
 //                            finish();
+                        }else {
+                            dialogController.dialogNolmal(this,"Warning","อยู่ระหว่างการใช้งานไม่สามารถออกจากระบบได้");
                         }
                     }
                 }
@@ -262,10 +276,19 @@ public class BaseActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    private void getMember(){
+    public void getMember(){
         try {
             listMembers = new ArrayList<TblMember>();
             listMembers = taskController.getMember();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    private void loadDataMember(){
+        try {
+            mForum = new ApiService();
+            basePresenter = new BasePresenter(this,mForum);
+            basePresenter.loadDataMember();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -299,13 +322,13 @@ public class BaseActivity extends AppCompatActivity implements
     }
 
     private void historyPage(){
-        if(listMembers.get(0).getAuthority().equalsIgnoreCase(_activity.getString(R.string.txtUser))){
-            Intent i = new Intent(this , UserHistoryActivity.class);
+//        if(listMembers.get(0).getAuthority().equalsIgnoreCase(_activity.getString(R.string.txtUser))){
+            Intent i = new Intent(this , HistoryActivity.class);
             startActivity(i);
-        }else if(listMembers.get(0).getAuthority().equalsIgnoreCase(_activity.getString(R.string.txtDriver))){
-            Intent i = new Intent(this , DriverHistoryActivity.class);
-            startActivity(i);
-        }
+//        }else if(listMembers.get(0).getAuthority().equalsIgnoreCase(_activity.getString(R.string.txtDriver))){
+//            Intent i = new Intent(this , DriverHistoryActivity.class);
+//            startActivity(i);
+//        }
     }
     /////////////////User Task Wait /////////////////
     private void getTaskWait(){
@@ -366,6 +389,20 @@ public class BaseActivity extends AppCompatActivity implements
             e.printStackTrace();
         }
     }
+
+    private void getTaskByID(){
+        try {
+            tblTask = new TblTask();
+            tblTask.setId(listMembers.get(0).getTask_id());
+            mForum = new ApiService();
+            basePresenter = new BasePresenter(this,mForum);
+            basePresenter.loadTaskByID();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void updateTaskBooking(List<TblTask> tblTasks){
         try {
             listTask = new ArrayList<TblTask>();

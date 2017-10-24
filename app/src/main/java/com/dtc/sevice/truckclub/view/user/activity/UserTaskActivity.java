@@ -229,7 +229,7 @@ public class UserTaskActivity extends AppCompatActivity implements View.OnClickL
             }
             LatLng latLng = new LatLng(tblTask.getDes_lat(), tblTask.getDes_lon());
             addMarkerDestination(latLng);
-            moveMap(tblTask.getDes_lat(),tblTask.getDes_lon());
+            moveMap(Double.parseDouble(String.valueOf(tblTask.getDes_lat())),Double.parseDouble(String.valueOf(tblTask.getDes_lon())));
         }
 
 
@@ -246,6 +246,7 @@ public class UserTaskActivity extends AppCompatActivity implements View.OnClickL
         if (lastLocation != null) {
             latitude = lastLocation.getLatitude();
             longitude = lastLocation.getLongitude();
+            //moveMap(latitude,longitude);
 
         } else {
             Toast.makeText(this, "ไม่สามารถระบุตำแหน่งได้", Toast.LENGTH_LONG).show();
@@ -282,7 +283,7 @@ public class UserTaskActivity extends AppCompatActivity implements View.OnClickL
         LatLng latLng = new LatLng(lat, lon);
 
         gMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        gMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        gMap.animateCamera(CameraUpdateFactory.zoomTo(9));
         gMap.getUiSettings().setZoomControlsEnabled(true);
 
 

@@ -196,6 +196,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp">
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/linear_data_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -279,6 +280,7 @@
             android:textSize="@dimen/font_20"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/buttonshape_orange"/>
         <Button
             android:visibility="gone"
@@ -290,6 +292,7 @@
             android:textSize="@dimen/font_20"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/buttonshape_orange"/>
     </LinearLayout>
 

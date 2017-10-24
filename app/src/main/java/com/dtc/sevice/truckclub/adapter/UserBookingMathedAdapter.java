@@ -18,6 +18,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.dtc.sevice.truckclub.R;
+import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.until.DateController;
 import com.dtc.sevice.truckclub.until.DialogController;
@@ -53,6 +54,7 @@ public class UserBookingMathedAdapter extends RecyclerView.Adapter<UserBookingMa
         holder.txt_start_position.setText(arrayList.get(i).getDest_location());
         holder.txt_count_date.setText(String.valueOf(arrayList.get(i).getDate_count()));
         holder.txt_type_car.setText(arrayList.get(i).getName_group());
+        holder.txt_status.setText(GlobalVar.checkStatusTask(arrayList.get(i).getTask_status()));
         holder.linear_list.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,7 +80,7 @@ public class UserBookingMathedAdapter extends RecyclerView.Adapter<UserBookingMa
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView txt_id,txt_date_start,txt_time_start,txt_date_end,txt_time_end,txt_start_position,txt_count_date,txt_type_car;
+        private TextView txt_id,txt_date_start,txt_time_start,txt_date_end,txt_time_end,txt_start_position,txt_count_date,txt_type_car,txt_status;
         private LinearLayout linear_list,linear_list_count,linear_title;
 
         public ViewHolder(View v) {
@@ -91,6 +93,7 @@ public class UserBookingMathedAdapter extends RecyclerView.Adapter<UserBookingMa
             txt_start_position = (TextView) v.findViewById(R.id.txt_start_position);
             txt_count_date = (TextView) v.findViewById(R.id.txt_count_date);
             txt_type_car = (TextView) v.findViewById(R.id.txt_type_car);
+            txt_status = (TextView) v.findViewById(R.id.txt_status);
             linear_list = (LinearLayout) v.findViewById(R.id.linear_list);
             linear_list_count = (LinearLayout) v.findViewById(R.id.linear_list_count);
             linear_title = (LinearLayout) v.findViewById(R.id.linear_title);

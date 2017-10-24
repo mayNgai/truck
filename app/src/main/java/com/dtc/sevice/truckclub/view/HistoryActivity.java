@@ -1,11 +1,12 @@
-package com.dtc.sevice.truckclub.view.user.activity;
+package com.dtc.sevice.truckclub.view;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,15 +15,20 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import com.dtc.sevice.truckclub.R;
+import com.dtc.sevice.truckclub.adapter.HistoryPageAdapter;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
+import com.dtc.sevice.truckclub.model.TblMember;
+import com.dtc.sevice.truckclub.model.TblTask;
+import com.dtc.sevice.truckclub.presenters.HistoryPresenter;
+import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.ApplicationController;
 import com.dtc.sevice.truckclub.until.DateController;
 import com.dtc.sevice.truckclub.until.DialogController;
+import com.dtc.sevice.truckclub.until.TaskController;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,7 +39,7 @@ import java.util.List;
  * Created by May on 10/9/2017.
  */
 
-public class UserHistoryActivity extends AppCompatActivity implements View.OnClickListener{
+public class HistoryActivity extends AppCompatActivity implements View.OnClickListener{
     private RadioButton rdoNow, rdoBook;
     private static Activity _activity;
     private DialogController dialog;
@@ -41,27 +47,35 @@ public class UserHistoryActivity extends AppCompatActivity implements View.OnCli
     private Spinner spinner;
     private EditText edtStart, edtEnd;
     private ImageButton imgStart, imgEnd;
+    private static RecyclerView recycler_view;
     private DatePickerDialog startDatePickerDialog;
     private DatePickerDialog endDatePickerDialog;
     private SimpleDateFormat dateFormatter;
     private Calendar newCalendar;
     private int pos = 0;
     private DateController dateController;
+    private TaskController taskController;
     private long lStartSelect ,lEndSelect ;
     private boolean flagSelect = false;
     private String[] strSelectDate;
     private int index = 0;
+    public List<TblMember> listMembers;
+    private ApiService mForum;
+    private HistoryPresenter historyPresenter;
+    private static List<TblTask> listTask = new ArrayList<TblTask>();
+    private static HistoryPageAdapter adapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
         dialog = new DialogController();
-        _activity = UserHistoryActivity.this;
+        _activity = HistoryActivity.this;
         ApplicationController.setAppActivity(_activity);
         dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
         dateController = new DateController();
+        taskController = new TaskController();
         initAll();
-        setSpinner();
+        getMember();
         setSpinner();
         setCheckChang();
         imgStart.setOnClickListener(this);
@@ -76,6 +90,10 @@ public class UserHistoryActivity extends AppCompatActivity implements View.OnCli
         edtEnd = (EditText) findViewById(R.id.edtEnd);
         imgStart = (ImageButton) findViewById(R.id.imgStart);
         imgEnd = (ImageButton) findViewById(R.id.imgEnd);
+        recycler_view = (RecyclerView)findViewById(R.id.recycler_view);
+        recycler_view.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        recycler_view.setLayoutManager(mLayoutManager);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -87,6 +105,15 @@ public class UserHistoryActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
+    }
+
+    private void getMember(){
+        try {
+            listMembers = new ArrayList<TblMember>();
+            listMembers = taskController.getMember();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void setSpinner() {
@@ -116,8 +143,8 @@ public class UserHistoryActivity extends AppCompatActivity implements View.OnCli
     private void setDateDefault() {
         try {
             pos = 0;
-            edtStart.setText(GlobalVar.getSystemDateOnly(UserHistoryActivity.this));
-            edtEnd.setText(GlobalVar.getSystemDateOnly(UserHistoryActivity.this));
+            edtStart.setText(GlobalVar.getSystemDateOnly(HistoryActivity.this));
+            edtEnd.setText(GlobalVar.getSystemDateOnly(HistoryActivity.this));
             setClickCalendar(false);
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,8 +166,8 @@ public class UserHistoryActivity extends AppCompatActivity implements View.OnCli
         pos = position;
         try {
             if (pos == 0) {
-                edtStart.setText(GlobalVar.getSystemDateOnly(UserHistoryActivity.this));
-                edtEnd.setText(GlobalVar.getSystemDateOnly(UserHistoryActivity.this));
+                edtStart.setText(GlobalVar.getSystemDateOnly(HistoryActivity.this));
+                edtEnd.setText(GlobalVar.getSystemDateOnly(HistoryActivity.this));
                 flagSelect = true;
                 setClickCalendar(false);
             } else if (pos == 1) {
@@ -203,12 +230,32 @@ public class UserHistoryActivity extends AppCompatActivity implements View.OnCli
 
     private void getDataHistory(){
         try {
-
+            mForum = new ApiService();
+            historyPresenter = new HistoryPresenter(this,mForum);
+            historyPresenter.loadHistory();
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
+    public void updateTask(List<TblTask> list){
+        try {
+            listTask = new ArrayList<TblTask>();
+            listTask = list;
+            setAdapter();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void setAdapter(){
+        try {
+            adapter = new HistoryPageAdapter(HistoryActivity.this,listTask);
+            recycler_view.setAdapter(adapter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     private void clearDefaultChooseYourSelf(){
         try {
             edtEnd.setText("");
@@ -245,7 +292,7 @@ public class UserHistoryActivity extends AppCompatActivity implements View.OnCli
                         flagSelect = true;
                         getDataHistory();
                     }else
-                        dialog.dialogNolmal(UserHistoryActivity.this, getResources().getString(R.string.titleLoginFail),
+                        dialog.dialogNolmal(HistoryActivity.this, getResources().getString(R.string.titleLoginFail),
                                 getResources().getString(R.string.txtPleaseChooseDate));
                 }
 
@@ -268,7 +315,7 @@ public class UserHistoryActivity extends AppCompatActivity implements View.OnCli
                 if(edtStart.getText().toString().length()>0)
                     endDatePickerDialog.show();
                 else
-                    dialog.dialogNolmal(UserHistoryActivity.this, getResources().getString(R.string.titleLoginFail),
+                    dialog.dialogNolmal(HistoryActivity.this, getResources().getString(R.string.titleLoginFail),
                             getResources().getString(R.string.txtPleaseChooseDate));
 
                 break;

@@ -109,16 +109,14 @@ public class ApiService {
         @POST("get_task.php")
         public Observable<List<TblTask>> getTask(@Body TblTask task);
 
+        @POST("get_task_by_id.php")
+        public Observable<TblTask> getTaskByID(@Body TblTask task);
+
         @POST("get_schedules_driver.php")
         public Observable<List<TblTask>> getSchedulesDriver(@Body TblMember member);
 
-        @FormUrlEncoded
-        @POST("get_history_user.php")
-        public Observable<List<TblTask>> getHistoryUser(@Field("member_id") int member_id ,@Field("service_type") String service_type);
-
-        @FormUrlEncoded
-        @POST("get_data_member.php")
-        public Observable<TblMember> getDataMember(@Field("member_id") int member_id ,@Field("authority") String authority);
+        @POST("get_history.php")
+        public Observable<List<TblTask>> getHistory(@Body TblMember member);
 
         @POST("sent_offer_price.php")
         public Observable<TblTask> sentOfferPrice(@Body TblTask task);
@@ -128,5 +126,11 @@ public class ApiService {
 
         @POST("update_driver.php")
         public Observable<TblTask> sentUpdateDriver(@Body TblTask task);
+
+        @POST("update_lat_lon.php")
+        public Observable<TblMember> sentUpdateLatLon(@Body TblMember member);
+
+        @POST("get_data_member.php")
+        public Observable<TblMember> getDataMember(@Body TblMember member);
     }
 }

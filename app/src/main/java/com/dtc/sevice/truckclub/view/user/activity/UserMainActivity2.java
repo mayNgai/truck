@@ -189,7 +189,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         longitude= location.getLongitude();
 
         LatLng coordinate = new LatLng(longitude, longitude);
-        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinate, 17));
+        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinate, 9));
 
     }
 
@@ -212,7 +212,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         // position on right bottom
         rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
         rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-        rlp.setMargins(0, 0, 0, 0);
+        rlp.setMargins(0, 60, 10, 0);
 
         getDestinationByFinger();
 
@@ -319,7 +319,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         LatLng latLng = new LatLng(lat, lon);
 
         gMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        gMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        gMap.animateCamera(CameraUpdateFactory.zoomTo(11));
         gMap.getUiSettings().setZoomControlsEnabled(true);
 
 

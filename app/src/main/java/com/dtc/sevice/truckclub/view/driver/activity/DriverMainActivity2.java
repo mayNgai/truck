@@ -41,6 +41,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -71,6 +72,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     private static TaskController taskController;
     public List<TblMember> members;
     public static TblTask tblTask;
+    public static TblTask tblTaskBooking;
     public static List<TblTask> listTasks;
     private Activity _activity;
     public static LinearLayout linear_select_type;
@@ -100,6 +102,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     }
 
     private void init(){
+        tblTaskBooking = new TblTask();
         recycler_view = (RecyclerView)findViewById(R.id.recycler_view);
         linear_select_type = (LinearLayout)findViewById(R.id.linear_select_type);
         swipe_refresh = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
@@ -134,6 +137,9 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         setShowSelectList();
         setTitle();
+        if(members.get(0).getStatus_id()>3){
+            getTaskByID();
+        }
         setRefreshList();
         btn_arrive.setOnClickListener(this);
         btn_done.setOnClickListener(this);
@@ -147,6 +153,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
                 members = baseActivity.listMembers;
             }
             if(members.get(0).getStatus_id()>3){
+                //addMarkerDestination();
                 linear_bottom.setVisibility(View.VISIBLE);
                 linear_title.setVisibility(View.VISIBLE);
                 linear_select_type.setVisibility(View.GONE);
@@ -204,6 +211,16 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
             mForum = new ApiService();
             driverMainPresenter = new DriverMainPresenter(DriverMainActivity2.this , mForum);
             driverMainPresenter.loadTask();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void getTaskByID(){
+        try {
+            mForum = new ApiService();
+            driverMainPresenter = new DriverMainPresenter(DriverMainActivity2.this , mForum);
+            driverMainPresenter.loadTaskByID();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -311,12 +328,25 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         if (location == null) {
             return;
         }
-        longitude = location.getLatitude();
+        latitude = location.getLatitude();
         longitude= location.getLongitude();
 
         LatLng coordinate = new LatLng(longitude, longitude);
-        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinate, 17));
+        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinate, 9));
+        updateLatLon(latitude,longitude);
 
+    }
+
+    private void updateLatLon(double latitude,double longitude){
+        try {
+            members.get(0).setLat(Float.parseFloat(String.valueOf(latitude)));
+            members.get(0).setLon(Float.parseFloat(String.valueOf(longitude)));
+            mForum = new ApiService();
+            driverMainPresenter = new DriverMainPresenter(DriverMainActivity2.this , mForum);
+            driverMainPresenter.sentUpdateLatlon();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -342,6 +372,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
 
 //        getDestinationByFinger();
 
+
     }
 
     //Getting current location
@@ -364,16 +395,28 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
             members.get(0).setLon(Float.valueOf(String.valueOf(longitude)));
             members.get(0).setRadius(0.05);
             //callDriverInScope();
+            updateLatLon(latitude,longitude);
         }
     }
     private void moveMap(double lat ,double lon) {
         LatLng latLng = new LatLng(lat, lon);
 
         gMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        gMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        gMap.animateCamera(CameraUpdateFactory.zoomTo(9));
         gMap.getUiSettings().setZoomControlsEnabled(true);
 
 
+    }
+
+    private void addMarkerDestination(LatLng latlon){
+        removeMarkerDestination();
+        markerDes = gMap.addMarker(new MarkerOptions().position(latlon).icon(BitmapDescriptorFactory.fromResource(R.drawable.flag)).title("Destination"));
+
+    }
+
+    private void removeMarkerDestination(){
+        if (markerDes != null)
+            markerDes.remove();
     }
 
     @Override
@@ -423,12 +466,18 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_done:
-
-                break;
-            case R.id.btn_arrive:
+                members.get(0).setStatus_id(6);
+                tblTaskBooking.setTask_status(6);
                 mForum = new ApiService();
                 driverMainPresenter = new DriverMainPresenter(DriverMainActivity2.this , mForum);
-//                driverMainPresenter.loadTask();
+                driverMainPresenter.sentUpdateDriver(tblTaskBooking);
+                break;
+            case R.id.btn_arrive:
+                members.get(0).setStatus_id(5);
+                tblTaskBooking.setTask_status(5);
+                mForum = new ApiService();
+                driverMainPresenter = new DriverMainPresenter(DriverMainActivity2.this , mForum);
+                driverMainPresenter.sentUpdateDriver(tblTaskBooking);
                 break;
             case R.id.linear_data_task:
 

@@ -93,37 +93,6 @@ public class DriverBookingPresenter {
         }
     }
 
-    public void loadDataMember(){
-        try {
-            if(!NetworkUtils.isConnected(mView)){
-                dialogController.dialogNolmal(mView,"Warning","Internet is not stable.");
-            }else {
-                mForum.getApi()
-                        .getDataMember(mView.members.get(0).getMember_id(),mView.members.get(0).getAuthority())
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<TblMember>() {
-                            @Override
-                            public void onCompleted() {
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e("loadDataMember Error", e.getMessage());
-                            }
-
-                            @Override
-                            public void onNext(TblMember tblTasks) {
-                                //mView.setListTask(tblTasks);
-                            }
-                        });
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
     public void sentOfferPrice(TblTask tblTask){
         try {
 //            if(!NetworkUtils.isConnected(mView)){

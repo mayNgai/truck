@@ -1034,6 +1034,25 @@ public class GlobalVar {
         return success;
     }
 
+    public static String checkStatusTask(int status){
+        String str = "";
+        try {
+            if(status == 3){
+                str = "คนขับยังไม่ออกเดินทาง";
+            }else if(status == 4){
+                str = "รถกำลังเดินทางมา";
+            }else if(status == 5){
+                str = "กำลังใช้งาน";
+            }else if(status == 6){
+                str = "จบงาน";
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return str;
+    }
+
     public static boolean GPSEnable(Context context) {
         boolean enable = false;
         final LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);

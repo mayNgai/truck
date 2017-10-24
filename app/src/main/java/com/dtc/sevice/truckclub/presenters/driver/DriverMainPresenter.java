@@ -2,6 +2,8 @@ package com.dtc.sevice.truckclub.presenters.driver;
 
 import android.util.Log;
 
+import com.dtc.sevice.truckclub.R;
+import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.DialogController;
@@ -121,6 +123,73 @@ public class DriverMainPresenter {
                             //  dialog.dismiss();
                         }
                     });
+//            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void sentUpdateLatlon(){
+        try {
+            mForum.getApi()
+                    .sentUpdateLatLon(mView.members.get(0))
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<TblMember>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("loadDataMember Error", e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(TblMember member) {
+
+
+                        }
+                    });
+//            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void loadTaskByID(){
+        try {
+//            if(!NetworkUtils.isConnected(mView)){
+//                dialogController.dialogNolmal(mView,mView.getString(R.string.txtWarning),mView.getString(R.string.txt_internet_is_not));
+//            }else {
+            TblTask tblTask = new TblTask();
+            tblTask.setId(mView.members.get(0).getTask_id());
+                mForum.getApi()
+                        .getTaskByID(tblTask)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<TblTask>() {
+                            @Override
+                            public void onCompleted() {
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e("loadTaskByID Error", e.getMessage());
+                            }
+
+                            @Override
+                            public void onNext(TblTask tblTasks) {
+                                //setDialogBottom(tblTasks);
+                                mView.tblTaskBooking = tblTasks;
+                                mView.setTitle();
+                                Log.i("loadTaskByID","Ok");
+
+                            }
+                        });
 //            }
 
         }catch (Exception e){

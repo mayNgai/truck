@@ -44,6 +44,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:text="TC-201710030001"/>
+            <TextView
+                android:id="@+id/txt_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textSize="@dimen/font_18"
+                android:textStyle="bold"
+                android:text=""/>
         </LinearLayout>
         <LinearLayout
             android:visibility="gone"
