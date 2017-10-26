@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -42,6 +43,7 @@ public class RegisterDriverFragmentFirst extends Fragment implements View.OnClic
     public static EditText edt_user_name,edt_first_name , edt_last_name ,edt_email,edt_tel,edt_password,edt_confirm_pass;
     public static TextView txt_date_of_birth;
     private Spinner spn_sex;
+    private LinearLayout layPassword;
     private Toolbar toolbar;
     private View rootView;
     private String[] arrSex;
@@ -78,6 +80,7 @@ public class RegisterDriverFragmentFirst extends Fragment implements View.OnClic
             edt_confirm_pass =(EditText)rootView.findViewById(R.id.edt_confirm_pass);
             txt_date_of_birth = (TextView)rootView.findViewById(R.id.txt_date_of_birth);
             spn_sex = (Spinner)rootView.findViewById(R.id.spn_sex);
+            layPassword = (LinearLayout)rootView.findViewById(R.id.layPassword);
             toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
             toolbar.setTitle(R.string.txtRegister);
             toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
@@ -113,6 +116,7 @@ public class RegisterDriverFragmentFirst extends Fragment implements View.OnClic
                     edt_email.setText(tblMember.getEmail());
                     edt_tel.setText(tblMember.getTel());
                     txt_date_of_birth.setText(((tblMember.getBirth_date() == null) || (tblMember.getBirth_date().length()==0) ? "" : dateController.convertDateFormat7To1(tblMember.getBirth_date())));
+                    layPassword.setVisibility(View.GONE);
                 }
 
             }
@@ -167,35 +171,60 @@ public class RegisterDriverFragmentFirst extends Fragment implements View.OnClic
         try {
             boolean cancel = false;
             View focusView = null;
-            if(edt_user_name.getText().toString().trim().length()==0){
-                edt_user_name.setError(activity.getResources().getString(R.string.error_invalid_useer_name));
-                focusView = edt_user_name;
-                cancel = true;
-            }else if(edt_first_name.getText().toString().trim().length()==0){
-                edt_first_name.setError(activity.getResources().getString(R.string.error_invalid_first_name));
-                focusView = edt_first_name;
-                cancel = true;
-            }else if(edt_last_name.getText().toString().trim().length()==0){
-                edt_last_name.setError(activity.getResources().getString(R.string.error_invalid_last_name));
-                focusView = edt_last_name;
-                cancel = true;
-            }else if(!GlobalVar.isEmailValid(edt_email.getText().toString().trim())){
-                edt_email.setError(activity.getResources().getString(R.string.error_invalid_email));
-                focusView = edt_email;
-                cancel = true;
-            }else if(!GlobalVar.isPhoneNumberValid(edt_tel.getText().toString().trim())){
-                edt_tel.setError(activity.getResources().getString(R.string.error_invalid_tel));
-                focusView = edt_tel;
-                cancel = true;
-            }else if(!GlobalVar.isPassWordValid(edt_password.getText().toString().trim())){
-                edt_password.setError(activity.getResources().getString(R.string.error_invalid_pass));
-                focusView = edt_password;
-                cancel = true;
-            }else if(!GlobalVar.isConfirmPassWordValid(edt_password.getText().toString().trim(),edt_confirm_pass.getText().toString().trim())){
-                edt_confirm_pass.setError(activity.getResources().getString(R.string.error_invalid_pass));
-                focusView = edt_confirm_pass;
-                cancel = true;
+            if(member_type == 0){
+                if(edt_user_name.getText().toString().trim().length()==0){
+                    edt_user_name.setError(activity.getResources().getString(R.string.error_invalid_useer_name));
+                    focusView = edt_user_name;
+                    cancel = true;
+                }else if(edt_first_name.getText().toString().trim().length()==0){
+                    edt_first_name.setError(activity.getResources().getString(R.string.error_invalid_first_name));
+                    focusView = edt_first_name;
+                    cancel = true;
+                }else if(edt_last_name.getText().toString().trim().length()==0){
+                    edt_last_name.setError(activity.getResources().getString(R.string.error_invalid_last_name));
+                    focusView = edt_last_name;
+                    cancel = true;
+                }else if(!GlobalVar.isEmailValid(edt_email.getText().toString().trim())){
+                    edt_email.setError(activity.getResources().getString(R.string.error_invalid_email));
+                    focusView = edt_email;
+                    cancel = true;
+                }else if(!GlobalVar.isPhoneNumberValid(edt_tel.getText().toString().trim())){
+                    edt_tel.setError(activity.getResources().getString(R.string.error_invalid_tel));
+                    focusView = edt_tel;
+                    cancel = true;
+                }else if(!GlobalVar.isPassWordValid(edt_password.getText().toString().trim())){
+                    edt_password.setError(activity.getResources().getString(R.string.error_invalid_pass));
+                    focusView = edt_password;
+                    cancel = true;
+                }else if(!GlobalVar.isConfirmPassWordValid(edt_password.getText().toString().trim(),edt_confirm_pass.getText().toString().trim())){
+                    edt_confirm_pass.setError(activity.getResources().getString(R.string.error_invalid_pass));
+                    focusView = edt_confirm_pass;
+                    cancel = true;
+                }
+            }else if(member_type == 1){
+                if(edt_user_name.getText().toString().trim().length()==0){
+                    edt_user_name.setError(activity.getResources().getString(R.string.error_invalid_useer_name));
+                    focusView = edt_user_name;
+                    cancel = true;
+                }else if(edt_first_name.getText().toString().trim().length()==0){
+                    edt_first_name.setError(activity.getResources().getString(R.string.error_invalid_first_name));
+                    focusView = edt_first_name;
+                    cancel = true;
+                }else if(edt_last_name.getText().toString().trim().length()==0){
+                    edt_last_name.setError(activity.getResources().getString(R.string.error_invalid_last_name));
+                    focusView = edt_last_name;
+                    cancel = true;
+                }else if(!GlobalVar.isEmailValid(edt_email.getText().toString().trim())){
+                    edt_email.setError(activity.getResources().getString(R.string.error_invalid_email));
+                    focusView = edt_email;
+                    cancel = true;
+                }else if(!GlobalVar.isPhoneNumberValid(edt_tel.getText().toString().trim())){
+                    edt_tel.setError(activity.getResources().getString(R.string.error_invalid_tel));
+                    focusView = edt_tel;
+                    cancel = true;
+                }
             }
+
 
             if(cancel) {
                 focusView.requestFocus();

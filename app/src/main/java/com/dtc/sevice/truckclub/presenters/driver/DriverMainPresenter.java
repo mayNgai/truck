@@ -1,13 +1,18 @@
 package com.dtc.sevice.truckclub.presenters.driver;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.util.Log;
 
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.service.ApiService;
+import com.dtc.sevice.truckclub.until.ApplicationController;
 import com.dtc.sevice.truckclub.until.DialogController;
 import com.dtc.sevice.truckclub.until.NetworkUtils;
+import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverMainActivity2;
 
 import java.util.List;
@@ -21,14 +26,19 @@ import rx.schedulers.Schedulers;
  */
 
 public class DriverMainPresenter {
+    private ProgressDialog dialog;
     private ApiService mForum;
     private DriverMainActivity2 mView;
     private DialogController dialogController;
+    private static int task_status = 0;
+    private TaskController taskController;
+    private Activity activity;
 
     public DriverMainPresenter(DriverMainActivity2 view,ApiService forum){
         mForum = forum;
         mView = view;
         dialogController = new DialogController();
+        taskController = new TaskController();
     }
 
     public void loadSchedulesDriver(){
@@ -95,12 +105,13 @@ public class DriverMainPresenter {
         }
     }
 
-    public void sentUpdateDriver(TblTask tblTask){
+    public void sentUpdateDriver(final TblTask tblTask){
         try {
 //            if(!NetworkUtils.isConnected(mView)){
 //                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
 //            }else {
-            // dialog = ProgressDialog.show(mView, "Wait", "loading...");
+            dialog = ProgressDialog.show(mView, "Wait", "loading...");
+            task_status = tblTask.getTask_status();
             mForum.getApi()
                     .sentUpdateDriver(tblTask)
                     .subscribeOn(Schedulers.newThread())
@@ -108,19 +119,28 @@ public class DriverMainPresenter {
                     .subscribe(new Observer<TblTask>() {
                         @Override
                         public void onCompleted() {
-                            //dialog.dismiss();
+                            dialog.dismiss();
                         }
 
                         @Override
                         public void onError(Throwable e) {
                             Log.e("loadDataMember Error", e.getMessage());
-                            // dialog.dismiss();
+                            dialog.dismiss();
                         }
 
                         @Override
                         public void onNext(TblTask tblTasks) {
-                            mView.setTitle();
-                            //  dialog.dismiss();
+                            dialog.dismiss();
+                            if(task_status == 6){
+                                taskController.createMember(tblTask.getMember().get(0));
+                                activity = ApplicationController.getAppActivity();
+                                Intent intent = new Intent(activity,DriverMainActivity2.class);
+                                activity.startActivity(intent);
+                                activity.finish();
+                            }else {
+                                mView.setTitle();
+                            }
+
                         }
                     });
 //            }

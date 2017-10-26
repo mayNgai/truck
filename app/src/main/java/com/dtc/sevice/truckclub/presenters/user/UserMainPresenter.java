@@ -35,7 +35,7 @@ public class UserMainPresenter {
     public void loadDriverInScope(){
         try {
             //dialog = ProgressDialog.show(mView, "Wait", "loading...");
-            mForum.getApi().getDriverInScope(mView.members.get(0).getMember_id(),mView.members.get(0).getLat(),mView.members.get(0).getLon(),mView.members.get(0).getRadius())
+            mForum.getApi().getDriverInScope(mView.members.get(0))
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<List<TblMember>>() {
@@ -52,6 +52,7 @@ public class UserMainPresenter {
 
                         @Override
                         public void onNext(List<TblMember> member) {
+
                             mView.updateMarkerDriverInScope(member);
                             //dialog.dismiss();
                         }

@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.adapter.TypeCarAdapter;
+import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblCarGroup;
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
@@ -423,6 +424,10 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.btn_now:
                 if(edt_start.getText().toString().length()>0){
+                    edt_start_date.setText(GlobalVar.getSystemDateOnly(UserMainActivity2.this));
+                    edt_start_time.setText(GlobalVar.getSystemTimeOnly(UserMainActivity2.this));
+                    edt_start_date.setEnabled(false);
+                    edt_start_time.setEnabled(false);
                     linear_detail.setVisibility(View.VISIBLE);
                     linear_select_type.setVisibility(View.INVISIBLE);
                     btn_now.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -432,6 +437,10 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.btn_booking:
                 if(edt_start.getText().toString().length()>0){
+                    edt_start_date.setText("");
+                    edt_start_time.setText("");
+                    edt_start_date.setEnabled(true);
+                    edt_start_time.setEnabled(true);
                     linear_detail.setVisibility(View.VISIBLE);
                     linear_select_type.setVisibility(View.INVISIBLE);
                     btn_now.setTextColor(getResources().getColor(R.color.black_1));
@@ -693,6 +702,12 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
     public void setDefault(){
         try {
             edt_start.setText("");
+            edt_start_date.setText("");
+            edt_start_time.setText("");
+            edt_end_date.setText("");
+            edt_end_time.setText("");
+            edt_count_date.setText("");
+            edt_iden.setText("");
             linear_detail.setVisibility(View.GONE);
             btn_now.setTextColor(getResources().getColor(R.color.black_1));
             btn_booking.setTextColor(getResources().getColor(R.color.black_1));

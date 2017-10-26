@@ -135,6 +135,16 @@ public class TblMember implements Serializable {
     @DatabaseField( useGetSet = true)
     private String task_id;
 
+    @SerializedName("count")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private int rating_count;
+
+    @SerializedName("all_count")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private int rating_all_count;
+
     @SerializedName("car_detail")
     @Expose
     private List<TblCarDetail> car_detail = null;
@@ -393,5 +403,21 @@ public class TblMember implements Serializable {
 
     public void setTask_id(String task_id) {
         this.task_id = task_id;
+    }
+
+    public int getRating_count() {
+        return rating_count;
+    }
+
+    public void setRating_count(int rating_count) {
+        this.rating_count = rating_count;
+    }
+
+    public int getRating_all_count() {
+        return rating_all_count;
+    }
+
+    public void setRating_all_count(int rating_all_count) {
+        this.rating_all_count = rating_all_count;
     }
 }

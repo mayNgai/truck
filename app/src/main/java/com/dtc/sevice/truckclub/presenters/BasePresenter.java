@@ -64,7 +64,7 @@ public class BasePresenter {
                 dialogController.dialogNolmal(mView,mView.getString(R.string.txtWarning),mView.getString(R.string.txt_internet_is_not));
             }else {
                 mForum.getApi()
-                        .updateStatusMember(mView.listMembers.get(0).getMember_id(),mView.listMembers.get(0).getStatus(),mView.listMembers.get(0).getStatus_id())
+                        .updateStatusMember(mView.listMembers.get(0))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<TblMember>() {

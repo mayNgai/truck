@@ -2,6 +2,7 @@ package com.dtc.sevice.truckclub.view.driver.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -12,13 +13,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -123,7 +127,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         taskController =new TaskController();
         baseActivity = new BaseActivity();
         members = new ArrayList<TblMember>();
-        members = baseActivity.listMembers;
+        members = baseActivity.getMember();
         _activity = new DriverMainActivity2();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -150,10 +154,13 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     public void setTitle(){
         try {
             if(members == null ||members.size()==0){
-                members = baseActivity.listMembers;
+                members = baseActivity.getMember();
             }
             if(members.get(0).getStatus_id()>3){
-                //addMarkerDestination();
+                if(tblTaskBooking!=null){
+                    LatLng latLng = new LatLng(tblTaskBooking.getDes_lat(), tblTaskBooking.getDes_lon());
+                    addMarkerDestination(latLng);
+                }
                 linear_bottom.setVisibility(View.VISIBLE);
                 linear_title.setVisibility(View.VISIBLE);
                 linear_select_type.setVisibility(View.GONE);
@@ -188,7 +195,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     public void setShowSelectList(){
         try {
             if(members == null ||members.size()==0){
-                members = baseActivity.listMembers;
+                members = baseActivity.getMember();
             }
             if(members.get(0).getStatus_id()==2){
                 linear_select_type.setVisibility(View.VISIBLE);
@@ -390,7 +397,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
             //String strAddress = getAddressByLatLng(latitude,longitude);
             //edt_start.setText((strAddress.length()>25) ? strAddress.substring(0,25) + ".." : strAddress);
             if(members == null || members.size() == 0)
-                members = baseActivity.listMembers;
+                members = baseActivity.getMember();
             members.get(0).setLat(Float.valueOf(String.valueOf(latitude)));
             members.get(0).setLon(Float.valueOf(String.valueOf(longitude)));
             members.get(0).setRadius(0.05);
@@ -466,11 +473,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_done:
-                members.get(0).setStatus_id(6);
-                tblTaskBooking.setTask_status(6);
-                mForum = new ApiService();
-                driverMainPresenter = new DriverMainPresenter(DriverMainActivity2.this , mForum);
-                driverMainPresenter.sentUpdateDriver(tblTaskBooking);
+                setDialogRating();
                 break;
             case R.id.btn_arrive:
                 members.get(0).setStatus_id(5);
@@ -491,6 +494,53 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
 
         }
     }
+
+    private void setFinishTask(){
+        try {
+            members.get(0).setStatus_id(6);
+            tblTaskBooking.setTask_status(6);
+            tblTaskBooking.setRating(count_rating);
+            mForum = new ApiService();
+            driverMainPresenter = new DriverMainPresenter(DriverMainActivity2.this , mForum);
+            driverMainPresenter.sentUpdateDriver(tblTaskBooking);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    float count_rating = 5;
+    private void setDialogRating(){
+        try {
+            LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate (R.layout.dialog_rating, null);
+            final Dialog mBottomSheetDialog = new Dialog (this,R.style.MaterialDialogSheet);
+            Button submitRateBtn = (Button)view.findViewById(R.id.submitRateBtn);
+            RatingBar ratingsBar = (RatingBar) view.findViewById(R.id.ratingsBar);
+            final TextView txt_rate = (TextView) view.findViewById(R.id.txt_rate);
+            mBottomSheetDialog.setContentView (view);
+            mBottomSheetDialog.setCancelable (true);
+            mBottomSheetDialog.getWindow ().setLayout (LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            mBottomSheetDialog.getWindow ().setGravity (Gravity.CENTER);
+            mBottomSheetDialog.show ();
+            ratingsBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar ratingBar, float rating, boolean b) {
+                    count_rating = rating;
+                    txt_rate.setText(String.valueOf(rating));
+                }
+            });
+            submitRateBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mBottomSheetDialog.dismiss();
+                    setFinishTask();
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

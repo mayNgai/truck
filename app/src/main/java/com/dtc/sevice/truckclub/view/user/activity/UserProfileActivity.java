@@ -143,7 +143,12 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
             edt_email.setText((listMembers.get(0).getEmail() ==null) ? "":listMembers.get(0).getEmail());
             edt_tel.setText((listMembers.get(0).getTel() ==null) ? "":listMembers.get(0).getTel());
             edt_birth.setText((listMembers.get(0).getBirth_date() ==null) ? "":dateController.convertDateFormat2To1(listMembers.get(0).getBirth_date()));
-            flagSex = ((listMembers.get(0).getSex() == "W" )? false : true) ;
+            if(listMembers.get(0).getSex().equalsIgnoreCase("W")){
+                flagSex = false;
+            }else {
+                flagSex = true;
+            }
+
             setSex();
         }catch (Exception e){
             e.printStackTrace();

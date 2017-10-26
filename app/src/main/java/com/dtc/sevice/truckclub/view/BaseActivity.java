@@ -59,7 +59,7 @@ public class BaseActivity extends AppCompatActivity implements
     private Toolbar toolbar;
     private ActionBarDrawerToggle drawerToggle;
     private int selectedNavItemId;
-    private TaskController taskController;
+    private static TaskController taskController;
     public static List<TblMember> listMembers;
     public static List<TblTask> tblTasks;
     private Activity _activity;
@@ -276,13 +276,14 @@ public class BaseActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void getMember(){
+    public List<TblMember> getMember(){
         try {
             listMembers = new ArrayList<TblMember>();
             listMembers = taskController.getMember();
         }catch (Exception e){
             e.printStackTrace();
         }
+        return listMembers;
     }
     private void loadDataMember(){
         try {

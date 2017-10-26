@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,10 @@ import com.dtc.sevice.truckclub.adapter.AddImageAdapter;
 import com.dtc.sevice.truckclub.adapter.ItemOffsetDecoration;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblTask;
+import com.dtc.sevice.truckclub.presenters.user.UserTaskPresenter;
+import com.dtc.sevice.truckclub.service.ApiService;
+import com.dtc.sevice.truckclub.until.ApplicationController;
+import com.dtc.sevice.truckclub.until.DialogController;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -54,7 +59,7 @@ import com.squareup.picasso.Picasso;
 
 public class UserTaskActivity extends AppCompatActivity implements View.OnClickListener,OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener , com.google.android.gms.location.LocationListener{
-    private TblTask tblTask;
+    public static TblTask tblTask;
     private Toolbar toolbar;
     private ImageView img_profile;
     private TextView txt_name,txt_last,txt_step1,txt_step2,txt_step3;
@@ -72,6 +77,9 @@ public class UserTaskActivity extends AppCompatActivity implements View.OnClickL
     private double longitude;
     private double latitude;
     private Marker[] markers = new Marker[10000];
+    private DialogController dialogController;
+    private ApiService apiService;
+    private UserTaskPresenter userTaskPresenter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +97,8 @@ public class UserTaskActivity extends AppCompatActivity implements View.OnClickL
 
     private void init(){
         try {
+            ApplicationController.setAppActivity(UserTaskActivity.this);
+            dialogController = new DialogController();
             _activity = UserTaskActivity.this;
             img_profile = (ImageView)findViewById(R.id.img_profile);
             txt_name = (TextView)findViewById(R.id.txt_name);
@@ -143,28 +153,28 @@ public class UserTaskActivity extends AppCompatActivity implements View.OnClickL
 
     private void setStatusTitle(){
         try {
-            if(tblTask.getMember().get(0).getComplete_status() == 3){
+            if(tblTask.getTask_status() == 3){
                 img_step1.setBackgroundResource(R.drawable.button_cricle_orange_stock);
                 img_step2.setBackgroundResource(R.drawable.button_cricle_orange_stock);
                 img_step3.setBackgroundResource(R.drawable.button_cricle_orange_stock);
                 txt_step1.setTextColor(getResources().getColor(R.color.LightGray));
                 txt_step2.setTextColor(getResources().getColor(R.color.LightGray));
                 txt_step3.setTextColor(getResources().getColor(R.color.LightGray));
-            }else if(tblTask.getMember().get(0).getComplete_status() == 4){
+            }else if(tblTask.getTask_status() == 4){
                 img_step1.setBackgroundResource(R.drawable.button_cricle_orange);
                 img_step2.setBackgroundResource(R.drawable.button_cricle_orange_stock);
                 img_step3.setBackgroundResource(R.drawable.button_cricle_orange_stock);
                 txt_step1.setTextColor(getResources().getColor(R.color.black_1));
                 txt_step2.setTextColor(getResources().getColor(R.color.LightGray));
                 txt_step3.setTextColor(getResources().getColor(R.color.LightGray));
-            }else if(tblTask.getMember().get(0).getComplete_status() == 5){
+            }else if(tblTask.getTask_status() == 5){
                 img_step1.setBackgroundResource(R.drawable.button_cricle_orange);
                 img_step2.setBackgroundResource(R.drawable.button_cricle_orange);
                 img_step3.setBackgroundResource(R.drawable.button_cricle_orange_stock);
                 txt_step1.setTextColor(getResources().getColor(R.color.LightGray));
                 txt_step2.setTextColor(getResources().getColor(R.color.black_1));
                 txt_step3.setTextColor(getResources().getColor(R.color.LightGray));
-            }else if(tblTask.getMember().get(0).getComplete_status() == 6){
+            }else if(tblTask.getTask_status() == 6){
                 img_step1.setBackgroundResource(R.drawable.button_cricle_orange);
                 img_step2.setBackgroundResource(R.drawable.button_cricle_orange);
                 img_step3.setBackgroundResource(R.drawable.button_cricle_orange);
@@ -317,22 +327,58 @@ public class UserTaskActivity extends AppCompatActivity implements View.OnClickL
                 setDialogBottom();
                 break;
             case R.id.linear_finish:
-                setDialogRating();
+                if(tblTask.getTask_status() == 5){
+                    setDialogRating();
+                }else {
+                    dialogController.dialogNolmal(this,"Warning","คนขับยังไม่กดจบงาน");
+                }
+
                 break;
         }
     }
 
+    private void setFinishTask(){
+        try {
+            tblTask.setTask_status(6);
+            tblTask.setRating(count_rating);
+            apiService = new ApiService();
+            userTaskPresenter = new UserTaskPresenter(this,apiService);
+            userTaskPresenter.sendFinish();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    float count_rating = 5;
     private void setDialogRating(){
         try {
             LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
             View view = inflater.inflate (R.layout.dialog_rating, null);
             final Dialog mBottomSheetDialog = new Dialog (this,R.style.MaterialDialogSheet);
+            Button submitRateBtn = (Button)view.findViewById(R.id.submitRateBtn);
+            RatingBar ratingsBar = (RatingBar) view.findViewById(R.id.ratingsBar);
+            final TextView txt_rate = (TextView) view.findViewById(R.id.txt_rate);
             mBottomSheetDialog.setContentView (view);
             mBottomSheetDialog.setCancelable (true);
             mBottomSheetDialog.getWindow ().setLayout (LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             mBottomSheetDialog.getWindow ().setGravity (Gravity.CENTER);
             mBottomSheetDialog.show ();
+            ratingsBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar ratingBar, float rating, boolean b) {
+                    count_rating = rating;
+                    txt_rate.setText(String.valueOf(rating));
+                }
+            });
+            submitRateBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mBottomSheetDialog.dismiss();
+                    setFinishTask();
+
+                }
+            });
         }catch (Exception e){
             e.printStackTrace();
         }

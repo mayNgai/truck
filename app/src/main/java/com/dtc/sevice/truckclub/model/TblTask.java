@@ -170,6 +170,11 @@ public class TblTask implements Serializable {
     @DatabaseField( useGetSet = true)
     private String complete_status;
 
+    @SerializedName("rating")
+    @Expose
+    @DatabaseField( useGetSet = true)
+    private float rating;
+
     @SerializedName("member")
     @Expose
     private List<TblMember> member;
@@ -445,5 +450,13 @@ public class TblTask implements Serializable {
 
     public void setComplete_status(String complete_status) {
         this.complete_status = complete_status;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 }

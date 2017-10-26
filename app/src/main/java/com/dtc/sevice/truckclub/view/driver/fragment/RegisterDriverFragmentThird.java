@@ -67,7 +67,7 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
     private ApplicationController _appController;
     public static ArrayList<String> selectedItems;
     private Updown_Image download_image;
-    private boolean flag_select_profile;
+    private static boolean flag_select_profile= true;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -119,9 +119,9 @@ public class RegisterDriverFragmentThird extends Fragment implements View.OnClic
         try {
             mView = new DriverRegisterActivity();
             if(mView.member != null){
-                flag_select_profile = false;
-                defaultPicProfile = false;
                 if(mView.member.getMember_type()==1){
+                    flag_select_profile = false;
+                    defaultPicProfile = false;
                     Picasso.with(getActivity())
                             .load(ApiService.url_facebook + mView.member.getFace_book_id() + ApiService.pic_facebook)
                             .into(img_profile);

@@ -36,16 +36,52 @@ public class UserRegisterPresenter {
         taskController = new TaskController();
     }
 
+//    public void loadRegister(){
+//        try {
+//            if(!NetworkUtils.isConnected(mView)){
+//                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+//            }else {
+//                dialog = ProgressDialog.show(mView, "Wait", "loading...");
+//                mForum.getApi()
+//                        .createMember(mView.member.getFirst_name(),mView.member.getLast_name(),mView.member.getEmail(),
+//                                mView.member.getUser_name(),mView.member.getTel(),mView.member.getBirth_date(),mView.member.getSex(),mView.member.getPassword()
+//                                ,mView.member.getMember_type(),mView.member.getAuthority(),mView.member.getDevice_id(),mView.member.getFace_book_id(),mView.member.getName_pic_path())
+//                        .subscribeOn(Schedulers.newThread())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribe(new Observer<TblMember>() {
+//                            @Override
+//                            public void onCompleted() {
+//                                dialog.dismiss();
+//                            }
+//
+//                            @Override
+//                            public void onError(Throwable e) {
+//                                Log.e("userRegisterCall Error", e.getMessage());
+//                                dialog.dismiss();
+//                            }
+//
+//                            @Override
+//                            public void onNext(TblMember member) {
+//                                updateSignUp(member);
+//                                dialog.dismiss();
+//                            }
+//                        });
+//            }
+//
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//
+//    }
+
     public void loadRegister(){
         try {
             if(!NetworkUtils.isConnected(mView)){
-                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+                dialogController.dialogNolmal(mView,"Warning","Internet is not stable.");
             }else {
                 dialog = ProgressDialog.show(mView, "Wait", "loading...");
                 mForum.getApi()
-                        .createMember(mView.member.getFirst_name(),mView.member.getLast_name(),mView.member.getEmail(),
-                                mView.member.getUser_name(),mView.member.getTel(),mView.member.getBirth_date(),mView.member.getSex(),mView.member.getPassword()
-                                ,mView.member.getMember_type(),mView.member.getAuthority(),mView.member.getDevice_id(),mView.member.getFace_book_id(),mView.member.getName_pic_path())
+                        .createMemberAndCar(mView.member)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<TblMember>() {

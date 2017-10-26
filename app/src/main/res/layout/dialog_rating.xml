@@ -41,10 +41,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="5.0"
-        android:id="@+id/rateTV"
+        android:id="@+id/txt_rate"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:textSize="20sp"
+        android:textStyle="bold"
         android:layout_below="@+id/linear_ratingsBar"
         android:layout_centerHorizontal="true" />
     <TextView
@@ -52,12 +53,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/errorTV"
         android:text="Something Went Wrong. Please Try Again"
-        android:layout_below="@+id/rateTV"
+        android:layout_below="@+id/txt_rate"
         android:textColor="@color/WhiteSmoke"
         android:visibility="gone"
         android:layout_centerHorizontal="true"/>
 
     <EditText
+        android:visibility="gone"
         android:layout_below="@+id/errorTV"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="20dp"

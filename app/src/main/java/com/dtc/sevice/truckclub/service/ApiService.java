@@ -20,18 +20,6 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
 import rx.Observable;
 
-//import retrofit.RequestInterceptor;
-//import retrofit.RestAdapter;
-//import retrofit.http.Body;
-//import retrofit.http.Field;
-//import retrofit.http.FormUrlEncoded;
-//import retrofit.http.Header;
-//import retrofit.http.Headers;
-//import retrofit.http.Multipart;
-//import retrofit.http.POST;
-//import retrofit.http.Part;
-//import retrofit.http.Query;
-
 /**
  * Created by admin on 9/20/2017 AD.
  */
@@ -82,9 +70,8 @@ public class ApiService {
         @POST("get_car_detail.php")
         public Observable<TblCarDetail> getCarDetail(@Body TblMember member);
 
-        @FormUrlEncoded
         @POST("update_status_member.php")
-        public Observable<TblMember> updateStatusMember(@Field("member_id") int member_id,@Field("status") String status,@Field("status_id") int status_id);
+        public Observable<TblMember> updateStatusMember(@Body TblMember member);
 
         @POST("get_province.php")
         public Observable<List<TblProvince>> getProvince();
@@ -92,9 +79,8 @@ public class ApiService {
         @POST("get_car_group.php")
         public Observable<List<TblCarGroup>> getCarGroup();
 
-        @FormUrlEncoded
         @POST("user_search_driver_in_scope.php")
-        public Observable<List<TblMember>> getDriverInScope(@Field("member_id") int member_id, @Field("lat") float lat,@Field("lon") float lon,@Field("radius") double radius);
+        public Observable<List<TblMember>> getDriverInScope(@Body TblMember member);
 
         @POST("user_update_profile.php")
         public Observable<TblMember> updateUserProfile(@Body TblMember member);
