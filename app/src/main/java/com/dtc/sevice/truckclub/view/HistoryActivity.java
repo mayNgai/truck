@@ -241,7 +241,8 @@ public class HistoryActivity extends AppCompatActivity implements View.OnClickLi
     public void updateTask(List<TblTask> list){
         try {
             listTask = new ArrayList<TblTask>();
-            listTask = list;
+            //listTask = list;
+            setListInSelect(list);
             setAdapter();
         }catch (Exception e){
             e.printStackTrace();
@@ -325,70 +326,134 @@ public class HistoryActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-//    private void setListInSelect() {
-//        try {
-//            if ((!task.getStart_date().equalsIgnoreCase("null")) && (!task.getStart_date().equalsIgnoreCase(""))) {
-//                long longStart = GlobalVar.dateTimeFormatTolong(task.getStart_date());
-//                long longCurrent = GlobalVar.dateTimeFormatTolong(GlobalVar.getSystemTime(User_History.this));
-//                if (pos == 0) {
-//                    if (longStart == longCurrent) {
-//                        itemAll.add(task);
-//                    }
-//
-//                } else if (pos == 1) {
-//                    List<String> listdate = dateController.daysOfWeek();
-//                    if (listdate.size() > 0) {
-//                        edtStart.setText(listdate.get(0));
-//                        edtEnd.setText(listdate.get(1));
-//                        long startWeek = dateController.dateFormat1Tolong(listdate.get(0));
-//                        long endWeek = dateController.dateFormat1Tolong(listdate.get(1));
-//
-//                        if (longStart >= startWeek && longStart <= endWeek) {
-//                            itemAll.add(task);
-//                        }
-//                    }
-//
-//                } else if (pos == 2) {
-//                    List<String> listdate = dateController.daysOfMonth();
-//                    edtStart.setText(listdate.get(1));
-//                    edtEnd.setText(listdate.get(2));
-//                    if (listdate.size() > 0) {
-//                        long lmonth = dateController.dateTimeFormat5Tolong(listdate.get(0));
-//                        long startmonth = dateController.dateTimeFormat5Tolong(task.getStart_date().substring(0, 7));
-//
-//                        if (lmonth == startmonth) {
-//                            itemAll.add(task);
-//                        }
-//                    }
-//
-//                } else if (pos == 3) {
-//
-//                    List<String> listdate = dateController.daysOfYear();
-//
-//                    if (listdate.size() > 0) {
-//                        edtStart.setText(listdate.get(1));
-//                        edtEnd.setText(listdate.get(2));
-//                        long lYear = dateController.dateTimeFormat6Tolong(listdate.get(0));
-//                        long startYear = dateController.dateTimeFormat6Tolong(task.getStart_date().substring(0, 4));
-//
-//                        if (lYear == startYear) {
-//                            itemAll.add(task);
-//                        }
-//                    }
-//                } else {
-//
-//                    if(lStartSelect!=0&&lEndSelect!=0){
-//                        if (longStart >= lStartSelect && longStart <= lEndSelect) {
-//                            itemAll.add(task);
-//                        }
-//                    }
-//
-//
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private void setListInSelect(List<TblTask> list) {
+        try {
+            if ((list != null) && (list.size()>0)) {
+                for(TblTask t: list){
+                    if(index == 0 && t.getService_type().equalsIgnoreCase("Now")){
+                        long longStart = GlobalVar.dateTimeFormatTolong(t.getDate_task_create());
+                        long longCurrent = GlobalVar.dateTimeFormatTolong(GlobalVar.getSystemTime(HistoryActivity.this));
+                        if (pos == 0) {
+                            if (longStart == longCurrent) {
+                                listTask.add(t);
+                            }
+
+                        } else if (pos == 1) {
+                            List<String> listdate = dateController.daysOfWeek();
+                            if (listdate.size() > 0) {
+                                edtStart.setText(listdate.get(0));
+                                edtEnd.setText(listdate.get(1));
+                                long startWeek = dateController.dateFormat1Tolong(listdate.get(0));
+                                long endWeek = dateController.dateFormat1Tolong(listdate.get(1));
+
+                                if (longStart >= startWeek && longStart <= endWeek) {
+                                    listTask.add(t);
+                                }
+                            }
+
+                        } else if (pos == 2) {
+                            List<String> listdate = dateController.daysOfMonth();
+                            edtStart.setText(listdate.get(1));
+                            edtEnd.setText(listdate.get(2));
+                            if (listdate.size() > 0) {
+                                long lmonth = dateController.dateTimeFormat5Tolong(listdate.get(0));
+                                long startmonth = dateController.dateTimeFormat5Tolong(t.getDate_task_create().substring(0, 7));
+
+                                if (lmonth == startmonth) {
+                                    listTask.add(t);
+                                }
+                            }
+
+                        } else if (pos == 3) {
+
+                            List<String> listdate = dateController.daysOfYear();
+
+                            if (listdate.size() > 0) {
+                                edtStart.setText(listdate.get(1));
+                                edtEnd.setText(listdate.get(2));
+                                long lYear = dateController.dateTimeFormat6Tolong(listdate.get(0));
+                                long startYear = dateController.dateTimeFormat6Tolong(t.getDate_task_create().substring(0, 4));
+
+                                if (lYear == startYear) {
+                                    listTask.add(t);
+                                }
+                            }
+                        } else {
+
+                            if(lStartSelect!=0&&lEndSelect!=0){
+                                if (longStart >= lStartSelect && longStart <= lEndSelect) {
+                                    listTask.add(t);
+                                }
+                            }
+
+
+                        }
+                    }else if(index == 1 && t.getService_type().equalsIgnoreCase("Booking")){
+                        long longStart = GlobalVar.dateTimeFormatTolong(t.getDate_task_create());
+                        long longCurrent = GlobalVar.dateTimeFormatTolong(GlobalVar.getSystemTime(HistoryActivity.this));
+                        if (pos == 0) {
+                            if (longStart == longCurrent) {
+                                listTask.add(t);
+                            }
+
+                        } else if (pos == 1) {
+                            List<String> listdate = dateController.daysOfWeek();
+                            if (listdate.size() > 0) {
+                                edtStart.setText(listdate.get(0));
+                                edtEnd.setText(listdate.get(1));
+                                long startWeek = dateController.dateFormat1Tolong(listdate.get(0));
+                                long endWeek = dateController.dateFormat1Tolong(listdate.get(1));
+
+                                if (longStart >= startWeek && longStart <= endWeek) {
+                                    listTask.add(t);
+                                }
+                            }
+
+                        } else if (pos == 2) {
+                            List<String> listdate = dateController.daysOfMonth();
+                            edtStart.setText(listdate.get(1));
+                            edtEnd.setText(listdate.get(2));
+                            if (listdate.size() > 0) {
+                                long lmonth = dateController.dateTimeFormat5Tolong(listdate.get(0));
+                                long startmonth = dateController.dateTimeFormat5Tolong(t.getDate_task_create().substring(0, 7));
+
+                                if (lmonth == startmonth) {
+                                    listTask.add(t);
+                                }
+                            }
+
+                        } else if (pos == 3) {
+
+                            List<String> listdate = dateController.daysOfYear();
+
+                            if (listdate.size() > 0) {
+                                edtStart.setText(listdate.get(1));
+                                edtEnd.setText(listdate.get(2));
+                                long lYear = dateController.dateTimeFormat6Tolong(listdate.get(0));
+                                long startYear = dateController.dateTimeFormat6Tolong(t.getDate_task_create().substring(0, 4));
+
+                                if (lYear == startYear) {
+                                    listTask.add(t);
+                                }
+                            }
+                        } else {
+
+                            if(lStartSelect!=0&&lEndSelect!=0){
+                                if (longStart >= lStartSelect && longStart <= lEndSelect) {
+                                    listTask.add(t);
+                                }
+                            }
+
+
+                        }
+                    }
+
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

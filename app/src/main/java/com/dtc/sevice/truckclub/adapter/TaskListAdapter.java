@@ -113,6 +113,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
                     if(edt_price.getText().toString().length()>0){
                         mView = new DriverBookingActivity();
                         mView.sentOfferPrice(Integer.parseInt(arrayList.get(pos).getId()),Integer.parseInt(edt_price.getText().toString()));
+                        arrayList.remove(pos);
+                        notifyDataSetChanged();
                     }else {
                         dialogController.dialogNolmal(mcontext,"Warnning","กรุณาใส่ราคาก่อน..");
                     }
@@ -124,6 +126,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
                 public void onClick(View view) {
                     mView = new DriverBookingActivity();
                     mView.sentGoing(arrayList.get(pos));
+                    arrayList.remove(pos);
+                    notifyDataSetChanged();
                 }
             });
 

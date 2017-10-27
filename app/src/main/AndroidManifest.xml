@@ -34,7 +34,7 @@
             android:theme="@style/MyMaterialWhitTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <data android:scheme="@string/fb_login_protocol_scheme" />
+                <!--<data android:scheme="@string/fb_login_protocol_scheme" />-->
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

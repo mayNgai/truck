@@ -27,7 +27,7 @@
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"
                 android:textStyle="bold"
-                android:textSize="@dimen/font_18"
+                android:textSize="@dimen/font_14"
                 android:text="วันที่เสนอราคา :"/>
             <TextView
                 android:id="@+id/txt_date"
@@ -72,6 +72,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:paddingTop="10dp"
             android:layout_weight="5">
 
             <LinearLayout
@@ -137,22 +138,16 @@
                         android:layout_marginLeft="10dp"
                         android:text="นามสกุล"/>
                 </LinearLayout>
-                <RatingBar
-                    android:id="@+id/rating_driver"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:isIndicator="true"
-                    android:clickable="false"
-                    android:numStars="5"
-                    android:scaleX="0.5"
-                    android:scaleY="0.5" />
+
             </LinearLayout>
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.3"
                 android:src="@drawable/arrow_right"/>
+
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -195,6 +190,21 @@
                 android:layout_marginLeft="20dp"
                 android:text="รถเทรลเลอร์"/>
 
+        </LinearLayout>
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:gravity="right"
+            android:layout_height="wrap_content">
+            <RatingBar
+                android:id="@+id/rating_driver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isIndicator="true"
+                android:clickable="false"
+                android:numStars="5"
+                android:scaleX="0.5"
+                android:scaleY="0.5" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"

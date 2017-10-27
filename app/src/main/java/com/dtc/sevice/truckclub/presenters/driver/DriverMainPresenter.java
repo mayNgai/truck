@@ -15,6 +15,7 @@ import com.dtc.sevice.truckclub.until.NetworkUtils;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverMainActivity2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observer;
@@ -132,7 +133,9 @@ public class DriverMainPresenter {
                         public void onNext(TblTask tblTasks) {
                             dialog.dismiss();
                             if(task_status == 6){
-                                taskController.createMember(tblTask.getMember().get(0));
+                                taskController.createMember(tblTasks.getMember().get(0));
+                                List<TblMember> tblMembers = new ArrayList<TblMember>();
+                                tblMembers = taskController.getMember();
                                 activity = ApplicationController.getAppActivity();
                                 Intent intent = new Intent(activity,DriverMainActivity2.class);
                                 activity.startActivity(intent);
@@ -211,6 +214,42 @@ public class DriverMainPresenter {
                             }
                         });
 //            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void loadDataMember(){
+        try {
+            if(!NetworkUtils.isConnected(mView)){
+                dialogController.dialogNolmal(mView,mView.getString(R.string.txtWarning),mView.getString(R.string.txt_internet_is_not));
+            }else {
+                //dialog = ProgressDialog.show(mView, mView.getString(R.string.txtWait), mView.getString(R.string.txt_loading));
+                mForum.getApi()
+                        .getDataMember(mView.listMembers.get(0))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<TblMember>() {
+                            @Override
+                            public void onCompleted() {
+                                // dialog.dismiss();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e("loadDataMember Error", e.getMessage());
+                                //dialog.dismiss();
+                            }
+
+                            @Override
+                            public void onNext(TblMember member) {
+                                taskController.createMember(member);
+                                mView.setTitle();
+                                //dialog.dismiss();
+                            }
+                        });
+            }
 
         }catch (Exception e){
             e.printStackTrace();

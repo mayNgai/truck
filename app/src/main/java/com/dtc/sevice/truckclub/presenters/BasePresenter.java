@@ -241,7 +241,7 @@ public class BasePresenter {
         }
     }
 
-    public void callWaitAccept(TblTask tblTask){
+    public void callUpdateTask(TblTask tblTask){
         try {
 //            if(!NetworkUtils.isConnected(mView)){
 //                dialogController.dialogNolmal(mView,mView.getString(R.string.txtWarning),mView.getString(R.string.txt_internet_is_not));

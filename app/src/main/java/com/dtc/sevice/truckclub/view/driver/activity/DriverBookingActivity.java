@@ -274,9 +274,9 @@ public class DriverBookingActivity extends AppCompatActivity {
     public void updateGoing(){
         try {
             adapter.closeDriverOffer();
-            Intent i = new Intent(DriverBookingActivity.this , DriverMainActivity2.class);
-            startActivity(i);
-            finish();
+//            Intent i = new Intent(DriverBookingActivity.this , DriverMainActivity2.class);
+//            startActivity(i);
+//            finish();
         }catch (Exception e){
             e.printStackTrace();
         }

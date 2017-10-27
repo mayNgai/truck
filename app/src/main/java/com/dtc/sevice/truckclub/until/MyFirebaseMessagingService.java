@@ -57,13 +57,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService{
                     startActivity(i);
                     _activity.finish();
 
-                }else if(message.equalsIgnoreCase("new_now")||message.equalsIgnoreCase("accept")) {
+                }else if(message.equalsIgnoreCase("new_now")||message.equalsIgnoreCase("timeout_driver")||message.equalsIgnoreCase("cancel")) {
                     Activity _activity = ApplicationController.getAppActivity();
                     i = new Intent(_activity, DriverMainActivity2.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                     _activity.finish();
-                }else if(message.equalsIgnoreCase("new_booking")){
+                }else if(message.equalsIgnoreCase("new_booking")||message.equalsIgnoreCase("accept")){
+                    if(message.equalsIgnoreCase("new_booking")){
                         String start_date = data.get("start_date");
                         if(GlobalVar.checkNotiTaskBooking(start_date)){
                             Activity _activity = ApplicationController.getAppActivity();
@@ -74,9 +75,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService{
                         }else {
                             success = false;
                         }
+                    }else if(message.equalsIgnoreCase("accept")){
+                        Activity _activity = ApplicationController.getAppActivity();
+                        i = new Intent(_activity, DriverBookingActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(i);
+                        _activity.finish();
+                    }
+
 
                 }else if(message.equalsIgnoreCase("offer_now")||message.equalsIgnoreCase("offer_booking")||message.equalsIgnoreCase("wait arrive")||message.equalsIgnoreCase("arrive")
-                        ||message.equalsIgnoreCase("done")){
+                        ||message.equalsIgnoreCase("done")||message.equalsIgnoreCase("timeout_user")){
                     Activity _activity = ApplicationController.getAppActivity();
                     i = new Intent(_activity, UserMainActivity2.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

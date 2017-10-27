@@ -285,7 +285,7 @@ public class BaseActivity extends AppCompatActivity implements
         }
         return listMembers;
     }
-    private void loadDataMember(){
+    public void loadDataMember(){
         try {
             mForum = new ApiService();
             basePresenter = new BasePresenter(this,mForum);
@@ -369,7 +369,22 @@ public class BaseActivity extends AppCompatActivity implements
             tblTask.setMember(tblMembers);
             mForum = new ApiService();
             basePresenter = new BasePresenter(this,mForum);
-            basePresenter.callWaitAccept(tblTask);
+            basePresenter.callUpdateTask(tblTask);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void callCancel(int id ){
+        try {
+            TblTask tblTask = new TblTask();
+            tblTask.setId(String.valueOf(id));
+            tblTask.setTask_status(-1);
+            tblTask.setService_type("Booking");
+            tblTask.setMember(listMembers);
+            mForum = new ApiService();
+            basePresenter = new BasePresenter(this,mForum);
+            basePresenter.callUpdateTask(tblTask);
         }catch (Exception e){
             e.printStackTrace();
         }

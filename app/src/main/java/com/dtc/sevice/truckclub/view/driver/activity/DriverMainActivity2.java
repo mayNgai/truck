@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -19,9 +20,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -52,6 +55,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by May on 9/27/2017.
@@ -79,7 +83,9 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     public static TblTask tblTaskBooking;
     public static List<TblTask> listTasks;
     private Activity _activity;
-    public static LinearLayout linear_select_type;
+    public static LinearLayout linear_select_type,linear_head,linear_main2;
+    private static ProgressBar progressBarCircle;
+    private static EditText edt_time;
     private static BaseActivity baseActivity;
     private ApiService mForum;
     private DriverMainPresenter driverMainPresenter;
@@ -88,10 +94,12 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     private SwipeRefreshLayout swipe_refresh;
     private static RelativeLayout linear_title;
     private static ImageButton img_step1,img_step2,img_step3;
-    private static TextView txt_step1,txt_step2,txt_step3,txt_name,txt_last;
+    private static TextView txt_step1,txt_step2,txt_step3,txt_name,txt_last,txt_wait_time;
     private static Button btn_done,btn_arrive;
     private LinearLayout linear_data_task,linear_bottom;
-    private ImageView img_profile;
+    private static ImageView img_profile,img_cancel;
+    private static CountDownTimer countDownTimer ;
+    private int countTime = 10;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,7 +110,9 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         setContentView(R.layout.activity_main_driver2);
         init();
+        initListeners();
         getSchedulesDriver();
+        //setCountDownTime();
     }
 
     private void init(){
@@ -121,9 +131,15 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         btn_arrive = (Button)findViewById(R.id.btn_arrive);
         linear_data_task = (LinearLayout)findViewById(R.id.linear_data_task);
         linear_bottom = (LinearLayout)findViewById(R.id.linear_bottom);
+        linear_head = (LinearLayout)findViewById(R.id.linear_head);
+        linear_main2 = (LinearLayout)findViewById(R.id.linear_main2);
         img_profile = (ImageView)findViewById(R.id.img_profile);
         txt_name = (TextView)findViewById(R.id.txt_name);
         txt_last = (TextView)findViewById(R.id.txt_last);
+        edt_time = (EditText) findViewById(R.id.edt_time);
+        txt_wait_time = (TextView)findViewById(R.id.txt_wait_time);
+        img_cancel = (ImageView)findViewById(R.id.img_cancel);
+        progressBarCircle = (ProgressBar)findViewById(R.id.progressBarCircle);
         taskController =new TaskController();
         baseActivity = new BaseActivity();
         members = new ArrayList<TblMember>();
@@ -145,10 +161,15 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
             getTaskByID();
         }
         setRefreshList();
+
+//        setClickList();
+    }
+
+    private void initListeners(){
         btn_arrive.setOnClickListener(this);
         btn_done.setOnClickListener(this);
         linear_data_task.setOnClickListener(this);
-//        setClickList();
+        img_cancel.setOnClickListener(this);
     }
 
     public void setTitle(){
@@ -485,9 +506,10 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
             case R.id.linear_data_task:
 
                 break;
-//            case R.id.btn_now:
-//
-//                break;
+            case R.id.img_cancel:
+                stopCountDownTimer();
+                linear_main2.setVisibility(View.GONE);
+                break;
 //            case R.id.btn_booking:
 //
 //                break;
@@ -539,6 +561,58 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private long timeCountInMilliSeconds = 1 * 60000;
+    private void setCountDownTime(){
+        try {
+            countTime = 1;
+            edt_time.setText(String.valueOf(countTime));
+            timeCountInMilliSeconds = countTime * 60000;
+            linear_main2.setVisibility(View.VISIBLE);
+            countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    txt_wait_time.setText(hmsTimeFormatter(millisUntilFinished));
+                    progressBarCircle.setProgress(60 - (int) ((timeCountInMilliSeconds - millisUntilFinished)/ (1000 * countTime)));
+
+                }
+
+                @Override
+                public void onFinish() {
+                    edt_time.setText("Time out...");
+                    txt_wait_time.setText(hmsTimeFormatter(0));
+                    setProgressBarValues();
+                }
+
+            }.start();
+            countDownTimer.start();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void stopCountDownTimer() {
+        countDownTimer.cancel();
+    }
+
+    private void setProgressBarValues() {
+
+        progressBarCircle.setMax((int) timeCountInMilliSeconds / 1000);
+        progressBarCircle.setProgress((int) timeCountInMilliSeconds / 1000);
+    }
+
+    private String hmsTimeFormatter(long milliSeconds) {
+
+        String hms = String.format("%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toHours(milliSeconds),
+                TimeUnit.MILLISECONDS.toMinutes(milliSeconds) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliSeconds)),
+                TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
+
+        return hms;
+
+
     }
 
     @Override

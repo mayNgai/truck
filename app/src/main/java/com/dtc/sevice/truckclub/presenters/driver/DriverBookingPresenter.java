@@ -2,14 +2,18 @@ package com.dtc.sevice.truckclub.presenters.driver;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.util.Log;
 
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.service.ApiService;
+import com.dtc.sevice.truckclub.until.ApplicationController;
 import com.dtc.sevice.truckclub.until.DialogController;
 import com.dtc.sevice.truckclub.until.NetworkUtils;
+import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverBookingActivity;
+import com.dtc.sevice.truckclub.view.driver.activity.DriverMainActivity2;
 
 import java.util.List;
 
@@ -26,11 +30,14 @@ public class DriverBookingPresenter {
     private ApiService mForum;
     private DriverBookingActivity mView;
     private DialogController dialogController;
+    private Activity activity;
+    private TaskController taskController;
 
     public DriverBookingPresenter(DriverBookingActivity view,ApiService forum){
         mForum = forum;
         mView = view;
         dialogController = new DialogController();
+        taskController = new TaskController();
     }
     public void loadSchedules(){
         try {
@@ -152,7 +159,12 @@ public class DriverBookingPresenter {
 
                         @Override
                         public void onNext(TblTask tblTasks) {
+                            taskController.createMember(tblTasks.getMember().get(0));
                             mView.updateGoing();
+                            activity = ApplicationController.getAppActivity();
+                            Intent i = new Intent(activity , DriverMainActivity2.class);
+                            activity.startActivity(i);
+                            activity.finish();
                             //  dialog.dismiss();
                         }
                     });

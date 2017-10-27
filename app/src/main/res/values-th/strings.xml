@@ -7,6 +7,7 @@
     <string name="app_name">Truck Club</string>
     <string name="logo_name">Truck Club</string>
     <string name="title_all_task">All Task</string>
+    <string name="title_home">Home</string>
     <string name="title_schedule">Schedule</string>
     <string name="title_me">Me</string>
     <integer name="zoom">11</integer>

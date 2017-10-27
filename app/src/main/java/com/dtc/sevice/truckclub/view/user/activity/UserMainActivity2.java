@@ -11,13 +11,16 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -28,6 +31,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -65,6 +69,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by admin on 9/20/2017 AD.
@@ -73,11 +78,16 @@ import java.util.Locale;
 public class UserMainActivity2 extends BaseActivity implements View.OnClickListener,OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener , com.google.android.gms.location.LocationListener{
     private static Button btn_now,btn_booking,btc_call_service;
-    private static EditText edt_start,edt_count_date,edt_end_date,edt_start_date,edt_iden,edt_start_time,edt_end_time;
+    private static EditText edt_start,edt_count_date,edt_end_date,edt_start_date,edt_iden,edt_start_time,edt_end_time,edt_time;
     private CheckBox chk_cash,chk_credit;
-    private ImageView img_start,img_del_start;
+    private static ImageView img_start,img_del_start ,img_cancel;
     private static LinearLayout linear_select_type,linear_current,linear_detail,linear_main1,linear_main2,linear_bottom,linear_head;
-    private static TextView txtname_car;
+    private static TextView txtname_car,txt_wait_time;
+    private static ProgressBar progressBarCircle;
+    private static SwipeRefreshLayout swipe_refresh;
+    private static RecyclerView recycler_view;
+    private static CountDownTimer countDownTimer ;
+    private int countTime = 10;
     //private LinearLayout linear_detail;
     //Map
     private GoogleApiClient client;
@@ -100,7 +110,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
     private static List<TblCarGroup> listCarGroups;
     public static TblTask tblTask;
     private DateController dateController;
-    private String service_type = "";
+    private static String service_type = "";
     private DialogController dialog;
     private boolean flagCountDate =  false;
     @Override
@@ -108,6 +118,8 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_user4);
         init();
+        initListeners();
+       // setCountDownTime();
     }
 
     private void init(){
@@ -139,20 +151,18 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         linear_bottom = (LinearLayout)findViewById(R.id.linear_bottom);
         linear_head = (LinearLayout)findViewById(R.id.linear_head);
         txtname_car = (TextView)findViewById(R.id.txtname_car);
+        edt_time = (EditText)findViewById(R.id.edt_time);
+        img_cancel = (ImageView)findViewById(R.id.img_cancel);
+        progressBarCircle = (ProgressBar)findViewById(R.id.progressBarCircle);
+        txt_wait_time = (TextView)findViewById(R.id.txt_wait_time);
+        swipe_refresh = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
+        recycler_view = (RecyclerView)findViewById(R.id.recycler_view);
         //img_del_iden = (ImageView)findViewById(R.id.img_del_iden);
-
+        recycler_view.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        recycler_view.setLayoutManager(mLayoutManager);
         members = taskController.getMember();
-        linear_select_type.setOnClickListener(this);
-        linear_current.setOnClickListener(this);
-        img_start.setOnClickListener(this);
-        img_del_start.setOnClickListener(this);
-        btn_now.setOnClickListener(this);
-        btn_booking.setOnClickListener(this);
-        btc_call_service.setOnClickListener(this);
-        edt_end_date.setOnClickListener(this);
-        edt_start_date.setOnClickListener(this);
-        edt_start_time.setOnClickListener(this);
-        edt_end_time.setOnClickListener(this);
+
         //img_del_iden.setOnClickListener(this);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -167,6 +177,21 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         setChangeTextStart();
         setCarGroup();
         //setChangeTextIden();
+    }
+
+    private void initListeners() {
+        linear_select_type.setOnClickListener(this);
+        linear_current.setOnClickListener(this);
+        img_start.setOnClickListener(this);
+        img_del_start.setOnClickListener(this);
+        btn_now.setOnClickListener(this);
+        btn_booking.setOnClickListener(this);
+        btc_call_service.setOnClickListener(this);
+        edt_end_date.setOnClickListener(this);
+        edt_start_date.setOnClickListener(this);
+        edt_start_time.setOnClickListener(this);
+        edt_end_time.setOnClickListener(this);
+        img_cancel.setOnClickListener(this);
     }
 
     public Action getIndexApiAction() {
@@ -486,6 +511,14 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 else
                     dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDate));
                 break;
+            case R.id.img_cancel:
+                stopCountDownTimer();
+                tblTask2.setTask_status(-1);
+                tblTask2.setMember(members);
+                callUpdateTask(tblTask2);
+                linear_main1.setVisibility(View.VISIBLE);
+                linear_main2.setVisibility(View.GONE);
+                break;
 
         }
     }
@@ -685,6 +718,16 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         }
     }
 
+    private void callUpdateTask(TblTask task){
+        try {
+            mApiService = new ApiService();
+            mUserMainPresenter = new UserMainPresenter(UserMainActivity2.this,mApiService);
+            mUserMainPresenter.updateMain(task);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void updateMarkerDriverInScope(List<TblMember> m){
         try {
             markers = new Marker[10000];
@@ -716,6 +759,77 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+    TblTask tblTask2;
+    private long timeCountInMilliSeconds = 1 * 60000;
+    public void setCountDownTime(final TblTask tblTask2){
+        try {
+//            tblTask2 = new TblTask();
+//            tblTask2.setTime_wait(1);
+//            tblTask2.setStart_date(dateController.getSystemTime(UserMainActivity2.this));
+            edt_time.setText(String.valueOf(tblTask2.getTime_wait()));
+            long current = dateController.dateTimeFormat2Tolong(dateController.getSystemTime(UserMainActivity2.this));
+            timeCountInMilliSeconds = dateController.dateTimeFormat2Tolong(tblTask2.getStart_date()) + tblTask2.getTime_wait() * 60000;
+            if(timeCountInMilliSeconds > current){
+                timeCountInMilliSeconds = timeCountInMilliSeconds - current;
+                linear_main1.setVisibility(View.GONE);
+                linear_main2.setVisibility(View.VISIBLE);
+                countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+
+                        txt_wait_time.setText(hmsTimeFormatter(millisUntilFinished));
+                        progressBarCircle.setProgress(60 - (int) ((timeCountInMilliSeconds - millisUntilFinished)/ (1000 * tblTask2.getTime_wait())));
+                        Log.i("wait_time",hmsTimeFormatter(millisUntilFinished));
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        Log.i("wait_time","Time out...");
+                        edt_time.setText("Time out...");
+                        txt_wait_time.setText(hmsTimeFormatter(0));
+                        setProgressBarValues();
+                        linear_main1.setVisibility(View.VISIBLE);
+                        linear_main2.setVisibility(View.GONE);
+                        tblTask2.setTask_status(2);
+                        tblTask2.setMember(members);
+                        callUpdateTask(tblTask2);
+
+//                        img_cancel.callOnClick();
+                        //dialog.dialogNolmal(UserMainActivity2.this,"Warning","Time out...");
+                    }
+
+                }.start();
+                countDownTimer.start();
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void stopCountDownTimer() {
+        countDownTimer.cancel();
+    }
+
+    private void setProgressBarValues() {
+
+        progressBarCircle.setMax((int) timeCountInMilliSeconds / 1000);
+        progressBarCircle.setProgress((int) timeCountInMilliSeconds / 1000);
+    }
+
+    private String hmsTimeFormatter(long milliSeconds) {
+
+        String hms = String.format("%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toHours(milliSeconds),
+                TimeUnit.MILLISECONDS.toMinutes(milliSeconds) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliSeconds)),
+                TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
+
+        return hms;
+
+
     }
 
     @Override
