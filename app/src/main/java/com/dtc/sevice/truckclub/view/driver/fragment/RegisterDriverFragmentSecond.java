@@ -185,11 +185,11 @@ public class RegisterDriverFragmentSecond extends Fragment {
             boolean cancel = false;
             View focusView = null;
             if(edt_sum1.getText().toString().trim().length()==0){
-                edt_sum1.setError(activity.getResources().getString(R.string.error_invalid_car_brands));
+                edt_sum1.setError(activity.getResources().getString(R.string.error_invalid_car_wheels));
                 focusView = edt_sum1;
                 cancel = true;
             }else if(edt_sum2.getText().toString().trim().length()==0){
-                edt_sum2.setError(activity.getResources().getString(R.string.error_invalid_car_model));
+                edt_sum2.setError(activity.getResources().getString(R.string.error_invalid_car_tons));
                 focusView = edt_sum2;
                 cancel = true;
             }

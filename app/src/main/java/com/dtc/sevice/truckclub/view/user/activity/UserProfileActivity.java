@@ -74,6 +74,7 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
         init();
+        initListeners();
     }
 
     private void init(){
@@ -108,10 +109,14 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
             }
         });
         setOnTouch();
+
+        getInfo();
+    }
+
+    private void initListeners(){
         lay_female.setOnClickListener(this);
         lay_male.setOnClickListener(this);
         img_profile.setOnClickListener(this);
-        getInfo();
     }
 
     private void getInfo(){

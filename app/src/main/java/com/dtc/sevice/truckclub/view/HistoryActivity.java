@@ -294,7 +294,7 @@ public class HistoryActivity extends AppCompatActivity implements View.OnClickLi
                         getDataHistory();
                     }else
                         dialog.dialogNolmal(HistoryActivity.this, getResources().getString(R.string.titleLoginFail),
-                                getResources().getString(R.string.txtPleaseChooseDate));
+                                getResources().getString(R.string.txtPleaseChooseDateStart));
                 }
 
             }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
@@ -317,7 +317,7 @@ public class HistoryActivity extends AppCompatActivity implements View.OnClickLi
                     endDatePickerDialog.show();
                 else
                     dialog.dialogNolmal(HistoryActivity.this, getResources().getString(R.string.titleLoginFail),
-                            getResources().getString(R.string.txtPleaseChooseDate));
+                            getResources().getString(R.string.txtPleaseChooseDateStart));
 
                 break;
 

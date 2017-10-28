@@ -39,8 +39,8 @@ public class AboutAdapter extends RecyclerView.Adapter<AboutAdapter.ViewHolder>{
             @Override
             public void onClick(View view) {
                 if(i ==0){
-//                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mcontext.getResources().getString(R.string.playStore)));
-//                    mcontext.startActivity(browserIntent);
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mcontext.getResources().getString(R.string.playStore)));
+                    mcontext.startActivity(browserIntent);
                 }else if(i==1){
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mcontext.getResources().getString(R.string.urlwwwdtc)));
                     mcontext.startActivity(browserIntent);

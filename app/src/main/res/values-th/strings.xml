@@ -27,7 +27,7 @@
     <string name="about">เกี่ยวกับ</string>
     <string name="wwwdtc">www.dtc.co.th</string>
     <string name="urlwwwdtc">http://www.dtc.co.th</string>
-    <string name="playStore">https://play.google.com/store/apps/details?id=dtc.dhub.tuay.service_transport</string>
+    <string name="playStore">https://play.google.com/store/apps/details?id=com.dtc.sevice.truckclub</string>
     <string name="version">เวอร์ชัน</string>
     <string name="checkUpdate">ตรวจสอบเวอร์ชัน</string>
 
@@ -308,7 +308,10 @@
     <string name="reportDriver">รายงานผู้ขับขี่</string>
 
     <string name="cantReport">ยังรายงานไม่ได้</string>
-    <string name="txtPleaseChooseDate">กรุณาเลือกวันที่เริ่มต้นก่อน</string>
+    <string name="txtPleaseChooseDateStart">Please Choose Start Date.</string>
+    <string name="txtPleaseChooseDateEnd">Please Choose End Date.</string>
+    <string name="txtPleaseChooseTimeStart">Please Choose Start Time.</string>
+    <string name="txtPleaseChooseTimeEnd">Please Choose End Time.</string>
 
 
     <string name="titleLogOutApp">กรุณาออกจากระบบ</string>
@@ -333,6 +336,8 @@
     <string name="error_invalid_car_model">Please enter Car model</string>
     <string name="error_invalid_license_plate">Please enter license plate</string>
     <string name="error_invalid_license_province">Please enter license province</string>
+    <string name="error_invalid_car_wheels">Please input car wheels.</string>
+    <string name="error_invalid_car_tons">Please input car tons.</string>
     <string name="error_invalid_prise_per_day">Please enter prise</string>
     <string name="error_invalid_type_car">Please select type car</string>
     <string name="error_invalid_total_tow">Please select total tow</string>

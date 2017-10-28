@@ -82,8 +82,8 @@ public class ApiService {
         @POST("user_search_driver_in_scope.php")
         public Observable<List<TblMember>> getDriverInScope(@Body TblMember member);
 
-        @POST("user_update_profile.php")
-        public Observable<TblMember> updateUserProfile(@Body TblMember member);
+        @POST("update_profile.php")
+        public Observable<TblMember> updateProfile(@Body TblMember member);
 
 
         @POST("clear_member.php")

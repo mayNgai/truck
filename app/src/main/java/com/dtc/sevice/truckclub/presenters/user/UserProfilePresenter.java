@@ -35,11 +35,11 @@ public class UserProfilePresenter {
     public void updateProfile(){
         try {
             if(!NetworkUtils.isConnected(mView)){
-                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
+                dialogController.dialogNolmal(mView,"Warning","Internet is not stable.");
             }else {
                 dialog = ProgressDialog.show(mView, "Wait", "loading...");
                 mForum.getApi()
-                        .updateUserProfile(mView.listMembers.get(0))
+                        .updateProfile(mView.listMembers.get(0))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<TblMember>() {

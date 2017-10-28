@@ -2,9 +2,11 @@ package com.dtc.sevice.truckclub.view.user.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -77,12 +79,12 @@ import java.util.concurrent.TimeUnit;
 
 public class UserMainActivity2 extends BaseActivity implements View.OnClickListener,OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener , com.google.android.gms.location.LocationListener{
-    private static Button btn_now,btn_booking,btc_call_service;
-    private static EditText edt_start,edt_count_date,edt_end_date,edt_start_date,edt_iden,edt_start_time,edt_end_time,edt_time;
+    private static Button btn_now,btn_booking,btn_call_service,btn_cancel;
+    private static EditText edt_start,edt_des,edt_count_date,edt_end_date,edt_start_date,edt_iden,edt_start_time,edt_end_time,edt_time;
     private CheckBox chk_cash,chk_credit;
-    private static ImageView img_start,img_del_start ,img_cancel;
-    private static LinearLayout linear_select_type,linear_current,linear_detail,linear_main1,linear_main2,linear_bottom,linear_head;
-    private static TextView txtname_car,txt_wait_time;
+    private static ImageView img_cancel;
+    private static LinearLayout linear_select_type,linear_current,linear_detail,linear_main1,linear_main2,linear_bottom,linear_head,linear_img_start,linear_img_des,linear_del_start,linear_del_des;
+    private static TextView txtname_car,txt_wait_time,txt_type_car;
     private static ProgressBar progressBarCircle;
     private static SwipeRefreshLayout swipe_refresh;
     private static RecyclerView recycler_view;
@@ -96,7 +98,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
     private SupportMapFragment dMapFragment2;
     private GoogleMap gMap;
     private Marker markerDriverRealTime;
-    private static Marker markerDes;
+    private static Marker markerDes,markerStart;
     private double longitude;
     private double latitude;
     private Marker[] markers = new Marker[10000];
@@ -132,8 +134,10 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         //linear_detail = (LinearLayout)findViewById(R.id.linear_detail);
         btn_now = (Button)findViewById(R.id.btn_now);
         btn_booking = (Button)findViewById(R.id.btn_booking);
-        btc_call_service = (Button)findViewById(R.id.btc_call_service);
+        btn_call_service = (Button)findViewById(R.id.btn_call_service);
+        btn_cancel = (Button)findViewById(R.id.btn_cancel);
         edt_start = (EditText)findViewById(R.id.edt_start);
+        edt_des = (EditText)findViewById(R.id.edt_des);
         edt_count_date = (EditText)findViewById(R.id.edt_count_date);
         edt_end_date = (EditText)findViewById(R.id.edt_end_date);
         edt_start_date = (EditText)findViewById(R.id.edt_start_date);
@@ -141,9 +145,11 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         edt_start_time = (EditText)findViewById(R.id.edt_start_time);
         edt_iden = (EditText)findViewById(R.id.edt_iden);
         chk_cash = (CheckBox)findViewById(R.id.chk_cash);
-        img_start = (ImageView)findViewById(R.id.img_start);
+        linear_img_start = (LinearLayout)findViewById(R.id.linear_img_start);
+        linear_img_des = (LinearLayout)findViewById(R.id.linear_img_des);
+        linear_del_start = (LinearLayout)findViewById(R.id.linear_del_start);
+        linear_del_des = (LinearLayout)findViewById(R.id.linear_del_des);
         linear_current = (LinearLayout)findViewById(R.id.linear_current);
-        img_del_start = (ImageView)findViewById(R.id.img_del_start);
         linear_select_type = (LinearLayout)findViewById(R.id.linear_select_type);
         linear_detail = (LinearLayout)findViewById(R.id.linear_detail);
         linear_main1 = (LinearLayout)findViewById(R.id.linear_main1);
@@ -151,6 +157,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         linear_bottom = (LinearLayout)findViewById(R.id.linear_bottom);
         linear_head = (LinearLayout)findViewById(R.id.linear_head);
         txtname_car = (TextView)findViewById(R.id.txtname_car);
+        txt_type_car = (TextView)findViewById(R.id.txt_type_car);
         edt_time = (EditText)findViewById(R.id.edt_time);
         img_cancel = (ImageView)findViewById(R.id.img_cancel);
         progressBarCircle = (ProgressBar)findViewById(R.id.progressBarCircle);
@@ -175,6 +182,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         setChangeTextStart();
+        setChangeTextDes();
         setCarGroup();
         //setChangeTextIden();
     }
@@ -182,11 +190,14 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
     private void initListeners() {
         linear_select_type.setOnClickListener(this);
         linear_current.setOnClickListener(this);
-        img_start.setOnClickListener(this);
-        img_del_start.setOnClickListener(this);
+        linear_img_start.setOnClickListener(this);
+        linear_img_des.setOnClickListener(this);
+        linear_del_start.setOnClickListener(this);
+        linear_del_des.setOnClickListener(this);
         btn_now.setOnClickListener(this);
         btn_booking.setOnClickListener(this);
-        btc_call_service.setOnClickListener(this);
+        btn_call_service.setOnClickListener(this);
+        btn_cancel.setOnClickListener(this);
         edt_end_date.setOnClickListener(this);
         edt_start_date.setOnClickListener(this);
         edt_start_time.setOnClickListener(this);
@@ -238,7 +249,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         // position on right bottom
         rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
         rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-        rlp.setMargins(0, 60, 10, 0);
+        rlp.setMargins(0, 140, 10, 0);
 
         getDestinationByFinger();
 
@@ -271,15 +282,39 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         try {
             gMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
-                public void onMapClick(LatLng latlon) {
+                public void onMapClick(final LatLng latlon) {
                     try {
                         if(latlon != null) {
-                            addMarkerDestination(latlon);
-                            moveMap(latlon.latitude,latlon.longitude);
-                            String strAddress = getAddressByLatLng(latlon.latitude,latlon.longitude);
-                            edt_start.setText((strAddress.length()>40) ? strAddress.substring(0,40) + ".." : strAddress);
-                            String strProvince = getProvinceByLatLng(latlon.latitude,latlon.longitude);
-                            setDestination(latlon.latitude,latlon.longitude,strProvince,strAddress);
+                            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(UserMainActivity2.this);
+                            alertDialogBuilder.setTitle("Warning");
+                            alertDialogBuilder.setMessage("กรุณาเลือกจุดปักตำแหน่ง..");
+                            alertDialogBuilder.setCancelable(false);
+                            alertDialogBuilder.setPositiveButton("ส่ง",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface arg0, int arg1) {
+                                            addMarkerDestination(latlon);
+                                            moveMap(latlon.latitude,latlon.longitude);
+                                            String strAddress = getAddressByLatLng(latlon.latitude,latlon.longitude);
+                                            edt_des.setText((strAddress.length()>50) ? strAddress.substring(0,50) + ".." : strAddress);
+                                            String strProvince = getProvinceByLatLng(latlon.latitude,latlon.longitude);
+                                            setDestination(latlon.latitude,latlon.longitude,strProvince,strAddress);
+                                        }
+                                    });
+                            alertDialogBuilder.setNegativeButton("รับ", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                            addMarkerStart(latlon);
+                                            moveMap(latlon.latitude,latlon.longitude);
+                                            String strAddress = getAddressByLatLng(latlon.latitude,latlon.longitude);
+                                            edt_start.setText((strAddress.length()>50) ? strAddress.substring(0,50) + ".." : strAddress);
+                                            String strProvince = getProvinceByLatLng(latlon.latitude,latlon.longitude);
+                                            setStartLocation(latlon.latitude,latlon.longitude,strProvince,strAddress);
+                                }
+                            });
+                            AlertDialog alertDialog = alertDialogBuilder.create();
+                            alertDialog.show();
+
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -292,9 +327,14 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         }
     }
     private String starDistination = "";
-    private void getDestinationBySearch() {
+    private void getLocationBySearch(String txt_position) {
         try {
-            starDistination = edt_start.getText().toString().trim();
+            if(txt_position.equalsIgnoreCase("start")){
+                starDistination = edt_start.getText().toString().trim();
+            }else if(txt_position.equalsIgnoreCase("des")){
+                starDistination = edt_des.getText().toString().trim();
+            }
+
             List<Address> addressList = null;
             if(starDistination.length()>0){
                 Geocoder geocoder = new Geocoder(this);
@@ -310,11 +350,20 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 if (addressList != null && addressList.size() != 0) {
                     address = addressList.get(0);
                     LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    addMarkerDestination(latLng);
+                    if(txt_position.equalsIgnoreCase("start")){
+                        addMarkerStart(latLng);
+                        String strAddress = getAddressByLatLng(address.getLatitude(),address.getLongitude());
+                        edt_start.setText((strAddress.length()>50) ? strAddress.substring(0,50) + ".." : strAddress);
+                        setStartLocation(address.getLatitude(),address.getLongitude(),address.getLocality(),strAddress);
+                    }else if(txt_position.equalsIgnoreCase("des")){
+                        addMarkerDestination(latLng);
+                        String strAddress = getAddressByLatLng(address.getLatitude(),address.getLongitude());
+                        edt_des.setText((strAddress.length()>50) ? strAddress.substring(0,50) + ".." : strAddress);
+                        setDestination(address.getLatitude(),address.getLongitude(),address.getLocality(),strAddress);
+                    }
+
                     moveMap(address.getLatitude(),address.getLongitude());
-                    String strAddress = getAddressByLatLng(address.getLatitude(),address.getLongitude());
-                    edt_start.setText((strAddress.length()>40) ? strAddress.substring(0,40) + ".." : strAddress);
-                    setDestination(address.getLatitude(),address.getLongitude(),address.getLocality(),strAddress);
+
                 }
             }
         } catch (Exception e) {
@@ -322,9 +371,19 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         }
     }
 
+    private void setStartLocation(double lat , double lon , String province ,String location){
+        try {
+            tblTask.setStart_lat(Float.valueOf(String.valueOf(lat)));
+            tblTask.setStart_lon(Float.valueOf(String.valueOf(lon)));
+            tblTask.setStart_province(province);
+            tblTask.setStart_location(location);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void setDestination(double lat , double lon , String province ,String location){
         try {
-            tblTask = new TblTask();
             tblTask.setDes_lat(Float.valueOf(String.valueOf(lat)));
             tblTask.setDes_lon(Float.valueOf(String.valueOf(lon)));
             tblTask.setDest_province(province);
@@ -334,9 +393,14 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         }
     }
 
+    private void addMarkerStart(LatLng latlon){
+        removeMarkerStart();
+        markerStart = gMap.addMarker(new MarkerOptions().position(latlon).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_person_pin_black_24dp)).title("Your Start"));
+
+    }
+
     private void addMarkerDestination(LatLng latlon){
         removeMarkerDestination();
-
         markerDes = gMap.addMarker(new MarkerOptions().position(latlon).icon(BitmapDescriptorFactory.fromResource(R.drawable.flag)).title("Your Destination"));
 
     }
@@ -345,7 +409,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         LatLng latLng = new LatLng(lat, lon);
 
         gMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        gMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        gMap.animateCamera(CameraUpdateFactory.zoomTo(9));
         gMap.getUiSettings().setZoomControlsEnabled(true);
 
 
@@ -385,6 +449,11 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
             e.printStackTrace();
         }
         return city;
+    }
+
+    private void removeMarkerStart(){
+        if (markerStart != null)
+            markerStart.remove();
     }
 
     private void removeMarkerDestination(){
@@ -441,18 +510,46 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
             case R.id.linear_current:
                 getCurrentLocation();
                 break;
-            case R.id.img_start:
-                getDestinationBySearch();
+            case R.id.linear_img_start:
+                if(edt_start.getText().toString().length()>0){
+                    getLocationBySearch("start");
+                }else {
+                    dialog.dialogNolmal(UserMainActivity2.this,"Warning","กรุณากรอกสถานที่ก่อน");
+                }
+
                 break;
-            case R.id.img_del_start:
-                setDefault();
+            case R.id.linear_img_des:
+                if(edt_des.getText().toString().length()>0){
+                    getLocationBySearch("des");
+                }else {
+                    dialog.dialogNolmal(UserMainActivity2.this,"Warning","กรุณากรอกสถานที่ก่อน");
+                }
+
+                break;
+            case R.id.linear_del_start:
+                edt_start.setText("");
+                removeMarkerStart();
+                //setDefault();
+                break;
+            case R.id.linear_del_des:
+                edt_des.setText("");
+                removeMarkerDestination();
+                //setDefault();
                 break;
             case R.id.btn_now:
                 if(edt_start.getText().toString().length()>0){
+                    dMapFragment2.getView().setClickable(false);
+                    edt_start.setEnabled(false);
+                    edt_des.setEnabled(false);
+                    linear_del_des.setEnabled(false);
+                    linear_del_start.setVisibility(View.INVISIBLE);
+                    linear_img_start.setVisibility(View.INVISIBLE);
+                    linear_img_des.setEnabled(false);
                     edt_start_date.setText(GlobalVar.getSystemDateOnly(UserMainActivity2.this));
                     edt_start_time.setText(GlobalVar.getSystemTimeOnly(UserMainActivity2.this));
                     edt_start_date.setEnabled(false);
                     edt_start_time.setEnabled(false);
+                    txt_type_car.setText(txtname_car.getText().toString());
                     linear_detail.setVisibility(View.VISIBLE);
                     linear_select_type.setVisibility(View.INVISIBLE);
                     btn_now.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -462,10 +559,18 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.btn_booking:
                 if(edt_start.getText().toString().length()>0){
+                    dMapFragment2.getView().setClickable(false);
+                    edt_start.setEnabled(false);
+                    edt_des.setEnabled(false);
+                    linear_del_des.setVisibility(View.INVISIBLE);
+                    linear_del_start.setVisibility(View.INVISIBLE);
+                    linear_img_start.setEnabled(false);
+                    linear_img_des.setEnabled(false);
                     edt_start_date.setText("");
                     edt_start_time.setText("");
                     edt_start_date.setEnabled(true);
                     edt_start_time.setEnabled(true);
+                    txt_type_car.setText(txtname_car.getText().toString());
                     linear_detail.setVisibility(View.VISIBLE);
                     linear_select_type.setVisibility(View.INVISIBLE);
                     btn_now.setTextColor(getResources().getColor(R.color.black_1));
@@ -478,11 +583,15 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 setDialogBottom();
                 break;
 
-            case R.id.btc_call_service:
+            case R.id.btn_call_service:
                 if(edt_start.getText().toString().length()>0){
                     setdata();
+
                 }
 
+                break;
+            case R.id.btn_cancel:
+                setDefault();
                 break;
             case R.id.edt_start_date:
                 flagCountDate = false;
@@ -497,19 +606,19 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                     flagCountDate = true;
                     setDatePicker(edt_end_date);
                 }else
-                    dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDate));
+                    dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDateStart));
                 break;
             case R.id.edt_start_time:
                 if(edt_start_date.getText().toString().length()>0)
                     setTimePicker(edt_start_time);
                 else
-                    dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDate));
+                    dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDateStart));
                 break;
             case R.id.edt_end_time:
                 if(edt_start_date.getText().toString().length()>0&&edt_start_time.getText().toString().length()>0&&edt_end_date.getText().toString().length()>0)
                     setTimePicker(edt_end_time);
                 else
-                    dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDate));
+                    dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDateEnd));
                 break;
             case R.id.img_cancel:
                 stopCountDownTimer();
@@ -526,33 +635,57 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
     private void setdata(){
         try {
             boolean cancel = false;
+            String txt_error = "";
             if(edt_start_date.getText().toString().length()==0){
                 cancel = true;
+                txt_error = getResources().getString(R.string.txtPleaseChooseDateStart);
             }else if(edt_start_time.getText().toString().length()==0){
                 cancel = true;
+                txt_error = getResources().getString(R.string.txtPleaseChooseTimeStart);
             }else if(edt_end_date.getText().toString().length()==0){
                 cancel = true;
+                txt_error = getResources().getString(R.string.txtPleaseChooseDateEnd);
             }else if(edt_end_time.getText().toString().length()==0){
                 cancel = true;
+                txt_error = getResources().getString(R.string.txtPleaseChooseTimeEnd);
             }
 
             if(!cancel){
-                tblTask.setUser_id(members.get(0).getMember_id());
-                tblTask.setGroup_id(position);
-                tblTask.setService_type(service_type);
-                tblTask.setDate_count(Integer.parseInt(edt_count_date.getText().toString()));
-                tblTask.setType_create("1");
-                tblTask.setIdentify(edt_iden.getText().toString());
-                if(service_type.equalsIgnoreCase("Now"))
-                    tblTask.setTime_wait(10);
-                tblTask.setStart_date(dateController.convertDateFormat1To2(edt_start_date.getText().toString()) + " " + edt_start_time.getText().toString());
-                tblTask.setEnd_date(dateController.convertDateFormat1To2(edt_end_date.getText().toString()) + " " + edt_end_time.getText().toString());
-                mApiService = new ApiService();
-                mUserMainPresenter = new UserMainPresenter(UserMainActivity2.this,mApiService);
-                mUserMainPresenter.sentCreateTask();
+                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(UserMainActivity2.this);
+                alertDialogBuilder.setTitle("Warning");
+                alertDialogBuilder.setMessage("ยืนยัน..");
+                alertDialogBuilder.setCancelable(false);
+                alertDialogBuilder.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                AlertDialog alertDialog = alertDialogBuilder.create();
+                                alertDialog.show();
+                                tblTask.setUser_id(members.get(0).getMember_id());
+                                tblTask.setGroup_id(position);
+                                tblTask.setService_type(service_type);
+                                tblTask.setDate_count(Integer.parseInt(edt_count_date.getText().toString()));
+                                tblTask.setType_create("1");
+                                tblTask.setIdentify(edt_iden.getText().toString());
+                                if(service_type.equalsIgnoreCase("Now"))
+                                    tblTask.setTime_wait(10);
+                                tblTask.setStart_date(dateController.convertDateFormat1To2(edt_start_date.getText().toString()) + " " + edt_start_time.getText().toString());
+                                tblTask.setEnd_date(dateController.convertDateFormat1To2(edt_end_date.getText().toString()) + " " + edt_end_time.getText().toString());
+                                mApiService = new ApiService();
+                                mUserMainPresenter = new UserMainPresenter(UserMainActivity2.this,mApiService);
+                                mUserMainPresenter.sentCreateTask();
+                            }
+                        });
+                alertDialogBuilder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
 
             }else {
-                dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDate));
+                dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),txt_error);
             }
 
         }catch (Exception e){
@@ -698,14 +831,36 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
             public void afterTextChanged(Editable s) {
                 if (s != null && s.length() > 0) {
                     //dp something
-                    img_del_start.setVisibility(View.VISIBLE);
+                    linear_del_start.setVisibility(View.VISIBLE);
                 } else {
-                    img_del_start.setVisibility(View.INVISIBLE);
+                    linear_del_start.setVisibility(View.INVISIBLE);
                 }
             }
         });
     }
+    private void setChangeTextDes(){
+        ((EditText) findViewById(R.id.edt_des)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s != null && s.length() > 0) {
+                    //dp something
+                    linear_del_des.setVisibility(View.VISIBLE);
+                } else {
+                    linear_del_des.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+    }
 
 
     private void callDriverInScope(){
@@ -744,16 +899,24 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
 
     public void setDefault(){
         try {
+            dMapFragment2.getView().setClickable(true);
+            edt_start.setEnabled(true);
+            edt_des.setEnabled(true);
+            linear_img_start.setEnabled(true);
+            linear_img_des.setEnabled(true);
             edt_start.setText("");
+            edt_des.setText("");
             edt_start_date.setText("");
             edt_start_time.setText("");
             edt_end_date.setText("");
             edt_end_time.setText("");
             edt_count_date.setText("");
             edt_iden.setText("");
+            txt_type_car.setText("");
             linear_detail.setVisibility(View.GONE);
             btn_now.setTextColor(getResources().getColor(R.color.black_1));
             btn_booking.setTextColor(getResources().getColor(R.color.black_1));
+            removeMarkerStart();
             removeMarkerDestination();
             linear_select_type.setVisibility(View.VISIBLE);
         }catch (Exception e){
