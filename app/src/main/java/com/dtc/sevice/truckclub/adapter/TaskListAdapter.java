@@ -46,7 +46,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(final TaskListAdapter.ViewHolder holder, final int i) {
-        holder.txt_start_position.setText(arrayList.get(i).getDest_location());
+        holder.txt_start_position.setText(arrayList.get(i).getStart_location());
+        holder.txt_des_position.setText(arrayList.get(i).getDest_location());
         holder.txt_date_start.setText(dateController.convertDateFormat2To1(arrayList.get(i).getStart_date()));
         holder.linear_list.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +71,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
             TextView txt_name = (TextView)view.findViewById( R.id.txt_driver_name);
             TextView txt_surname = (TextView)view.findViewById( R.id.txt_driver_surname);
             TextView txt_start_position = (TextView)view.findViewById( R.id.txt_start_position);
+            TextView txt_des_position = (TextView)view.findViewById( R.id.txt_des_position);
             TextView txt_type_car = (TextView)view.findViewById( R.id.txt_type_car);
             final EditText edt_price = (EditText)view.findViewById( R.id.edt_price);
             ImageButton img_ok = (ImageButton)view.findViewById( R.id.img_ok);
@@ -89,7 +91,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
             txt_end_time.setText(arrayList.get(pos).getEnd_date().substring(10,16));
             txt_name.setText(arrayList.get(pos).getMember().get(0).getFirst_name());
             txt_surname.setText(arrayList.get(pos).getMember().get(0).getLast_name());
-            txt_start_position.setText(arrayList.get(pos).getDest_location());
+            txt_start_position.setText(arrayList.get(pos).getStart_location());
+            txt_des_position.setText(arrayList.get(pos).getDest_location());
             txt_type_car.setText(arrayList.get(pos).getName_group());
             if(select_position == 1 ||select_position == 2){
                 edt_price.setText(arrayList.get(pos).getPrice_offer());
@@ -158,12 +161,13 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView txt_start_position,txt_date_start;
+        private TextView txt_start_position,txt_des_position,txt_date_start;
         private LinearLayout linear_list;
 
         public ViewHolder(View v) {
             super(v);
             txt_start_position = (TextView) v.findViewById(R.id.txt_start_position);
+            txt_des_position = (TextView) v.findViewById(R.id.txt_des_position);
             txt_date_start = (TextView) v.findViewById(R.id.txt_date_start);
             linear_list = (LinearLayout) v.findViewById(R.id.linear_list);
         }

@@ -576,7 +576,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/buttonshape_find_location_search_white"
                     android:drawableLeft="@drawable/ic_query_builder_black_24dp"
-                    android:enabled="false"
+                    android:enabled="true"
                     android:padding="10dp"
                     android:text="ตอนนี้"
                     android:textSize="@dimen/font_18" />

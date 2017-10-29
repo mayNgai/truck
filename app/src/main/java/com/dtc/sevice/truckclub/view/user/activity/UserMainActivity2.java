@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -41,6 +42,7 @@ import android.widget.Toast;
 
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.adapter.TypeCarAdapter;
+import com.dtc.sevice.truckclub.broadcasts.UserBackgroundService;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblCarGroup;
 import com.dtc.sevice.truckclub.model.TblMember;
@@ -84,8 +86,8 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
     private CheckBox chk_cash,chk_credit;
     private static ImageView img_cancel;
     private static LinearLayout linear_select_type,linear_current,linear_detail,linear_main1,linear_main2,linear_bottom,linear_head,linear_img_start,linear_img_des,linear_del_start,linear_del_des;
-    private static TextView txtname_car,txt_wait_time,txt_type_car;
-    private static ProgressBar progressBarCircle;
+    public static TextView txtname_car,txt_wait_time,txt_type_car;
+    public static ProgressBar progressBarCircle;
     private static SwipeRefreshLayout swipe_refresh;
     private static RecyclerView recycler_view;
     private static CountDownTimer countDownTimer ;
@@ -114,7 +116,8 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
     private DateController dateController;
     private static String service_type = "";
     private DialogController dialog;
-    private boolean flagCountDate =  false;
+    private boolean flagEndDate =  false;
+    private boolean clickableOnMap = true;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -285,36 +288,37 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 public void onMapClick(final LatLng latlon) {
                     try {
                         if(latlon != null) {
-                            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(UserMainActivity2.this);
-                            alertDialogBuilder.setTitle("Warning");
-                            alertDialogBuilder.setMessage("กรุณาเลือกจุดปักตำแหน่ง..");
-                            alertDialogBuilder.setCancelable(false);
-                            alertDialogBuilder.setPositiveButton("ส่ง",
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface arg0, int arg1) {
-                                            addMarkerDestination(latlon);
-                                            moveMap(latlon.latitude,latlon.longitude);
-                                            String strAddress = getAddressByLatLng(latlon.latitude,latlon.longitude);
-                                            edt_des.setText((strAddress.length()>50) ? strAddress.substring(0,50) + ".." : strAddress);
-                                            String strProvince = getProvinceByLatLng(latlon.latitude,latlon.longitude);
-                                            setDestination(latlon.latitude,latlon.longitude,strProvince,strAddress);
-                                        }
-                                    });
-                            alertDialogBuilder.setNegativeButton("รับ", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                            addMarkerStart(latlon);
-                                            moveMap(latlon.latitude,latlon.longitude);
-                                            String strAddress = getAddressByLatLng(latlon.latitude,latlon.longitude);
-                                            edt_start.setText((strAddress.length()>50) ? strAddress.substring(0,50) + ".." : strAddress);
-                                            String strProvince = getProvinceByLatLng(latlon.latitude,latlon.longitude);
-                                            setStartLocation(latlon.latitude,latlon.longitude,strProvince,strAddress);
-                                }
-                            });
-                            AlertDialog alertDialog = alertDialogBuilder.create();
-                            alertDialog.show();
-
+                            if(clickableOnMap){
+                                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(UserMainActivity2.this);
+                                alertDialogBuilder.setTitle("Warning");
+                                alertDialogBuilder.setMessage("กรุณาเลือกจุดปักตำแหน่ง..");
+                                alertDialogBuilder.setCancelable(true);
+                                alertDialogBuilder.setPositiveButton("ส่ง",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface arg0, int arg1) {
+                                                addMarkerDestination(latlon);
+                                                moveMap(latlon.latitude,latlon.longitude);
+                                                String strAddress = getAddressByLatLng(latlon.latitude,latlon.longitude);
+                                                edt_des.setText((strAddress.length()>50) ? strAddress.substring(0,50) + ".." : strAddress);
+                                                String strProvince = getProvinceByLatLng(latlon.latitude,latlon.longitude);
+                                                setDestination(latlon.latitude,latlon.longitude,strProvince,strAddress);
+                                            }
+                                        });
+                                alertDialogBuilder.setNegativeButton("รับ", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        addMarkerStart(latlon);
+                                        moveMap(latlon.latitude,latlon.longitude);
+                                        String strAddress = getAddressByLatLng(latlon.latitude,latlon.longitude);
+                                        edt_start.setText((strAddress.length()>50) ? strAddress.substring(0,50) + ".." : strAddress);
+                                        String strProvince = getProvinceByLatLng(latlon.latitude,latlon.longitude);
+                                        setStartLocation(latlon.latitude,latlon.longitude,strProvince,strAddress);
+                                    }
+                                });
+                                AlertDialog alertDialog = alertDialogBuilder.create();
+                                alertDialog.show();
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -354,12 +358,12 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                         addMarkerStart(latLng);
                         String strAddress = getAddressByLatLng(address.getLatitude(),address.getLongitude());
                         edt_start.setText((strAddress.length()>50) ? strAddress.substring(0,50) + ".." : strAddress);
-                        setStartLocation(address.getLatitude(),address.getLongitude(),address.getLocality(),strAddress);
+                        setStartLocation(address.getLatitude(),address.getLongitude(),address.getAdminArea(),strAddress);
                     }else if(txt_position.equalsIgnoreCase("des")){
                         addMarkerDestination(latLng);
                         String strAddress = getAddressByLatLng(address.getLatitude(),address.getLongitude());
                         edt_des.setText((strAddress.length()>50) ? strAddress.substring(0,50) + ".." : strAddress);
-                        setDestination(address.getLatitude(),address.getLongitude(),address.getLocality(),strAddress);
+                        setDestination(address.getLatitude(),address.getLongitude(),address.getAdminArea(),strAddress);
                     }
 
                     moveMap(address.getLatitude(),address.getLongitude());
@@ -443,7 +447,8 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         try {
             addresses = geocoder.getFromLocation(lat, lon, 1);
             strAddress = addresses.get(0).getAddressLine(0);
-            city = addresses.get(0).getLocality();
+//            city = addresses.get(0).getLocality();
+            city = addresses.get(0).getAdminArea();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -538,7 +543,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.btn_now:
                 if(edt_start.getText().toString().length()>0){
-                    dMapFragment2.getView().setClickable(false);
+                    clickableOnMap = false;
                     edt_start.setEnabled(false);
                     edt_des.setEnabled(false);
                     linear_del_des.setEnabled(false);
@@ -559,7 +564,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.btn_booking:
                 if(edt_start.getText().toString().length()>0){
-                    dMapFragment2.getView().setClickable(false);
+                    clickableOnMap = false;
                     edt_start.setEnabled(false);
                     edt_des.setEnabled(false);
                     linear_del_des.setVisibility(View.INVISIBLE);
@@ -585,7 +590,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
 
             case R.id.btn_call_service:
                 if(edt_start.getText().toString().length()>0){
-                    setdata();
+                    setData();
 
                 }
 
@@ -594,7 +599,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 setDefault();
                 break;
             case R.id.edt_start_date:
-                flagCountDate = false;
+                flagEndDate = false;
                 edt_end_date.setText("");
                 edt_start_time.setText("");
                 edt_end_time.setText("");
@@ -603,7 +608,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.edt_end_date:
                 if(edt_start_date.getText().toString().length()>0&&edt_start_time.getText().toString().length()>0) {
-                    flagCountDate = true;
+                    flagEndDate = true;
                     setDatePicker(edt_end_date);
                 }else
                     dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDateStart));
@@ -632,7 +637,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private void setdata(){
+    private void setData(){
         try {
             boolean cancel = false;
             String txt_error = "";
@@ -659,8 +664,6 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                AlertDialog alertDialog = alertDialogBuilder.create();
-                                alertDialog.show();
                                 tblTask.setUser_id(members.get(0).getMember_id());
                                 tblTask.setGroup_id(position);
                                 tblTask.setService_type(service_type);
@@ -668,7 +671,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                                 tblTask.setType_create("1");
                                 tblTask.setIdentify(edt_iden.getText().toString());
                                 if(service_type.equalsIgnoreCase("Now"))
-                                    tblTask.setTime_wait(10);
+                                    tblTask.setTime_wait(1);
                                 tblTask.setStart_date(dateController.convertDateFormat1To2(edt_start_date.getText().toString()) + " " + edt_start_time.getText().toString());
                                 tblTask.setEnd_date(dateController.convertDateFormat1To2(edt_end_date.getText().toString()) + " " + edt_end_time.getText().toString());
                                 mApiService = new ApiService();
@@ -683,7 +686,8 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                     }
                 });
 
-
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
             }else {
                 dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),txt_error);
             }
@@ -696,10 +700,19 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
 
     private void setDatePicker(final EditText editText) {
         String txtDate = "";
-        Calendar c = Calendar.getInstance();
-        int mYear = c.get(Calendar.YEAR);
-        int mMonth = c.get(Calendar.MONTH);
-        int mDay = c.get(Calendar.DAY_OF_MONTH);
+        int mYear,mMonth,mDay;
+        if(edt_start_date.getText().toString().length()>0){
+            String date = dateController.convertDateFormat1To2(edt_start_date.getText().toString());
+            mYear = Integer.parseInt(date.substring(0,4));
+            mMonth = Integer.parseInt(date.substring(5,7)) - 1;
+            mDay = Integer.parseInt(date.substring(8,10));
+        }else {
+            Calendar c = Calendar.getInstance();
+            mYear = c.get(Calendar.YEAR);
+            mMonth = c.get(Calendar.MONTH);
+            mDay = c.get(Calendar.DAY_OF_MONTH);
+        }
+
         DatePickerDialog datePickerDialog = new DatePickerDialog(UserMainActivity2.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -714,10 +727,26 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                         aa = year + "-0" + (monthOfYear + 1) + "-0" + dayOfMonth;
                 }
                 editText.setText(dateController.convertDateFormat2To1(aa));
-                if(flagCountDate){
-                    int days = dateController.daysBetween(dateController.dateFormat1Tolong(edt_start_date.getText().toString()),dateController.dateFormat2Tolong(aa));
-                    //int days = Days.daysBetween(dateController.convertDateFormat2To1(edt_start_date.getText().toString()), aa).getDays();
-                    edt_count_date.setText(String.valueOf(days));
+                if(flagEndDate){
+                    long StartSelect = dateController.dateFormat1Tolong(edt_start_date.getText().toString());
+                    long EndSelect = dateController.dateFormat1Tolong(edt_end_date.getText().toString());
+                    if(StartSelect<EndSelect) {
+                        int days = dateController.daysBetween(dateController.dateFormat1Tolong(edt_start_date.getText().toString()),dateController.dateFormat2Tolong(aa));
+                        edt_count_date.setText(String.valueOf(days));
+                    }else {
+                        edt_end_date.setText("");
+                        dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.titleLoginFail),
+                                getResources().getString(R.string.txtPleaseChooseDateStart));
+                    }
+
+                }else {
+                    long current = dateController.dateFormat1Tolong(GlobalVar.getSystemDateOnly(UserMainActivity2.this));
+                    long StartSelect = dateController.dateFormat1Tolong(edt_start_date.getText().toString());
+                    if(StartSelect<current) {
+                        edt_start_date.setText("");
+                        dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.titleLoginFail),
+                                getResources().getString(R.string.txtPleaseChooseDateStart));
+                    }
                 }
             }
         }, mYear, mMonth, mDay);
@@ -899,7 +928,8 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
 
     public void setDefault(){
         try {
-            dMapFragment2.getView().setClickable(true);
+            flagEndDate = false;
+            clickableOnMap = true;
             edt_start.setEnabled(true);
             edt_des.setEnabled(true);
             linear_img_start.setEnabled(true);
@@ -923,11 +953,12 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
             e.printStackTrace();
         }
     }
-    TblTask tblTask2;
-    private long timeCountInMilliSeconds = 1 * 60000;
-    public void setCountDownTime(final TblTask tblTask2){
+    public static TblTask tblTask2;
+    public long timeCountInMilliSeconds = 1 * 60000;
+    public void setCountDownTime(final TblTask t){
         try {
-//            tblTask2 = new TblTask();
+            tblTask2 = new TblTask();
+            tblTask2 = t;
 //            tblTask2.setTime_wait(1);
 //            tblTask2.setStart_date(dateController.getSystemTime(UserMainActivity2.this));
             edt_time.setText(String.valueOf(tblTask2.getTime_wait()));
@@ -937,37 +968,50 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                 timeCountInMilliSeconds = timeCountInMilliSeconds - current;
                 linear_main1.setVisibility(View.GONE);
                 linear_main2.setVisibility(View.VISIBLE);
-                countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-
-                        txt_wait_time.setText(hmsTimeFormatter(millisUntilFinished));
-                        progressBarCircle.setProgress(60 - (int) ((timeCountInMilliSeconds - millisUntilFinished)/ (1000 * tblTask2.getTime_wait())));
-                        Log.i("wait_time",hmsTimeFormatter(millisUntilFinished));
-
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        Log.i("wait_time","Time out...");
-                        edt_time.setText("Time out...");
-                        txt_wait_time.setText(hmsTimeFormatter(0));
-                        setProgressBarValues();
-                        linear_main1.setVisibility(View.VISIBLE);
-                        linear_main2.setVisibility(View.GONE);
-                        tblTask2.setTask_status(2);
-                        tblTask2.setMember(members);
-                        callUpdateTask(tblTask2);
-
-//                        img_cancel.callOnClick();
-                        //dialog.dialogNolmal(UserMainActivity2.this,"Warning","Time out...");
-                    }
-
-                }.start();
-                countDownTimer.start();
+                Intent intent = new Intent(UserMainActivity2.this, UserBackgroundService.class);
+                startService(intent);
+//                countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
+//                    @Override
+//                    public void onTick(long millisUntilFinished) {
+//
+//                        txt_wait_time.setText(hmsTimeFormatter(millisUntilFinished));
+//                        progressBarCircle.setProgress(60 - (int) ((timeCountInMilliSeconds - millisUntilFinished)/ (1000 * tblTask2.getTime_wait())));
+//                        Log.i("wait_time",hmsTimeFormatter(millisUntilFinished));
+//
+//                    }
+//
+//                    @Override
+//                    public void onFinish() {
+//                        Log.i("wait_time","Time out...");
+//                        setTimeOut();
+//
+////                        img_cancel.callOnClick();
+//                        //dialog.dialogNolmal(UserMainActivity2.this,"Warning","Time out...");
+//                    }
+//
+//                }.start();
+//                countDownTimer.start();
             }
 
 
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void setTimeOut(){
+        try {
+            edt_time.setText("Time out...");
+            txt_wait_time.setText(hmsTimeFormatter(0));
+            setProgressBarValues();
+            linear_main1.setVisibility(View.VISIBLE);
+            linear_main2.setVisibility(View.GONE);
+            tblTask2.setTask_status(2);
+            tblTask2.setMember(members);
+            callUpdateTask(tblTask2);
+            Intent s = new Intent(UserMainActivity2.this, UserBackgroundService.class);
+            stopService(s);
+            //dialog.dialogNolmal(UserMainActivity2.this,"Warning","Time out...");
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -983,7 +1027,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         progressBarCircle.setProgress((int) timeCountInMilliSeconds / 1000);
     }
 
-    private String hmsTimeFormatter(long milliSeconds) {
+    public String hmsTimeFormatter(long milliSeconds) {
 
         String hms = String.format("%02d:%02d:%02d",
                 TimeUnit.MILLISECONDS.toHours(milliSeconds),
@@ -994,6 +1038,31 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
 
 
     }
+
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        Log.i("onStart","-- ON START --");
+//    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("onResume","-- ON RESUME --");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i("onPause","-- ON PAUSE --");
+    }
+
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        Log.i("onStop","-- ON STOP --");
+//    }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

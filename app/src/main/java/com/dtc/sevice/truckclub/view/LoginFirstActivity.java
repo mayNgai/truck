@@ -24,13 +24,13 @@ public class LoginFirstActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_first);
-        intit();
+        init();
         mApiService = new ApiService();
         mLoginFirstPresenter = new LoginFirstPresenter(LoginFirstActivity.this,mApiService);
         mLoginFirstPresenter.loadCarGroup();
     }
 
-    private void intit() {
+    private void init() {
         UserButton = (Button)findViewById(R.id.UserButton);
         DriverButton = (Button)findViewById(R.id.DriverButton);
         UserButton.setOnClickListener(this);

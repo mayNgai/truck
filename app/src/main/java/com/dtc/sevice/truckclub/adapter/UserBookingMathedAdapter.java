@@ -1,20 +1,12 @@
 package com.dtc.sevice.truckclub.adapter;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.dtc.sevice.truckclub.R;
@@ -22,7 +14,6 @@ import com.dtc.sevice.truckclub.helper.GlobalVar;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.until.DateController;
 import com.dtc.sevice.truckclub.until.DialogController;
-import com.dtc.sevice.truckclub.view.driver.activity.DriverBookingActivity;
 import com.dtc.sevice.truckclub.view.user.activity.UserTaskActivity;
 
 import java.util.List;
@@ -51,7 +42,8 @@ public class UserBookingMathedAdapter extends RecyclerView.Adapter<UserBookingMa
         holder.txt_time_start.setText(arrayList.get(i).getStart_date().substring(10,16));
         holder.txt_date_end.setText(dateController.convertDateFormat2To1(arrayList.get(i).getEnd_date()));
         holder.txt_time_end.setText(arrayList.get(i).getEnd_date().substring(10,16));
-        holder.txt_start_position.setText(arrayList.get(i).getDest_location());
+        holder.txt_start_position.setText(arrayList.get(i).getStart_location());
+        holder.txt_des_position.setText(arrayList.get(i).getDest_location());
         holder.txt_count_date.setText(String.valueOf(arrayList.get(i).getDate_count()));
         holder.txt_type_car.setText(arrayList.get(i).getName_group());
         holder.txt_status.setText(GlobalVar.checkStatusTask(arrayList.get(i).getTask_status()));
@@ -80,7 +72,7 @@ public class UserBookingMathedAdapter extends RecyclerView.Adapter<UserBookingMa
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView txt_id,txt_date_start,txt_time_start,txt_date_end,txt_time_end,txt_start_position,txt_count_date,txt_type_car,txt_status;
+        private TextView txt_id,txt_date_start,txt_time_start,txt_date_end,txt_time_end,txt_start_position,txt_des_position,txt_count_date,txt_type_car,txt_status;
         private LinearLayout linear_list,linear_list_count,linear_title;
 
         public ViewHolder(View v) {
@@ -91,6 +83,7 @@ public class UserBookingMathedAdapter extends RecyclerView.Adapter<UserBookingMa
             txt_date_end = (TextView) v.findViewById(R.id.txt_date_end);
             txt_time_end = (TextView) v.findViewById(R.id.txt_time_end);
             txt_start_position = (TextView) v.findViewById(R.id.txt_start_position);
+            txt_des_position = (TextView) v.findViewById(R.id.txt_des_position);
             txt_count_date = (TextView) v.findViewById(R.id.txt_count_date);
             txt_type_car = (TextView) v.findViewById(R.id.txt_type_car);
             txt_status = (TextView) v.findViewById(R.id.txt_status);

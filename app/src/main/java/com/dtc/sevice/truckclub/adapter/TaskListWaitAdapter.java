@@ -42,7 +42,8 @@ public class TaskListWaitAdapter extends RecyclerView.Adapter<TaskListWaitAdapte
         holder.txt_date_start.setText(dateController.convertDateFormat2To1(arrayList.get(i).getStart_date()));
         holder.txt_time_start.setText(arrayList.get(i).getStart_date().substring(10,16));
         holder.txt_driver_wait.setText(String.valueOf(arrayList.get(i).getMember().size()));
-        holder.txt_start_position.setText(arrayList.get(i).getDest_location());
+        holder.txt_start_position.setText(arrayList.get(i).getStart_location());
+        holder.txt_des_position.setText(arrayList.get(i).getDest_location());
         holder.linear_list.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,6 +64,7 @@ public class TaskListWaitAdapter extends RecyclerView.Adapter<TaskListWaitAdapte
             TextView txt_date_end = (TextView)view.findViewById(R.id.txt_date_end);
             TextView txt_time_end = (TextView)view.findViewById(R.id.txt_time_end);
             TextView txt_start_position = (TextView)view.findViewById(R.id.txt_start_position);
+            TextView txt_des_position = (TextView)view.findViewById(R.id.txt_des_position);
             TextView txt_count_date = (TextView)view.findViewById(R.id.txt_count_date);
             TextView txt_type_car = (TextView)view.findViewById(R.id.txt_type_car);
             TextView txt_count_driver = (TextView)view.findViewById(R.id.txt_count_driver);
@@ -85,7 +87,8 @@ public class TaskListWaitAdapter extends RecyclerView.Adapter<TaskListWaitAdapte
             txt_time_start.setText(arrayList.get(pos).getStart_date().substring(10,16));
             txt_date_end.setText(dateController.convertDateFormat2To1(arrayList.get(pos).getEnd_date()));
             txt_time_end.setText(arrayList.get(pos).getEnd_date().substring(10,16));
-            txt_start_position.setText(arrayList.get(pos).getDest_location());
+            txt_start_position.setText(arrayList.get(pos).getStart_location());
+            txt_des_position.setText(arrayList.get(pos).getDest_location());
             txt_count_date.setText(String.valueOf(arrayList.get(pos).getDate_count()));
             txt_type_car.setText(arrayList.get(pos).getName_group());
             txt_count_driver.setText(String.valueOf(arrayList.get(pos).getMember().size()));
@@ -140,7 +143,7 @@ public class TaskListWaitAdapter extends RecyclerView.Adapter<TaskListWaitAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView txt_date_start,txt_time_start,txt_driver_wait,txt_start_position;
+        private TextView txt_date_start,txt_time_start,txt_driver_wait,txt_start_position,txt_des_position;
         private LinearLayout linear_list;
 
         public ViewHolder(View v) {
@@ -149,6 +152,7 @@ public class TaskListWaitAdapter extends RecyclerView.Adapter<TaskListWaitAdapte
             txt_time_start = (TextView) v.findViewById(R.id.txt_time_start);
             txt_driver_wait = (TextView) v.findViewById(R.id.txt_driver_wait);
             txt_start_position = (TextView) v.findViewById(R.id.txt_start_position);
+            txt_des_position = (TextView) v.findViewById(R.id.txt_des_position);
             linear_list = (LinearLayout) v.findViewById(R.id.linear_list);
         }
     }
