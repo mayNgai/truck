@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ import com.dtc.sevice.truckclub.presenters.driver.DriverMainPresenter;
 import com.dtc.sevice.truckclub.service.ApiService;
 import com.dtc.sevice.truckclub.until.ApplicationController;
 import com.dtc.sevice.truckclub.until.DateController;
+import com.dtc.sevice.truckclub.until.DialogController;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.BaseActivity;
 import com.google.android.gms.appindexing.Action;
@@ -85,7 +87,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     private int subLastText = 25;
 
     private static TaskController taskController;
-    public List<TblMember> members;
+    public static List<TblMember> members;
     public static TblTask tblTask;
     public static TblTask tblTaskBooking;
     public static List<TblTask> listTasks;
@@ -109,6 +111,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     private int countTime = 10;
     public static Timer timer = new Timer();
     private static DateController dateController;
+    private static DialogController dialog;
 
     /////
     final String PREF_NAME = "user";
@@ -121,8 +124,10 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     final String KEY_TIME_WAIT = "time_wait";
     final String KEY_DESTROY = "destroy_app";
 
-    SharedPreferences sp;
-    SharedPreferences.Editor editor;
+    public static SharedPreferences sp;
+    public static SharedPreferences.Editor editor;
+
+    private static DriverBackgroundService backgroundService;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -143,6 +148,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         editor = sp.edit();
         tblTaskBooking = new TblTask();
         dateController = new DateController();
+        dialog = new DialogController();
         ApplicationController.setAppActivity(DriverMainActivity2.this);
         recycler_view = (RecyclerView)findViewById(R.id.recycler_view);
         linear_select_type = (LinearLayout)findViewById(R.id.linear_select_type);
@@ -615,10 +621,14 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
             dateController = new DateController();
             long current = dateController.dateTimeFormat9Tolong(dateController.getSystemTimeFull(ApplicationController.getAppActivity()));
             timeCountInMilliSeconds = dateController.dateTimeFormat9Tolong(tblTask2.getDate_task_create()) + tblTask2.getTime_wait() * 60000;
+            if(editor == null){
+                sp = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+                editor = sp.edit();
+            }
             editor.putLong(KEY_TIME_END,timeCountInMilliSeconds);
             editor.putString(KEY_DATE_CREATE,tblTask2.getDate_task_create());
             if(timeCountInMilliSeconds > current){
-                stopService();
+                //stopService();
                 timeCountInMilliSeconds = timeCountInMilliSeconds - current;
                 editor.putInt(KEY_MEMBER_ID,members.get(0).getMember_id());
                 editor.putString(KEY_TASK_ID,tblTask2.getId());
@@ -627,7 +637,52 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
                 editor.putBoolean(KEY_DESTROY, false);
                 editor.commit();
                 linear_main2.setVisibility(View.VISIBLE);
-                startService();
+//                backgroundService = new DriverBackgroundService();
+//                startService();
+                countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        try {
+                            if(txt_wait_time != null){
+
+                                txt_wait_time.setText(hmsTimeFormatter(millisUntilFinished));
+                                progressBarCircle.setProgress(60 - (int) ((timeCountInMilliSeconds - millisUntilFinished)/ (1000 * tblTask2.getTime_wait())));
+                                Log.i("onTick","test");
+                            }
+
+                            Log.i("wait_time",hmsTimeFormatter(millisUntilFinished));
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        Log.i("wait_time","Time out...");
+                        setProgressBarValues();
+                        stopCountDownTimer();
+                        linear_main2.setVisibility(View.GONE);
+                        dialog.dialogNolmal(ApplicationController.getAppActivity(),"Warning","Time out...");
+//                    editor.putBoolean(KEY_TIME_OUT,true);
+//                    editor.commit();
+//                    TblMember tblMember = new TblMember();
+//                    tblMember.setMember_id(sp.getInt(KEY_MEMBER_ID,0));
+//                    List<TblMember> tblMembers = new ArrayList<TblMember>();
+//                    tblMembers.add(tblMember);
+//                    TblTask tblTask = new TblTask();
+//                    tblTask.setId(sp.getString(KEY_TASK_ID,""));
+//                    tblTask.setTask_status(2);
+//                    tblTask.setService_type("Now");
+//                    tblTask.setMember(tblMembers);
+//                    mView.callUpdateTask(tblTask,2);
+//                    Intent i = new Intent(UserBackgroundService.this, UserMainActivity2.class);
+//                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(i);
+                    }
+
+                }.start();
+                countDownTimer.start();
 
             }
 
@@ -659,11 +714,11 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     }
 
     public void startService() {
-        startService(new Intent(DriverMainActivity2.this, DriverBackgroundService.class));
+        startService(new Intent(ApplicationController.getAppActivity(), backgroundService.getClass()));
     }
 
     public void stopService() {
-        stopService(new Intent(DriverMainActivity2.this, DriverBackgroundService.class));
+        stopService(new Intent(ApplicationController.getAppActivity(), backgroundService.getClass()));
     }
 
     @Override
