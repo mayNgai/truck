@@ -3,6 +3,9 @@ package com.dtc.sevice.truckclub.view.driver.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -32,10 +35,13 @@ import android.widget.Toast;
 
 import com.dtc.sevice.truckclub.R;
 import com.dtc.sevice.truckclub.adapter.TaskListAdapter;
+import com.dtc.sevice.truckclub.broadcasts.DriverBackgroundService;
 import com.dtc.sevice.truckclub.model.TblMember;
 import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.presenters.driver.DriverMainPresenter;
 import com.dtc.sevice.truckclub.service.ApiService;
+import com.dtc.sevice.truckclub.until.ApplicationController;
+import com.dtc.sevice.truckclub.until.DateController;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.BaseActivity;
 import com.google.android.gms.appindexing.Action;
@@ -55,6 +61,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -84,7 +91,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     public static List<TblTask> listTasks;
     private Activity _activity;
     public static LinearLayout linear_select_type,linear_head,linear_main2;
-    private static ProgressBar progressBarCircle;
+    public static ProgressBar progressBarCircle;
     private static EditText edt_time;
     private static BaseActivity baseActivity;
     private ApiService mForum;
@@ -94,12 +101,28 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     private SwipeRefreshLayout swipe_refresh;
     private static RelativeLayout linear_title;
     private static ImageButton img_step1,img_step2,img_step3;
-    private static TextView txt_step1,txt_step2,txt_step3,txt_name,txt_last,txt_wait_time;
+    public static TextView txt_step1,txt_step2,txt_step3,txt_name,txt_last,txt_wait_time;
     private static Button btn_done,btn_arrive;
     private LinearLayout linear_data_task,linear_bottom;
     private static ImageView img_profile,img_cancel;
     private static CountDownTimer countDownTimer ;
     private int countTime = 10;
+    public static Timer timer = new Timer();
+    private static DateController dateController;
+
+    /////
+    final String PREF_NAME = "user";
+    final String KEY_TASK_ID = "task_id";
+    final String KEY_MEMBER_ID = "member_id";
+    final String KEY_TIME_OUT = "time_out";
+    final String KEY_TIME_END = "time_end";
+    final String KEY_DATE_CREATE = "date_create";
+    final String KEY_TIME_COUNT = "time_count";
+    final String KEY_TIME_WAIT = "time_wait";
+    final String KEY_DESTROY = "destroy_app";
+
+    SharedPreferences sp;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -116,7 +139,11 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
     }
 
     private void init(){
+        sp = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        editor = sp.edit();
         tblTaskBooking = new TblTask();
+        dateController = new DateController();
+        ApplicationController.setAppActivity(DriverMainActivity2.this);
         recycler_view = (RecyclerView)findViewById(R.id.recycler_view);
         linear_select_type = (LinearLayout)findViewById(R.id.linear_select_type);
         swipe_refresh = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
@@ -295,6 +322,21 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
                     swipe_refresh.setRefreshing(false);
                 }
             });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void sentOfferPrice(int id , int price){
+        try {
+            TblTask tblTask = new TblTask();
+            tblTask.setId(String.valueOf(id));
+            tblTask.setPrice_offer(String.valueOf(price));
+            tblTask.setTask_status(0);
+            tblTask.setService_type("Now");
+            tblTask.setMember(members);
+            mForum = new ApiService();
+            driverMainPresenter = new DriverMainPresenter(DriverMainActivity2.this , mForum);
+            driverMainPresenter.sentOfferPrice(tblTask);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -563,30 +605,31 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         }
     }
 
-    private long timeCountInMilliSeconds = 1 * 60000;
-    private void setCountDownTime(){
+    public static TblTask tblTask2;
+    public static long timeCountInMilliSeconds = 1 * 60000;
+    public void setCountDownTime(final TblTask t){
         try {
-            countTime = 1;
-            edt_time.setText(String.valueOf(countTime));
-            timeCountInMilliSeconds = countTime * 60000;
-            linear_main2.setVisibility(View.VISIBLE);
-            countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    txt_wait_time.setText(hmsTimeFormatter(millisUntilFinished));
-                    progressBarCircle.setProgress(60 - (int) ((timeCountInMilliSeconds - millisUntilFinished)/ (1000 * countTime)));
+            tblTask2 = new TblTask();
+            tblTask2 = t;
+            edt_time.setText(String.valueOf(tblTask2.getTime_wait()));
+            dateController = new DateController();
+            long current = dateController.dateTimeFormat9Tolong(dateController.getSystemTimeFull(ApplicationController.getAppActivity()));
+            timeCountInMilliSeconds = dateController.dateTimeFormat9Tolong(tblTask2.getDate_task_create()) + tblTask2.getTime_wait() * 60000;
+            editor.putLong(KEY_TIME_END,timeCountInMilliSeconds);
+            editor.putString(KEY_DATE_CREATE,tblTask2.getDate_task_create());
+            if(timeCountInMilliSeconds > current){
+                stopService();
+                timeCountInMilliSeconds = timeCountInMilliSeconds - current;
+                editor.putInt(KEY_MEMBER_ID,members.get(0).getMember_id());
+                editor.putString(KEY_TASK_ID,tblTask2.getId());
+                editor.putLong(KEY_TIME_COUNT,timeCountInMilliSeconds);
+                editor.putInt(KEY_TIME_WAIT,tblTask2.getTime_wait());
+                editor.putBoolean(KEY_DESTROY, false);
+                editor.commit();
+                linear_main2.setVisibility(View.VISIBLE);
+                startService();
 
-                }
-
-                @Override
-                public void onFinish() {
-                    edt_time.setText("Time out...");
-                    txt_wait_time.setText(hmsTimeFormatter(0));
-                    setProgressBarValues();
-                }
-
-            }.start();
-            countDownTimer.start();
+            }
 
         }catch (Exception e){
             e.printStackTrace();
@@ -603,7 +646,7 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         progressBarCircle.setProgress((int) timeCountInMilliSeconds / 1000);
     }
 
-    private String hmsTimeFormatter(long milliSeconds) {
+    public String hmsTimeFormatter(long milliSeconds) {
 
         String hms = String.format("%02d:%02d:%02d",
                 TimeUnit.MILLISECONDS.toHours(milliSeconds),
@@ -613,6 +656,14 @@ public class DriverMainActivity2 extends BaseActivity implements View.OnClickLis
         return hms;
 
 
+    }
+
+    public void startService() {
+        startService(new Intent(DriverMainActivity2.this, DriverBackgroundService.class));
+    }
+
+    public void stopService() {
+        stopService(new Intent(DriverMainActivity2.this, DriverBackgroundService.class));
     }
 
     @Override

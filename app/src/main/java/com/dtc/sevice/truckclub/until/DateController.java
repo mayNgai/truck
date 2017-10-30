@@ -26,6 +26,7 @@ public class DateController {
     SimpleDateFormat dateFormat6 = new SimpleDateFormat("yyyy");
     SimpleDateFormat dateFormat7 = new SimpleDateFormat("MM/dd/yyyy");
     SimpleDateFormat dateFormat8 = new SimpleDateFormat("HH:mm");
+    SimpleDateFormat dateFormat9 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public String getSystemTime(Context mContext) {
         long time;
@@ -37,6 +38,22 @@ public class DateController {
                 time = System.currentTimeMillis();
                 Date resultDate = new Date(time);
                 timeStr = dateFormat4.format(resultDate);
+            }
+        }
+
+        return timeStr;
+    }
+
+    public String getSystemTimeFull(Context mContext) {
+        long time;
+        String timeStr = "1993-10-27 07:05:00";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            if (Settings.Global.getInt(mContext.getContentResolver(), Settings.Global.AUTO_TIME, 0) == 0)
+                mContext.startActivity(new Intent(android.provider.Settings.ACTION_DATE_SETTINGS));
+            else {
+                time = System.currentTimeMillis();
+                Date resultDate = new Date(time);
+                timeStr = dateFormat9.format(resultDate);
             }
         }
 
@@ -108,6 +125,18 @@ public class DateController {
         Date d = null;
         try {
             d = dateFormat6.parse(string_date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long milliseconds = d.getTime();
+        return milliseconds;
+    }
+
+    public long dateTimeFormat9Tolong(String date) {
+        String string_date = date;
+        Date d = null;
+        try {
+            d = dateFormat9.parse(string_date);
         } catch (ParseException e) {
             e.printStackTrace();
         }

@@ -126,7 +126,9 @@
         <service
             android:name=".broadcasts.UserBackgroundService"
             android:exported="false"/>
-
+        <service
+            android:name=".broadcasts.DriverBackgroundService"
+            android:exported="false"/>
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />

@@ -190,6 +190,7 @@ public class DriverMainPresenter {
 //            }else {
             TblTask tblTask = new TblTask();
             tblTask.setId(mView.members.get(0).getTask_id());
+            tblTask.setMember(mView.members);
                 mForum.getApi()
                         .getTaskByID(tblTask)
                         .subscribeOn(Schedulers.newThread())
@@ -255,5 +256,36 @@ public class DriverMainPresenter {
             e.printStackTrace();
         }
     }
+    public void sentOfferPrice(TblTask tblTask){
+        try {
+            mForum.getApi()
+                    .sentOfferPrice(tblTask)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<TblTask>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("loadDataMember Error", e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(TblTask tblTasks) {
+                            if(tblTasks.getService_type().equalsIgnoreCase("Now")){
+                                mView.setCountDownTime(tblTasks);
+                            }
+                           // mView.updateSentOfferPrice();
+                        }
+                    });
+//            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
 }

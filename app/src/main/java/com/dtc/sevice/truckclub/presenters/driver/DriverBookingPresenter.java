@@ -102,10 +102,6 @@ public class DriverBookingPresenter {
 
     public void sentOfferPrice(TblTask tblTask){
         try {
-//            if(!NetworkUtils.isConnected(mView)){
-//                dialogController.dialogNolmal(mView,"Wanning","Internet is not stable.");
-//            }else {
-               // dialog = ProgressDialog.show(mView, "Wait", "loading...");
                 mForum.getApi()
                         .sentOfferPrice(tblTask)
                         .subscribeOn(Schedulers.newThread())
@@ -113,19 +109,16 @@ public class DriverBookingPresenter {
                         .subscribe(new Observer<TblTask>() {
                             @Override
                             public void onCompleted() {
-                                //dialog.dismiss();
                             }
 
                             @Override
                             public void onError(Throwable e) {
                                 Log.e("loadDataMember Error", e.getMessage());
-                               // dialog.dismiss();
                             }
 
                             @Override
                             public void onNext(TblTask tblTasks) {
                                 mView.updateSentOfferPrice();
-                              //  dialog.dismiss();
                             }
                         });
 //            }

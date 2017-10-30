@@ -410,6 +410,7 @@ public class BaseActivity extends AppCompatActivity implements
         try {
             tblTask = new TblTask();
             tblTask.setId(listMembers.get(0).getTask_id());
+            tblTask.setMember(listMembers);
             mForum = new ApiService();
             basePresenter = new BasePresenter(this,mForum);
             basePresenter.loadTaskByID();

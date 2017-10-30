@@ -6,8 +6,10 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -41,6 +43,8 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.dtc.sevice.truckclub.R;
+import com.dtc.sevice.truckclub.adapter.DriverWaitAcceptAdapter;
+import com.dtc.sevice.truckclub.adapter.TaskListAdapter;
 import com.dtc.sevice.truckclub.adapter.TypeCarAdapter;
 import com.dtc.sevice.truckclub.broadcasts.UserBackgroundService;
 import com.dtc.sevice.truckclub.helper.GlobalVar;
@@ -53,6 +57,7 @@ import com.dtc.sevice.truckclub.until.DateController;
 import com.dtc.sevice.truckclub.until.DialogController;
 import com.dtc.sevice.truckclub.until.TaskController;
 import com.dtc.sevice.truckclub.view.BaseActivity;
+import com.dtc.sevice.truckclub.view.driver.activity.DriverMainActivity2;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -73,6 +78,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -109,8 +116,8 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
     private TaskController taskController;
     public List<TblMember> members;
     private Activity _activity;
-    private ApiService mApiService;
-    private UserMainPresenter mUserMainPresenter;
+    private static ApiService mApiService;
+    private static UserMainPresenter mUserMainPresenter;
     private static List<TblCarGroup> listCarGroups;
     public static TblTask tblTask;
     private DateController dateController;
@@ -118,6 +125,21 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
     private DialogController dialog;
     private boolean flagEndDate =  false;
     private boolean clickableOnMap = true;
+
+    /////
+    final String PREF_NAME = "user";
+    final String KEY_TASK_ID = "task_id";
+    final String KEY_MEMBER_ID = "member_id";
+    final String KEY_TIME_OUT = "time_out";
+    final String KEY_TIME_END = "time_end";
+    final String KEY_DATE_CREATE = "date_create";
+    final String KEY_TIME_COUNT = "time_count";
+    final String KEY_TIME_WAIT = "time_wait";
+    final String KEY_DESTROY = "destroy_app";
+
+    SharedPreferences sp;
+    SharedPreferences.Editor editor;
+    public static Timer timer = new Timer();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,6 +156,8 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         _activity = new UserMainActivity2();
         dateController = new DateController();
         dialog = new DialogController();
+        sp = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        editor = sp.edit();
         //linear_detail = (LinearLayout)findViewById(R.id.linear_detail);
         btn_now = (Button)findViewById(R.id.btn_now);
         btn_booking = (Button)findViewById(R.id.btn_booking);
@@ -187,6 +211,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         setChangeTextStart();
         setChangeTextDes();
         setCarGroup();
+        setTimeOut();
         //setChangeTextIden();
     }
 
@@ -626,10 +651,13 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                     dialog.dialogNolmal(UserMainActivity2.this, getResources().getString(R.string.txtWarning),getResources().getString(R.string.txtPleaseChooseDateEnd));
                 break;
             case R.id.img_cancel:
-                stopCountDownTimer();
+                //stopCountDownTimer();
+//                Intent s = new Intent(UserMainActivity2.this, UserBackgroundService.class);
+//                stopService(s);
+                UserBackgroundService.countDownTimer.cancel();
                 tblTask2.setTask_status(-1);
                 tblTask2.setMember(members);
-                callUpdateTask(tblTask2);
+                callUpdateTask(tblTask2,-1);
                 linear_main1.setVisibility(View.VISIBLE);
                 linear_main2.setVisibility(View.GONE);
                 break;
@@ -671,7 +699,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                                 tblTask.setType_create("1");
                                 tblTask.setIdentify(edt_iden.getText().toString());
                                 if(service_type.equalsIgnoreCase("Now"))
-                                    tblTask.setTime_wait(1);
+                                    tblTask.setTime_wait(2);
                                 tblTask.setStart_date(dateController.convertDateFormat1To2(edt_start_date.getText().toString()) + " " + edt_start_time.getText().toString());
                                 tblTask.setEnd_date(dateController.convertDateFormat1To2(edt_end_date.getText().toString()) + " " + edt_end_time.getText().toString());
                                 mApiService = new ApiService();
@@ -902,11 +930,13 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private void callUpdateTask(TblTask task){
+    public void callUpdateTask(TblTask task,int status_id){
         try {
+
             mApiService = new ApiService();
             mUserMainPresenter = new UserMainPresenter(UserMainActivity2.this,mApiService);
-            mUserMainPresenter.updateMain(task);
+            mUserMainPresenter.updateMain(task,status_id);
+            stopService();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -954,43 +984,35 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         }
     }
     public static TblTask tblTask2;
-    public long timeCountInMilliSeconds = 1 * 60000;
+    public static long timeCountInMilliSeconds = 1 * 60000;
     public void setCountDownTime(final TblTask t){
         try {
             tblTask2 = new TblTask();
             tblTask2 = t;
-//            tblTask2.setTime_wait(1);
-//            tblTask2.setStart_date(dateController.getSystemTime(UserMainActivity2.this));
             edt_time.setText(String.valueOf(tblTask2.getTime_wait()));
-            long current = dateController.dateTimeFormat2Tolong(dateController.getSystemTime(UserMainActivity2.this));
-            timeCountInMilliSeconds = dateController.dateTimeFormat2Tolong(tblTask2.getStart_date()) + tblTask2.getTime_wait() * 60000;
+            long current = dateController.dateTimeFormat9Tolong(dateController.getSystemTimeFull(UserMainActivity2.this));
+            timeCountInMilliSeconds = dateController.dateTimeFormat9Tolong(tblTask2.getDate_task_create()) + tblTask2.getTime_wait() * 60000;
+            editor.putLong(KEY_TIME_END,timeCountInMilliSeconds);
+            editor.putString(KEY_DATE_CREATE,tblTask2.getDate_task_create());
             if(timeCountInMilliSeconds > current){
+                stopService();
                 timeCountInMilliSeconds = timeCountInMilliSeconds - current;
+                editor.putInt(KEY_MEMBER_ID,members.get(0).getMember_id());
+                editor.putString(KEY_TASK_ID,tblTask2.getId());
+                editor.putLong(KEY_TIME_COUNT,timeCountInMilliSeconds);
+                editor.putInt(KEY_TIME_WAIT,tblTask2.getTime_wait());
+                editor.putBoolean(KEY_DESTROY, false);
+                editor.commit();
                 linear_main1.setVisibility(View.GONE);
                 linear_main2.setVisibility(View.VISIBLE);
-                Intent intent = new Intent(UserMainActivity2.this, UserBackgroundService.class);
-                startService(intent);
-//                countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
-//                    @Override
-//                    public void onTick(long millisUntilFinished) {
-//
-//                        txt_wait_time.setText(hmsTimeFormatter(millisUntilFinished));
-//                        progressBarCircle.setProgress(60 - (int) ((timeCountInMilliSeconds - millisUntilFinished)/ (1000 * tblTask2.getTime_wait())));
-//                        Log.i("wait_time",hmsTimeFormatter(millisUntilFinished));
-//
-//                    }
-//
-//                    @Override
-//                    public void onFinish() {
-//                        Log.i("wait_time","Time out...");
-//                        setTimeOut();
-//
-////                        img_cancel.callOnClick();
-//                        //dialog.dialogNolmal(UserMainActivity2.this,"Warning","Time out...");
-//                    }
-//
-//                }.start();
-//                countDownTimer.start();
+                startService();
+                if(t.getMember()!=null&&t.getMember().size()>0){
+                    setListTask(t.getMember());
+                }else {
+                    List<TblMember> list = new ArrayList<TblMember>();
+                    setListTask(list);
+                }
+                setRefreshList();
             }
 
 
@@ -999,19 +1021,53 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         }
     }
 
+    public void setListTask(List<TblMember> lists){
+        try {
+            DriverWaitAcceptAdapter adapter = new DriverWaitAcceptAdapter(UserMainActivity2.this,lists,0);
+            recycler_view.setAdapter(adapter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void setRefreshList(){
+        try {
+            swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    getTask();
+                    swipe_refresh.setRefreshing(false);
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void getTask(){
+        try {
+            tblTask.setId(members.get(0).getTask_id());
+            tblTask.setMember(members);
+            mApiService = new ApiService();
+            mUserMainPresenter = new UserMainPresenter(UserMainActivity2.this,mApiService);
+            mUserMainPresenter.loadCreateTask();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void setTimeOut(){
         try {
-            edt_time.setText("Time out...");
-            txt_wait_time.setText(hmsTimeFormatter(0));
-            setProgressBarValues();
-            linear_main1.setVisibility(View.VISIBLE);
-            linear_main2.setVisibility(View.GONE);
-            tblTask2.setTask_status(2);
-            tblTask2.setMember(members);
-            callUpdateTask(tblTask2);
-            Intent s = new Intent(UserMainActivity2.this, UserBackgroundService.class);
-            stopService(s);
-            //dialog.dialogNolmal(UserMainActivity2.this,"Warning","Time out...");
+            if(sp.getBoolean(KEY_TIME_OUT,false)){
+                editor.putBoolean(KEY_TIME_OUT,false);
+                editor.commit();
+                dialog.dialogNolmal(UserMainActivity2.this,"Warning","Time out...");
+            }
+
+            if(members.get(0).getStatus_id() == 33){
+                getTask();
+            }
+//
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1038,12 +1094,13 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
 
 
     }
+    public void startService() {
+        startService(new Intent(UserMainActivity2.this, UserBackgroundService.class));
+    }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        Log.i("onStart","-- ON START --");
-//    }
+    public void stopService() {
+        stopService(new Intent(UserMainActivity2.this, UserBackgroundService.class));
+    }
 
     @Override
     public void onResume() {
@@ -1057,11 +1114,13 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
         Log.i("onPause","-- ON PAUSE --");
     }
 
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        Log.i("onStop","-- ON STOP --");
-//    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        editor.putBoolean(KEY_DESTROY, true);
+        editor.commit();
+        Log.i("onDestroy","-- ON Destroy --");
+    }
 
 
     @Override

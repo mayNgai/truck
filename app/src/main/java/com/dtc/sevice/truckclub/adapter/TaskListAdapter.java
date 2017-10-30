@@ -20,6 +20,7 @@ import com.dtc.sevice.truckclub.model.TblTask;
 import com.dtc.sevice.truckclub.until.DateController;
 import com.dtc.sevice.truckclub.until.DialogController;
 import com.dtc.sevice.truckclub.view.driver.activity.DriverBookingActivity;
+import com.dtc.sevice.truckclub.view.driver.activity.DriverMainActivity2;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
     private DateController dateController;
     private DialogController dialogController;
     private static DriverBookingActivity mView;
+    private static DriverMainActivity2 mView2;
     private int select_position;
 
     public TaskListAdapter(Context context, List<TblTask> _arrayList,int _select_position){
@@ -114,8 +116,15 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
                 @Override
                 public void onClick(View view) {
                     if(edt_price.getText().toString().length()>0){
-                        mView = new DriverBookingActivity();
-                        mView.sentOfferPrice(Integer.parseInt(arrayList.get(pos).getId()),Integer.parseInt(edt_price.getText().toString()));
+                        if(arrayList.get(pos).getService_type().equalsIgnoreCase("Booking")){
+                            mView = new DriverBookingActivity();
+                            mView.sentOfferPrice(Integer.parseInt(arrayList.get(pos).getId()),Integer.parseInt(edt_price.getText().toString()));
+                        }else {
+                            mView2 = new DriverMainActivity2();
+                            mView2.sentOfferPrice(Integer.parseInt(arrayList.get(pos).getId()),Integer.parseInt(edt_price.getText().toString()));
+                            mBottomSheetDialog.dismiss();
+                        }
+
                         arrayList.remove(pos);
                         notifyDataSetChanged();
                     }else {

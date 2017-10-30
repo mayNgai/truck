@@ -196,6 +196,18 @@ public class TaskController {
         return list;
     }
 
+    public List<TblTask> getTaskByID(String id){
+        List<TblTask> list = new ArrayList<TblTask>();
+        try {
+            getConnectDatabaseHelper();
+            list = tblTaskRuntimeDao.queryBuilder().where().eq("id", id).query();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public boolean deleteMember(List<TblMember> member){
         try {
             getConnectDatabaseHelper();
