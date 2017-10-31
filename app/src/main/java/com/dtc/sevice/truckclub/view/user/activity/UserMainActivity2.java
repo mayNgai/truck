@@ -699,7 +699,7 @@ public class UserMainActivity2 extends BaseActivity implements View.OnClickListe
                                 tblTask.setType_create("1");
                                 tblTask.setIdentify(edt_iden.getText().toString());
                                 if(service_type.equalsIgnoreCase("Now"))
-                                    tblTask.setTime_wait(2);
+                                    tblTask.setTime_wait(10);
                                 tblTask.setStart_date(dateController.convertDateFormat1To2(edt_start_date.getText().toString()) + " " + edt_start_time.getText().toString());
                                 tblTask.setEnd_date(dateController.convertDateFormat1To2(edt_end_date.getText().toString()) + " " + edt_end_time.getText().toString());
                                 mApiService = new ApiService();
